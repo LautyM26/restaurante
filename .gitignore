@@ -1,0 +1,15 @@
+# Configuración personal de agentes IA (cada integrante usa la suya, no se sube)
+CLAUDE.md
+AGENTS.md
+opencode/
+.opencode/
+.claude/
+.agents/
+.atl/
+skills/
+docs/constitution.md
+
+# Sistema operativo y editor
+.DS_Store
+Thumbs.db
+.vscode/
