@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+/* Tokens del lenguaje visual "brasa" (plan §9.2-§9.4 y §10.1). */
+@theme {
+  /* Paleta: carbón (superficies), hueso y ceniza (texto), brasa (único acento), estados */
+  --color-coal-950: #0c0a09;
+  --color-coal-900: #15120f;
+  --color-coal-800: #1f1a16;
+  --color-coal-700: #2b241e;
+  --color-bone-50: #f6f1eb;
+  --color-ash-300: #b3a89d;
+  --color-ash-500: #9a8f84; /* más claro que el valor inicial: llega a 4,5:1 sobre coal-800 y coal-700 */
+  --color-ember-300: #ffc58a; /* decorativo, no texto */
+  --color-ember-400: #ff9a3d;
+  --color-ember-500: #f2711c;
+  --color-ember-700: #8f3510; /* decorativo, no texto */
+  --color-herb-400: #8fcf8a;
+  --color-chili-400: #ff6b5e;
+
+  /* Tipografías autoalojadas con @fontsource */
+  --font-display: "Barlow Condensed", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Barlow", ui-sans-serif, system-ui, sans-serif;
+
+  /* Curvas de movimiento */
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* Radios (las píldoras usan rounded-full) */
+  --radius-control: 14px;
+  --radius-row: 16px;
+  --radius-badge: 12px;
+  --radius-sheet: 28px;
+
+  /* Capas; las hojas viven en el top layer de <dialog> */
+  --z-stage: 0;
+  --z-ring: 5;
+  --z-panel: 10;
+  --z-tabs: 20;
+  --z-top-bar: 30;
+  --z-toast: 35;
+  --z-cart-bar: 40;
+}
+
+/* Base nativa móvil (plan §11, skill mobile-native) */
+@layer base {
+  html {
+    background-color: var(--color-coal-950);
+    color-scheme: dark;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
+    overscroll-behavior-y: none;
+  }
+
+  /* Escenario: carbón con una luz de brasa que sube desde el pie (plan §9.2) */
+  body {
+    min-height: 100svh;
+    background:
+      linear-gradient(
+        180deg,
+        transparent 38%,
+        rgb(242 113 28 / 0.045) 56%,
+        rgb(242 113 28 / 0.065) 70%,
+        rgb(242 113 28 / 0.03) 100%
+      ),
+      var(--color-coal-950);
+    color: var(--color-bone-50);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  /* 16 px evita el zoom automático de iOS al enfocar un campo */
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+
+  /* Toque inmediato y sin selección de texto, solo en controles (nunca en body) */
+  button,
+  [role="button"],
+  a {
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ember-400);
+    outline-offset: 2px;
+  }
+}

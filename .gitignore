@@ -14,3 +14,12 @@ docs/referencias/
 .DS_Store
 Thumbs.db
 .vscode/
+
+# Dependencias, compilación y entorno local
+node_modules/
+dist/
+coverage/
+.env
+.env.*
+!.env.example
+*.log

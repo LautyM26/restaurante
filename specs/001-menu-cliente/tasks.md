@@ -14,7 +14,7 @@
 
 ---
 
-- [ ] **T1. Base del proyecto: Vite + React + TS, Tailwind v4, tokens y entorno de pruebas**
+- [x] **T1. Base del proyecto: Vite + React + TS, Tailwind v4, tokens y entorno de pruebas**
   - **Requisitos:** base de todos; RNF1, RNF2 (infraestructura), RNF6 (plan §1, §2, §9.2-§9.4, §11).
   - **Tests primero (rojo):** `tests/app/smoke.test.tsx`: `<App/>` renderiza un landmark `main` y pasa `expectNoA11yViolations`.
   - **Crea:** `package.json` (scripts `dev` con `--host`, `build`, `preview`, `test`, `test:watch`; dependencias de plan §1.1, incluido `axe-core`), `vite.config.ts`, `tsconfig*.json`, `index.html` (metas de §11), `.env.example`, `src/main.tsx`, `src/config.ts`, `src/app/App.tsx` (mínimo: `<main>`), `src/styles/index.css` (`@import "tailwindcss"`, `@theme` con paleta de §9.2 incluido `ash-500 = #9a8f84`, fuentes, curvas, radios y capas; base móvil de §11), `tests/setup.ts`, `tests/utils.tsx` (`renderWithProviders`, `expectNoA11yViolations`).
