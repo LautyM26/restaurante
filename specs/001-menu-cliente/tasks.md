@@ -22,7 +22,7 @@
   - **Skills:** `ponytail` (dependencias mínimas), `mobile-native` (metas y base CSS), `ui-ux-pro-max` (tokens y contraste), `design-taste-frontend` §3 (stack), `systematic-debugging` (si falla la configuración).
   - **Hecho cuando:** `npm test` y `npm run build` en verde; `index.html` tiene `viewport-fit=cover`, `interactive-widget=resizes-content`, `theme-color` y `color-scheme dark`, sin `user-scalable=no`; los tokens coinciden con §9.2.
 
-- [ ] **T2. Dominio puro y utilidades**
+- [x] **T2. Dominio puro y utilidades**
   - **Requisitos:** RF1, RF2, RF7, RF13, RF15-RF20, RF22, RF28, RF30, RF36, RF37, RF44, RF48; RNF10 (reglas) (plan §6).
   - **Tests primero (rojo):**
     - `tests/domain/table.test.ts`: `12`, `012` válidos (= 12); ausente y `mesa=` → missing; `abc`, `0`, `-3`, `12.5`, `1000`, `" 12"` → invalid; `mesa` repetida → vale la primera.
