@@ -6,7 +6,9 @@ import { parseTableParam } from '../src/domain/table'
 import { I18nProvider } from '../src/i18n/I18nContext'
 import type { Services } from '../src/services/contracts'
 import { ServicesProvider } from '../src/services/ServicesContext'
+import { TableCartProvider } from '../src/state/CartContext'
 import { TableProvider } from '../src/state/TableContext'
+import { LiveRegionProvider } from '../src/ui/LiveRegion'
 
 interface RenderOptions {
   /** URL (ruta + query + hash) con la que arranca el test, por ejemplo '/?mesa=12#/orders'. */
@@ -17,17 +19,23 @@ interface RenderOptions {
   i18n?: boolean
   /** Monta el TableProvider leyendo `?mesa=` de `url`; necesita `services` (verifica la mesa con getTable). */
   table?: boolean
+  /** Monta el LiveRegionProvider (anuncios para lector de pantalla). */
+  liveRegion?: boolean
+  /** Monta el pedido en curso de la mesa (TableCartProvider); necesita `table`. */
+  cart?: boolean
 }
 
 /**
  * Renderiza dentro de MotionConfig sin duración y con movimiento reducido,
  * para que las animaciones no ralenticen ni vuelvan inestables los tests.
- * Los providers son opcionales y se anidan como en App: Services > I18n > Table.
+ * Los providers son opcionales y se anidan como en App: Services > I18n > Región viva > Table > Cart.
  */
-export function renderWithProviders(ui: ReactElement, { url = '/', services, i18n = false, table = false }: RenderOptions = {}) {
+export function renderWithProviders(ui: ReactElement, { url = '/', services, i18n = false, table = false, liveRegion = false, cart = false }: RenderOptions = {}) {
   window.history.replaceState(null, '', url)
   let content = ui
+  if (cart) content = <TableCartProvider>{content}</TableCartProvider>
   if (table) content = <TableProvider parsed={parseTableParam(window.location.search)}>{content}</TableProvider>
+  if (liveRegion) content = <LiveRegionProvider>{content}</LiveRegionProvider>
   if (i18n) content = <I18nProvider>{content}</I18nProvider>
   if (services) content = <ServicesProvider services={services}>{content}</ServicesProvider>
   return render(

@@ -6,21 +6,12 @@
 // apagan solo la imagen y el precio: así el texto conserva el contraste mínimo de 4,5:1 (plan §9.2).
 //
 // Nombre accesible = el nombre del plato; descripción accesible = descripción + etiquetas + precio (+ "Agotado").
-import { Fragment, useId } from 'react'
-import { Grains, Leaf, Pepper, Plant } from '@phosphor-icons/react'
-import type { Icon } from '@phosphor-icons/react'
+import { useId } from 'react'
 import { isDishOrderable } from '../../domain/selection'
-import type { CategoryVisual, DietaryTag, Dish } from '../../domain/types'
+import type { CategoryVisual, Dish } from '../../domain/types'
 import { useI18n } from '../../i18n/I18nContext'
-import type { TranslationKey } from '../../i18n/I18nContext'
 import { DishVisual } from '../../ui/DishVisual'
-
-const TAGS: Record<DietaryTag, { icon: Icon; label: TranslationKey; tint: string }> = {
-  vegetarian: { icon: Leaf, label: 'tag.vegetarian', tint: 'text-herb-400' },
-  vegan: { icon: Plant, label: 'tag.vegan', tint: 'text-herb-400' },
-  gluten_free: { icon: Grains, label: 'tag.gluten_free', tint: 'text-ember-400' },
-  spicy: { icon: Pepper, label: 'tag.spicy', tint: 'text-chili-400' },
-}
+import { DishTags } from './DishTags'
 
 interface DishRowProps {
   dish: Dish
@@ -55,23 +46,7 @@ export function DishRow({ dish, visual, onOpen }: DishRowProps) {
             {localize(dish.description)}
           </span>
 
-          {dish.tags.length > 0 && (
-            <span id={ids.tags} className="flex flex-wrap gap-x-3 gap-y-1">
-              {dish.tags.map((tag, index) => {
-                const { icon: Glyph, label, tint } = TAGS[tag]
-                return (
-                  <Fragment key={tag}>
-                    {/* Espacio entre etiquetas solo para el lector de pantalla ("Picante Sin TACC", no "PicanteSin TACC") */}
-                    {index > 0 && ' '}
-                    <span className="inline-flex items-center gap-1 text-[0.8125rem] text-ash-300">
-                      <Glyph size={14} weight="bold" aria-hidden="true" className={tint} />
-                      {t(label)}
-                    </span>
-                  </Fragment>
-                )
-              })}
-            </span>
-          )}
+          <DishTags tags={dish.tags} id={ids.tags} />
 
           <span id={ids.price} className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1">
             <span

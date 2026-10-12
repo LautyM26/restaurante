@@ -14,14 +14,17 @@ import { expectNoA11yViolations, renderWithProviders } from '../../utils'
 type GetMenu = NonNullable<Parameters<typeof createTestServices>[1]>
 
 /** MenuScreen recibe el estado del hook por props (plan §4): este arnés hace de CustomerApp. */
-function Harness({ onOpenDish }: { onOpenDish?: (dishId: string) => void }) {
+function Harness() {
   const menu = useMenu()
-  return <MenuScreen menu={menu} onOpenDish={onOpenDish ? (dish) => onOpenDish(dish.id) : undefined} />
+  return <MenuScreen menu={menu} />
 }
 
-function renderMenu(getMenu: GetMenu = async () => fixtureMenu, onOpenDish?: (dishId: string) => void) {
+function renderMenu(getMenu: GetMenu = async () => fixtureMenu) {
   const services = createTestServices(undefined, getMenu)
-  return { services, ...renderWithProviders(<Harness onOpenDish={onOpenDish} />, { services, i18n: true }) }
+  return {
+    services,
+    ...renderWithProviders(<Harness />, { url: '/?mesa=12', services, i18n: true, table: true, cart: true, liveRegion: true }),
+  }
 }
 
 function deferred<T>() {
@@ -113,8 +116,7 @@ describe('MenuScreen: la carta (RF7-RF10, RF13, RF34, RF45)', () => {
     })
 
     it('un plato agotado y uno de grupo obligatorio sin opciones (P4) se ven como "Agotado" y no se pueden abrir', async () => {
-      const onOpen = vi.fn()
-      renderMenu(undefined, onOpen)
+      renderMenu()
       await screen.findByRole('navigation')
 
       for (const name of ['sold_out', 'trapped']) {
@@ -123,22 +125,15 @@ describe('MenuScreen: la carta (RF7-RF10, RF13, RF34, RF45)', () => {
         expect(within(row).getByText('Agotado')).toBeInTheDocument()
         await userEvent.click(row)
       }
-      expect(onOpen).not.toHaveBeenCalled()
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     })
 
-    it('tocar un plato disponible avisa con su id (T7 abrirá la ficha)', async () => {
-      const onOpen = vi.fn()
-      renderMenu(undefined, onOpen)
+    it('tocar un plato disponible abre su ficha (RF14)', async () => {
+      renderMenu()
       await screen.findByRole('navigation')
 
       await userEvent.click(screen.getByRole('button', { name: 'burger' }))
-      expect(onOpen).toHaveBeenCalledWith('burger')
-    })
-
-    it('sin onOpenDish (todavía no hay ficha) tocar un plato no rompe', async () => {
-      renderMenu()
-      await screen.findByRole('navigation')
-      await expect(userEvent.click(screen.getByRole('button', { name: 'burger' }))).resolves.not.toThrow()
+      expect(await screen.findByRole('dialog', { name: 'burger' })).toBeInTheDocument()
     })
 
     it('cambiar de idioma traduce títulos, pestañas y platos, con fallback al español', async () => {

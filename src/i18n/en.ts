@@ -25,9 +25,25 @@ export const en = {
   'dish.required_other': 'Choose {count} options',
   'dish.maxReached': 'You can choose up to {max}',
   'dish.added': 'Added: {name} × {qty}',
+  'dish.group.required': 'Required',
+  'dish.group.optional': 'Optional',
+  'dish.group.upTo': 'Up to {max}',
+  'dish.option.unavailable': 'Unavailable',
+  'dish.note.label': 'Note for the kitchen',
+  'dish.note.placeholder': 'E.g. no onion',
+  'dish.note.counter': '{count} of {max}',
+
+  // Sheets and quantity
+  'sheet.close': 'Close',
+  'qty.label': 'Quantity',
+  'qty.decrease': 'Decrease quantity',
+  'qty.increase': 'Increase quantity',
 
   // Current order
   'cart.maxPerDish': 'Maximum 20 per dish',
+  'cart.inProgress': 'Order in progress',
+  'cart.units_one': '{count} item',
+  'cart.units_other': '{count} items',
   'cart.view': 'View order',
   'cart.remove': 'Remove',
   'cart.send': 'Send order',

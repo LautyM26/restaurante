@@ -92,6 +92,11 @@
     outline: 2px solid var(--color-ember-400);
     outline-offset: 2px;
   }
+
+  /* Con una hoja modal abierta la página de atrás no se desplaza (plan §9.5) */
+  html:has(dialog[open]) {
+    overflow: hidden;
+  }
 }
 
 /* Material de vidrio (plan §9.2, §9.5 y §10.4): TopBar, CategoryTabs, CartBar y SegmentedControl */

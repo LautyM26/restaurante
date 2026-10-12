@@ -60,3 +60,31 @@ describe('createSafeStorage con un almacenamiento que lanza error (RNF8)', () =>
     expect(storage.get('antes')).toBe('1')
   })
 })
+
+describe('createSessionStorage (pedido en curso por pestaña, RF23)', () => {
+  it('escribe en sessionStorage y no en localStorage', async () => {
+    const { createSessionStorage } = await import('../../src/services/storage')
+    window.sessionStorage.clear()
+    window.localStorage.clear()
+    const storage = createSessionStorage()
+
+    storage.set('k', 'v')
+    expect(window.sessionStorage.getItem('k')).toBe('v')
+    expect(window.localStorage.getItem('k')).toBeNull()
+    expect(storage.get('k')).toBe('v')
+    storage.remove('k')
+    expect(window.sessionStorage.getItem('k')).toBeNull()
+  })
+
+  it('con sessionStorage bloqueado sigue funcionando en memoria (RNF8)', async () => {
+    const { createSessionStorage } = await import('../../src/services/storage')
+    vi.spyOn(window, 'sessionStorage', 'get').mockImplementation(() => {
+      throw new DOMException('Bloqueado', 'SecurityError')
+    })
+    const storage = createSessionStorage()
+
+    expect(() => storage.set('k', 'v')).not.toThrow()
+    expect(storage.get('k')).toBe('v')
+    vi.restoreAllMocks()
+  })
+})

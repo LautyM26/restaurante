@@ -1,26 +1,29 @@
 // La carta (RF7-RF10, RF13, RF34, RF45; plan §3 y §5.2). Recibe el estado de `useMenu()` por props y dibuja
 // el que corresponda: marcadores de carga, error con "Reintentar", carta vacía, o las pestañas de categorías
 // con una sección por categoría. No sabe nada de la mesa: sin mesa válida la carta se lee igual (solo
-// lectura); lo que cambia se decide en la ficha y en el pedido (T7, T8).
+// lectura); lo que cambia se decide en la ficha y en el pedido.
 //
-// T7 conecta `onOpenDish` con la ficha del plato; T10 antepone la portada y convierte esta sección en el panel.
-import { useMemo } from 'react'
+// Aquí vive qué plato tiene la ficha abierta (RF14). T8 monta la barra y el resumen del pedido; T10 antepone
+// la portada y convierte esta sección en el panel.
+import { useMemo, useState } from 'react'
 import type { Dish } from '../../domain/types'
 import type { UseMenu } from '../../state/useMenu'
+import { DishSheet } from '../dish/DishSheet'
 import { CategoryTabs } from './CategoryTabs'
 import { MenuEmpty, MenuError, MenuLoading } from './MenuStates'
 import { MenuSection } from './MenuSection'
 
 interface MenuScreenProps {
   menu: UseMenu
-  /** Se llama al tocar un plato que se puede pedir. */
-  onOpenDish?: (dish: Dish) => void
 }
 
-const ignore = () => {}
-
-export function MenuScreen({ menu, onOpenDish = ignore }: MenuScreenProps) {
+export function MenuScreen({ menu }: MenuScreenProps) {
   const loaded = menu.status === 'ready' ? menu.menu : null
+  const [openDishId, setOpenDishId] = useState<string | null>(null)
+  // Se busca en la carta vigente: si el plato desaparece con la ficha abierta, la ficha se cierra sola.
+  const openDish = loaded?.dishes.find((dish) => dish.id === openDishId) ?? null
+  const openVisual = loaded?.categories.find((category) => category.id === openDish?.categoryId)?.visual ?? 'main'
+  const openSheet = (dish: Dish) => setOpenDishId(dish.id)
 
   // Los platos ya vienen ordenados por `order` (sortMenu): agrupar conserva ese orden.
   const sections = useMemo(
@@ -42,10 +45,11 @@ export function MenuScreen({ menu, onOpenDish = ignore }: MenuScreenProps) {
         <>
           <CategoryTabs categories={sections.map((s) => s.category)} />
           {sections.map(({ category, dishes }) => (
-            <MenuSection key={category.id} category={category} dishes={dishes} onOpenDish={onOpenDish} />
+            <MenuSection key={category.id} category={category} dishes={dishes} onOpenDish={openSheet} />
           ))}
         </>
       )}
+      <DishSheet dish={openDish} visual={openVisual} onClose={() => setOpenDishId(null)} />
     </section>
   )
 }

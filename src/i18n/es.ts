@@ -24,9 +24,25 @@ export const es = {
   'dish.required_other': 'Elegí {count} opciones',
   'dish.maxReached': 'Podés elegir hasta {max}',
   'dish.added': 'Agregado: {name} × {qty}',
+  'dish.group.required': 'Obligatorio',
+  'dish.group.optional': 'Opcional',
+  'dish.group.upTo': 'Hasta {max}',
+  'dish.option.unavailable': 'No disponible',
+  'dish.note.label': 'Nota para la cocina',
+  'dish.note.placeholder': 'Ej.: sin cebolla',
+  'dish.note.counter': '{count} de {max}',
+
+  // Hojas y cantidad
+  'sheet.close': 'Cerrar',
+  'qty.label': 'Cantidad',
+  'qty.decrease': 'Disminuir cantidad',
+  'qty.increase': 'Aumentar cantidad',
 
   // Pedido en curso
   'cart.maxPerDish': 'Máximo 20 por plato',
+  'cart.inProgress': 'Pedido en curso',
+  'cart.units_one': '{count} unidad',
+  'cart.units_other': '{count} unidades',
   'cart.view': 'Ver pedido',
   'cart.remove': 'Quitar',
   'cart.send': 'Enviar pedido',

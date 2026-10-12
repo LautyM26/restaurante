@@ -42,3 +42,6 @@ export function createSafeStorage(resolve: () => Storage): SafeStorage {
 
 /** localStorage seguro: compartido entre pestañas del navegador (mismo dispositivo). */
 export const createLocalStorage = (): SafeStorage => createSafeStorage(() => window.localStorage)
+
+/** sessionStorage seguro: vive mientras la pestaña siga abierta (pedido en curso, sobrevive a recargas). */
+export const createSessionStorage = (): SafeStorage => createSafeStorage(() => window.sessionStorage)

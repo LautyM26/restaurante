@@ -1,5 +1,6 @@
 // Esqueleto de la vista del cliente (plan §3): barra superior fija y una de dos pantallas según el hash.
-// La carta ya es la definitiva (MenuScreen, T6); "Mis pedidos" es PROVISORIA hasta que T9 la reemplace por OrdersScreen.
+// La carta ya es la definitiva (MenuScreen, T6); "Mis pedidos" es PROVISORIA hasta que T9 la reemplace por OrdersScreen,
+// y la línea "Pedido en curso" es PROVISORIA hasta que T8 la reemplace por la CartBar.
 // La carta se pide aquí, una sola vez, y sobrevive a ir y volver de "Mis pedidos" (y se refresca al volver a
 // primer plano). La navegación: el scroll de la carta se conserva al ir y volver (RF32) y el foco acompaña
 // cada cambio de pantalla.
@@ -7,7 +8,10 @@ import { useEffect, useLayoutEffect, useRef } from 'react'
 import { TopBar } from '../features/layout/TopBar'
 import { TableNotice } from '../features/menu/TableNotice'
 import { MenuScreen } from '../features/menu/MenuScreen'
+import { cartTotalCents } from '../domain/pricing'
 import { useI18n } from '../i18n/I18nContext'
+import { useCart } from '../state/CartContext'
+import type { UseMenu } from '../state/useMenu'
 import { useMenu } from '../state/useMenu'
 import { useTable } from '../state/TableContext'
 import { TableBadge } from '../ui/TableBadge'
@@ -16,6 +20,21 @@ import { useHashScreen } from './useHashScreen'
 // Mismos límites que el plan §9.6: celular fluido, tablet centrada en 720 px y escritorio en 1120 px.
 const PAGE =
   'mx-auto w-full max-w-[720px] pt-[calc(env(safe-area-inset-top)+5.5rem)] pb-[calc(env(safe-area-inset-bottom)+2rem)] pr-[max(1rem,env(safe-area-inset-right))] pl-[max(1rem,env(safe-area-inset-left))] outline-none md:pr-[max(1.5rem,env(safe-area-inset-right))] md:pl-[max(1.5rem,env(safe-area-inset-left))] lg:max-w-[1120px]'
+
+/** PROVISORIO (T7): hace visible el pedido en curso hasta que T8 traiga la CartBar. */
+function InProgressLine({ menu }: { menu: UseMenu }) {
+  const { t, formatPrice } = useI18n()
+  const cart = useCart()
+  if (cart.units === 0) return null
+
+  const total = menu.status === 'ready' ? ` · ${formatPrice(cartTotalCents(cart.lines, menu.menu))}` : ''
+  return (
+    <p data-provisional="" className="w-full rounded-row border border-ember-400/40 px-3 py-2.5 text-[0.9375rem] font-semibold text-bone-50">
+      {t('cart.inProgress')}: {t('cart.units', { count: cart.units })}
+      {total}
+    </p>
+  )
+}
 
 export function CustomerApp() {
   const { t } = useI18n()
@@ -57,6 +76,7 @@ export function CustomerApp() {
             <div className="w-full">
               <TableNotice />
             </div>
+            <InProgressLine menu={menu} />
             <MenuScreen menu={menu} />
           </div>
         ) : (
