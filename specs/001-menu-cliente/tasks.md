@@ -54,7 +54,7 @@
   - **Skills:** `ponytail`, `systematic-debugging`.
   - **Hecho cuando:** las pantallas pueden depender solo de `contracts.ts`, que no expone tipos de transporte; con dos pestañas abiertas, `window.__demo.setStatus(...)` en una se refleja en la otra (comprobado por el test de dos instancias); `npm test` en verde.
 
-- [ ] **T4. Idiomas y selector de idioma**
+- [x] **T4. Idiomas y selector de idioma**
   - **Requisitos:** RF33, RF34 (infraestructura), RF35; RNF8 (plan §8).
   - **Tests primero (rojo):** `tests/i18n/format.test.ts` (`interpolate`; plurales; `formatPrice` `es-AR` y `en-US` con ARS; `formatTime`; `localize` con fallback); `dictionaries.test.ts` (`en` tiene exactamente las claves de `es`); `I18nContext.test.tsx` (español por defecto; `<html lang>` sincronizado; cambio a inglés traduce y persiste; con storage que lanza error sigue funcionando); `tests/features/layout/LanguageToggle.test.tsx` (radiogroup accesible, opción seleccionada anunciada, objetivos de 44 px por clase; `expectNoA11yViolations`).
   - **Crea:** `src/i18n/es.ts`, `en.ts`, `format.ts`, `I18nContext.tsx`, `src/ui/SegmentedControl.tsx`, `src/features/layout/LanguageToggle.tsx`. **Modifica:** `src/app/App.tsx` (monta `I18nProvider` y, provisoriamente hasta T5, el `LanguageToggle` dentro de `main`).
