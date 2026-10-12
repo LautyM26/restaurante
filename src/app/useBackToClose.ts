@@ -44,8 +44,11 @@ export function useBackToClose(open: boolean, close: () => void) {
       // la hoja sigue abierta y la entrada se conserva.
       queueMicrotask(() => {
         if (!pushed.current || (openRef.current && mounted.current)) return
+        const sheetOnTop = window.history.state?.sheet === true
         pushed.current = false
-        window.history.back()
+        // Si otra pantalla ya reemplazó la entrada de la hoja (el envío del pedido lleva a "Mis pedidos"),
+        // retroceder sacaría al cliente de esa pantalla.
+        if (sheetOnTop) window.history.back()
       })
     }
   }, [open])

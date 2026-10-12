@@ -73,6 +73,19 @@ describe('useBackToClose: "atrás" cierra la hoja (RF43, CL29)', () => {
     expect(onClose).not.toHaveBeenCalled()
   })
 
+  it('si otra pantalla reemplazó la entrada de la hoja (envío correcto), al desmontar no retrocede', async () => {
+    const back = vi.spyOn(window.history, 'back').mockImplementation(() => {})
+    const { unmount } = render(<Sheet open onClose={() => {}} />)
+    expect(window.history.state).toMatchObject({ sheet: true })
+
+    // CustomerApp navega a 'Mis pedidos' sustituyendo la entrada de la hoja, y la carta (con la hoja) se desmonta
+    window.history.replaceState({ app: 'restaurante', from: 'menu' }, '', '#/orders')
+    unmount()
+    await flush()
+
+    expect(back).not.toHaveBeenCalled()
+  })
+
   it('sin hoja abierta un popstate no hace nada', () => {
     const onClose = vi.fn()
     render(<Sheet open={false} onClose={onClose} />)

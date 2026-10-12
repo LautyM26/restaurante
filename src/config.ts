@@ -13,3 +13,7 @@ export const MY_ORDERS_WINDOW_H = 12
 export const CODE_UNIQUE_WINDOW_H = 24
 /** Duración del aviso (Toast), en milisegundos. */
 export const TOAST_MS = 4000
+/** Espera máxima, en milisegundos, de una respuesta al enviar un pedido; vencida, el resultado es desconocido (plan §7.3, regla 7). */
+export const SUBMIT_TIMEOUT_MS = 15000
+/** Cuánto se ve el resaltado de la CartBar al agregar cuando hay movimiento reducido, en milisegundos. */
+export const CART_HIGHLIGHT_MS = 1500

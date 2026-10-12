@@ -1,11 +1,17 @@
-import { act, render, screen } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { parseTableParam } from '../../src/domain/table'
 import { CartProvider, TableCartProvider, useCart } from '../../src/state/CartContext'
 import type { Cart } from '../../src/state/CartContext'
-import { TableProvider } from '../../src/state/TableContext'
+import { TableProvider, useTable } from '../../src/state/TableContext'
 import { ServicesProvider } from '../../src/services/ServicesContext'
 import { createTestServices } from '../fixtures/services'
+
+let tableApi!: ReturnType<typeof useTable>
+function TableProbe() {
+  tableApi = useTable()
+  return null
+}
 
 const KEY_12 = 'restaurante.cart.table-12'
 
@@ -221,6 +227,31 @@ describe('CartContext: pedido en curso por mesa (RF19, RF20, RF23, RNF8)', () =>
     })
   })
 
+  it('lastAdd cuenta cada agregado y avisa si se recortó el tope (confirmación visible, RF19)', () => {
+    renderCart(12)
+    expect(cart.lastAdd).toEqual({ seq: 0, capped: false })
+
+    add({ quantity: 3 })
+    expect(cart.lastAdd).toEqual({ seq: 1, capped: false })
+
+    add({ quantity: 19 })
+    expect(cart.lastAdd).toEqual({ seq: 2, capped: true })
+    expect(cart.lines[0].quantity).toBe(20)
+
+    add({ dishId: 'salad' })
+    expect(cart.lastAdd).toEqual({ seq: 3, capped: false })
+  })
+
+  it('lastAdd no se guarda: tras recargar vuelve a cero (no hay nada que confirmar)', () => {
+    const first = renderCart(12)
+    add()
+    first.unmount()
+
+    renderCart(12)
+    expect(cart.lines).toHaveLength(1)
+    expect(cart.lastAdd.seq).toBe(0)
+  })
+
   it('useCart fuera del provider avisa con un mensaje claro', () => {
     const quiet = vi.spyOn(console, 'error').mockImplementation(() => {})
     expect(() => render(<Probe />)).toThrow(/CartProvider/)
@@ -237,6 +268,7 @@ describe('TableCartProvider: toma la mesa del TableProvider', () => {
       <ServicesProvider services={createTestServices()}>
         <TableProvider parsed={parseTableParam(window.location.search)}>
           <TableCartProvider>
+            <TableProbe />
             <Probe />
           </TableCartProvider>
         </TableProvider>
@@ -252,6 +284,16 @@ describe('TableCartProvider: toma la mesa del TableProvider', () => {
 
     renderWithTable('?mesa=12')
     expect(cart.lines.map((l) => l.dishId)).toEqual(['burger'])
+  })
+
+  it('si el restaurante rechaza la mesa (INVALID_TABLE) el pedido en curso se conserva (CL1)', async () => {
+    renderWithTable('?mesa=12')
+    await waitFor(() => expect(tableApi.status).toBe('valid'))
+    add({ dishId: 'burger', quantity: 2 })
+
+    act(() => tableApi.markInvalid())
+    expect(cart.lines.map((l) => [l.dishId, l.quantity])).toEqual([['burger', 2]])
+    expect(window.sessionStorage.getItem(KEY_12)).not.toBeNull()
   })
 
   it('sin mesa válida el pedido no se guarda', () => {

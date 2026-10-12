@@ -16,7 +16,7 @@ type GetMenu = NonNullable<Parameters<typeof createTestServices>[1]>
 /** MenuScreen recibe el estado del hook por props (plan §4): este arnés hace de CustomerApp. */
 function Harness() {
   const menu = useMenu()
-  return <MenuScreen menu={menu} />
+  return <MenuScreen menu={menu} onSent={() => {}} />
 }
 
 function renderMenu(getMenu: GetMenu = async () => fixtureMenu) {
@@ -153,7 +153,7 @@ describe('MenuScreen: la carta (RF7-RF10, RF13, RF34, RF45)', () => {
           <LanguageToggle />
           <Harness />
         </>,
-        { services, i18n: true },
+        { services, url: '/?mesa=12', i18n: true, table: true, cart: true, liveRegion: true },
       )
       await screen.findByRole('navigation')
       expect(headings()).toEqual(['Entradas', 'Principales'])

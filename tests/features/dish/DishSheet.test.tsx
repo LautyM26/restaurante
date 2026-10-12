@@ -72,7 +72,7 @@ function Harness() {
   const menu = useMenu()
   cart = useCart()
   setLang = useI18n().setLang
-  return <MenuScreen menu={menu} />
+  return <MenuScreen menu={menu} onSent={() => {}} />
 }
 
 function renderSheetApp({ url = '/?mesa=12', getMenu = async () => testMenu, getTable }: {

@@ -3,6 +3,8 @@ import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { CustomerApp } from '../../src/app/CustomerApp'
 import { ServiceError } from '../../src/services/contracts'
+import type { FakeOrderService } from '../fixtures/fakeOrderService'
+import { makeOrder } from '../fixtures/orders'
 import { createTestServices } from '../fixtures/services'
 import { menu as fixtureMenu, salad } from '../fixtures/menu'
 import { expectNoA11yViolations, renderWithProviders } from '../utils'
@@ -12,8 +14,8 @@ type GetMenu = Parameters<typeof createTestServices>[1]
 
 const NOTICE_ES = 'Para pedir, escaneá el código QR de tu mesa o pedile ayuda al personal.'
 
-// `liveRegion` solo donde se agrega a la bolsa: suma otro role="status" que otros tests no esperan.
-const renderApp = (url: string, getTable?: GetTable, getMenu?: GetMenu, liveRegion = false) => {
+// La región viva va siempre: MenuScreen anuncia el envío del pedido y la necesita montada (como en App).
+const renderApp = (url: string, getTable?: GetTable, getMenu?: GetMenu, liveRegion = true) => {
   const services = createTestServices(getTable, getMenu)
   return {
     services,
@@ -46,7 +48,7 @@ describe('CustomerApp: esqueleto de la app (RF1, RF2, RF3, RF4, RF32, RF41, RF42
 
     it('mientras verifica la mesa avisa "Verificando tu mesa" y todavía no muestra "Mesa 12"', () => {
       renderApp('/?mesa=12', () => new Promise(() => {}))
-      expect(screen.getByRole('status')).toHaveTextContent('Verificando tu mesa')
+      expect(screen.getByText('Verificando tu mesa').closest('[role="status"]')).toBeInTheDocument()
       expect(screen.queryByText('Mesa 12')).not.toBeInTheDocument()
     })
 
@@ -351,9 +353,11 @@ describe('CustomerApp: esqueleto de la app (RF1, RF2, RF3, RF4, RF32, RF41, RF42
     })
   })
 
-  // T7: hasta que T8 traiga la barra del pedido, una línea provisoria muestra el pedido en curso.
-  describe('pedido en curso provisorio (T7: RF23)', () => {
+  // T8: la barra del pedido reemplaza a la línea provisoria de T7, y enviar lleva a "Mis pedidos".
+  describe('pedido en curso y envío (T8: RF21, RF23, RF25, RF26)', () => {
     const withSalad = async () => ({ categories: fixtureMenu.categories, dishes: [salad] })
+    const barButton = () => screen.queryByRole('button', { name: /Ver pedido/ })
+    const sentOrder = () => makeOrder({ id: 'order-9', code: 'K7F2', tableId: 12, totalCents: 500000 })
 
     async function addSalads(quantity: number) {
       await userEvent.click(await screen.findByRole('button', { name: 'salad' }))
@@ -365,31 +369,44 @@ describe('CustomerApp: esqueleto de la app (RF1, RF2, RF3, RF4, RF32, RF41, RF42
       await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
     }
 
-    beforeEach(() => window.sessionStorage.clear())
+    async function sendOrder(view: ReturnType<typeof renderApp>) {
+      const orders = view.services.orderService as FakeOrderService
+      orders.createOrder.mockResolvedValue(sentOrder())
+      await addSalads(1)
+      await userEvent.click(await screen.findByRole('button', { name: /Ver pedido/ }))
+      await userEvent.click(await screen.findByRole('button', { name: /^Enviar pedido/ }))
+      return orders
+    }
 
-    it('sin nada en el pedido no se muestra', async () => {
+    beforeEach(() => {
+      window.sessionStorage.clear()
+      window.history.replaceState(null, '', '/')
+    })
+
+    it('sin nada en el pedido no hay barra', async () => {
       renderApp('/?mesa=12', undefined, withSalad, true)
       await screen.findByRole('button', { name: 'salad' })
+      expect(barButton()).not.toBeInTheDocument()
+    })
+
+    it('tras agregar muestra la barra con las unidades y el total, y se actualiza al agregar más; ya no hay línea provisoria', async () => {
+      const { container } = renderApp('/?mesa=12', undefined, withSalad, true)
+      await addSalads(1)
+      expect(await screen.findByRole('button', { name: /Ver pedido.*1 unidad(?!es).*\$\s5\.000/ })).toBeInTheDocument()
+
+      await addSalads(2)
+      expect(barButton()).toHaveAccessibleName(/3 unidades.*\$\s15\.000/)
+      expect(container.querySelector('[data-provisional]')).not.toBeInTheDocument()
       expect(screen.queryByText(/Pedido en curso/)).not.toBeInTheDocument()
     })
 
-    it('tras agregar muestra las unidades y el total, y se actualiza al agregar más', async () => {
-      renderApp('/?mesa=12', undefined, withSalad, true)
-      await addSalads(1)
-      expect(await screen.findByText(/Pedido en curso/)).toHaveTextContent(/: 1 unidad ·/)
-
-      await addSalads(2)
-      expect(screen.getByText(/Pedido en curso/)).toHaveTextContent(/3 unidades/)
-      expect(screen.getByText(/Pedido en curso/)).toHaveTextContent(/\$\s15\.000/)
-    })
-
-    it('al recargar (volver a montar la app) el pedido en curso sigue', async () => {
+    it('al recargar (volver a montar la app) la barra sigue con el pedido', async () => {
       const first = renderApp('/?mesa=12', undefined, withSalad, true)
       await addSalads(2)
       first.unmount()
 
       renderApp('/?mesa=12', undefined, withSalad, true)
-      expect(await screen.findByText(/Pedido en curso/)).toHaveTextContent(/2 unidades/)
+      expect(await screen.findByRole('button', { name: /Ver pedido.*2 unidades/ })).toBeInTheDocument()
     })
 
     it('otra mesa no ve el pedido de la mesa 12', async () => {
@@ -399,7 +416,80 @@ describe('CustomerApp: esqueleto de la app (RF1, RF2, RF3, RF4, RF32, RF41, RF42
 
       renderApp('/?mesa=5', undefined, withSalad, true)
       await screen.findByRole('button', { name: 'salad' })
-      expect(screen.queryByText(/Pedido en curso/)).not.toBeInTheDocument()
+      expect(barButton()).not.toBeInTheDocument()
+    })
+
+    it('un envío correcto lleva a "Mis pedidos", vacía el pedido y muestra el código (RF25)', async () => {
+      const view = renderApp('/?mesa=12', undefined, withSalad, true)
+      await sendOrder(view)
+
+      expect(await screen.findByRole('heading', { name: 'Mis pedidos' })).toBeInTheDocument()
+      expect(window.location.hash).toBe('#/orders')
+      expect(screen.getByText(/Pedido enviado.*K7F2/)).toBeInTheDocument()
+      expect(barButton()).not.toBeInTheDocument()
+      expect(window.sessionStorage.getItem('restaurante.cart.table-12')).toBeNull()
+    })
+
+    it('el registro del dispositivo recuerda el pedido enviado (para el seguimiento de T9)', async () => {
+      window.localStorage.clear()
+      const view = renderApp('/?mesa=12', undefined, withSalad, true)
+      await sendOrder(view)
+      await screen.findByRole('heading', { name: 'Mis pedidos' })
+
+      const stored = JSON.parse(window.localStorage.getItem('restaurante.myOrders') ?? '[]')
+      expect(stored).toEqual([expect.objectContaining({ orderId: 'order-9', tableId: 12 })])
+    })
+
+    it('tras enviar, "Pedir algo más" vuelve a la carta (el resumen no deja entradas de historial sueltas)', async () => {
+      const view = renderApp('/?mesa=12', undefined, withSalad, true)
+      await sendOrder(view)
+      await screen.findByRole('heading', { name: 'Mis pedidos' })
+      expect(window.history.state).toMatchObject({ from: 'menu' })
+      expect(window.history.state).not.toHaveProperty('sheet')
+
+      await userEvent.click(screen.getByRole('button', { name: 'Pedir algo más' }))
+
+      expect(await screen.findByRole('button', { name: 'salad' })).toBeInTheDocument()
+      expect(screen.queryByRole('heading', { name: 'Mis pedidos' })).not.toBeInTheDocument()
+    })
+
+    it('si al recargar había un envío sin resolver y el pedido ya existe, va directo a "Mis pedidos" (CL28)', async () => {
+      window.sessionStorage.setItem(
+        'restaurante.cart.table-12',
+        JSON.stringify({
+          lines: [{ dishId: 'salad', quantity: 1, selection: {}, note: '' }],
+          note: '',
+          pending: { clientRequestId: 'req-viejo', fingerprint: 'huella', startedAt: '2026-10-11T12:00:00.000Z' },
+        }),
+      )
+      const services = createTestServices(undefined, withSalad)
+      ;(services.orderService as FakeOrderService).findByClientRequestId.mockResolvedValue(sentOrder())
+      renderWithProviders(<CustomerApp />, { url: '/?mesa=12', services, i18n: true, table: true, cart: true, liveRegion: true })
+
+      expect(await screen.findByRole('heading', { name: 'Mis pedidos' })).toBeInTheDocument()
+      expect(window.location.hash).toBe('#/orders')
+    })
+
+    it('si el restaurante responde INVALID_TABLE, la mesa deja de ser válida y el pedido en curso se conserva (CL1)', async () => {
+      const view = renderApp('/?mesa=12', undefined, withSalad, true)
+      const orders = view.services.orderService as FakeOrderService
+      orders.createOrder.mockRejectedValue(new ServiceError('INVALID_TABLE', 'x'))
+      await addSalads(2)
+      await userEvent.click(await screen.findByRole('button', { name: /Ver pedido/ }))
+      await userEvent.click(await screen.findByRole('button', { name: /^Enviar pedido/ }))
+
+      await waitFor(() => expect(screen.queryByText('Mesa 12')).not.toBeInTheDocument())
+      expect(screen.getAllByText(/escaneá el código QR de tu mesa/).length).toBeGreaterThan(0)
+      expect(screen.queryByRole('button', { name: /^Enviar pedido/ })).not.toBeInTheDocument()
+      expect(JSON.parse(window.sessionStorage.getItem('restaurante.cart.table-12')!).lines[0].quantity).toBe(2)
+      expect(window.location.hash).not.toBe('#/orders')
+    })
+
+    it('no tiene violaciones de accesibilidad con la barra visible', async () => {
+      const { container } = renderApp('/?mesa=12', undefined, withSalad, true)
+      await addSalads(1)
+      await screen.findByRole('button', { name: /Ver pedido/ })
+      await expectNoA11yViolations(container)
     })
   })
 })

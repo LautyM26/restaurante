@@ -61,6 +61,16 @@ export const en = {
   'cart.price.body': 'Before {old}, now {new}.',
   'cart.price.accept': 'Accept and send',
   'cart.price.review': 'Review order',
+  'cart.price.line': '{name}: before {old}, now {new}',
+  'cart.title': 'Your order',
+  'cart.note.label': 'Note for the whole order',
+  'cart.total': 'Total',
+  'cart.fixLines': 'Remove the marked dishes to send your order.',
+  'cart.locked': "Your order is being sent and can't be changed for now.",
+  'cart.error.resolveFailed': 'No connection. Try again.',
+  'cart.line.unknownDish': 'Dish no longer on the menu',
+  'cart.line.reopen': 'Choose again',
+  'cart.line.reopenLabel': 'Choose again: {name}',
 
   // My orders
   'orders.title': 'My orders',

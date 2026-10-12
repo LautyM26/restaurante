@@ -3,6 +3,7 @@
 // al pedido en curso, cierra la ficha y anuncia el agregado (y el tope de 20, si se alcanzó).
 //
 // Sin mesa válida (RF2, RF3, RF41) la ficha se puede leer pero no hay "Agregar": en su lugar va el aviso de la mesa.
+// Con un envío sin resolver (RF26) "Agregar" queda apagado y explica por qué.
 // El estado de la selección vive en `DishForm`, que sigue montado mientras la ficha está abierta: cambiar de
 // idioma o refrescar la carta no la reinicia (CL19). Se vuelve a armar al abrir otro plato (`key`).
 import { useId, useMemo, useState } from 'react'
@@ -63,6 +64,7 @@ function DishForm({ dish, visual, onDone }: { dish: Dish; visual: CategoryVisual
   const cart = useCart()
   const announce = useAnnounce()
   const baseId = useId()
+  const lockedId = `${baseId}-locked`
 
   const [chosen, setChosen] = useState<Selection>({})
   const [quantity, setQuantity] = useState(1)
@@ -138,6 +140,17 @@ function DishForm({ dish, visual, onDone }: { dish: Dish; visual: CategoryVisual
           </GlowButton>
         ) : table.status !== 'valid' ? (
           <TableNotice />
+        ) : cart.pending ? (
+          <>
+            {/* Hay un envío sin resolver: el pedido no se puede modificar hasta saber si llegó (RF26) */}
+            <p id={lockedId} className="mb-2 text-center text-[0.875rem] text-ash-300">
+              {t('cart.locked')}
+            </p>
+            <GlowButton wide disabled aria-describedby={lockedId} className="justify-between">
+              <span>{t('dish.add')}</span>
+              <span className="tabular-nums">{formatPrice(lineTotalCents(dish, selection, quantity))}</span>
+            </GlowButton>
+          </>
         ) : (
           <>
             {/* Pista visual de por qué "Agregar" está apagado; el lector de pantalla la oye por aria-describedby */}

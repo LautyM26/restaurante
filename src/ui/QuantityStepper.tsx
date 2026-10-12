@@ -13,17 +13,19 @@ interface QuantityStepperProps {
   /** Mínimo seleccionable; en la ficha y en el resumen es 1. */
   min?: number
   max?: number
+  /** Nombre del grupo si hay varios en pantalla (resumen del pedido); por defecto "Cantidad". */
+  label?: string
 }
 
 const BUTTON =
   'inline-flex size-11 items-center justify-center rounded-full border border-hairline bg-coal-700 text-bone-50 transition-[background-color,transform,opacity] duration-120 ease-out-strong hover:bg-white/10 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-coal-700 disabled:active:scale-100 motion-reduce:transition-none motion-reduce:active:scale-100'
 
-export function QuantityStepper({ value, onChange, onRemove, min = 1, max = MAX_QTY }: QuantityStepperProps) {
+export function QuantityStepper({ value, onChange, onRemove, min = 1, max = MAX_QTY, label }: QuantityStepperProps) {
   const { t } = useI18n()
   const removing = onRemove !== undefined && value <= min
 
   return (
-    <div role="group" aria-label={t('qty.label')} className="inline-flex items-center gap-1">
+    <div role="group" aria-label={label ?? t('qty.label')} className="inline-flex items-center gap-1">
       {/* Un solo botón para restar y quitar: así el foco del teclado no se pierde al pasar a 1 */}
       <button
         type="button"

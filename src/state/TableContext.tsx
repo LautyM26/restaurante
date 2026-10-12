@@ -11,7 +11,8 @@ import { useServices } from '../services/ServicesContext'
 
 export type TableState =
   | { status: 'missing' }
-  | { status: 'invalid' }
+  /** `tableId` solo si el restaurante rechazó el envío (markInvalid): el pedido en curso de esa mesa se conserva (CL1). */
+  | { status: 'invalid'; tableId?: number }
   | { status: 'checking' | 'valid' | 'unverified'; tableId: number }
 
 export type Table = TableState & {
@@ -58,7 +59,11 @@ export function TableProvider({ parsed, children }: { parsed: TableParam; childr
     setAttempt((n) => n + 1)
   }, [state])
 
-  const markInvalid = useCallback(() => setState({ status: 'invalid' }), [])
+  // Se recuerda el número de mesa: el pedido en curso sigue siendo de esa mesa (plan §5.4, CL1).
+  const markInvalid = useCallback(
+    () => setState((current) => ('tableId' in current ? { status: 'invalid', tableId: current.tableId } : { status: 'invalid' })),
+    [],
+  )
 
   // Al volver la conexión se reintenta solo (RF41); el oyente existe solo mientras haya algo que reintentar.
   useEffect(() => {

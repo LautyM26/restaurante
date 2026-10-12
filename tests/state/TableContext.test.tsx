@@ -165,6 +165,20 @@ describe('TableContext: del QR a la mesa (plan §5.1)', () => {
     expect(screen.getByText('Estado: invalid')).toBeInTheDocument()
   })
 
+  it('markInvalid() conserva la mesa pedida: así el pedido en curso de esa mesa no se pierde (CL1)', async () => {
+    setup('?mesa=12', async (id) => ({ id }))
+    await screen.findByText('Estado: valid')
+
+    await userEvent.click(screen.getByRole('button', { name: 'invalidar' }))
+    expect(screen.getByText('Mesa: 12')).toBeInTheDocument()
+  })
+
+  it('una mesa que el restaurante dice que no existe no tiene número (no hay pedido que conservar)', async () => {
+    setup('?mesa=50', async () => null)
+    expect(await screen.findByText('Estado: invalid')).toBeInTheDocument()
+    expect(screen.getByText('Mesa: ninguna')).toBeInTheDocument()
+  })
+
   it('useTable fuera del provider da un error claro', () => {
     const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
     expect(() => render(<Probe />)).toThrow(/TableProvider/)

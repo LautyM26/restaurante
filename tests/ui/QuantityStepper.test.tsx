@@ -89,6 +89,19 @@ describe('QuantityStepper: cantidad de 1 a 20 (RF20, CL10)', () => {
     })
   })
 
+  it('con `label` el grupo lleva su propio nombre (varias líneas del resumen no repiten "Cantidad")', () => {
+    renderWithProviders(
+      <>
+        <QuantityStepper value={2} onChange={() => {}} label="Cantidad: Ensalada" />
+        <QuantityStepper value={1} onChange={() => {}} label="Cantidad: Bife" />
+      </>,
+      { i18n: true },
+    )
+    expect(screen.getByRole('group', { name: 'Cantidad: Ensalada' })).toBeInTheDocument()
+    expect(screen.getByRole('group', { name: 'Cantidad: Bife' })).toBeInTheDocument()
+    expect(screen.queryByRole('group', { name: 'Cantidad' })).not.toBeInTheDocument()
+  })
+
   it('los nombres cambian de idioma', () => {
     window.localStorage.setItem(LANG_STORAGE_KEY, 'en')
     renderStepper(2)

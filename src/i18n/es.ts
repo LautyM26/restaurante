@@ -60,6 +60,16 @@ export const es = {
   'cart.price.body': 'Antes {old}, ahora {new}.',
   'cart.price.accept': 'Aceptar y enviar',
   'cart.price.review': 'Revisar pedido',
+  'cart.price.line': '{name}: antes {old}, ahora {new}',
+  'cart.title': 'Tu pedido',
+  'cart.note.label': 'Nota para todo el pedido',
+  'cart.total': 'Total',
+  'cart.fixLines': 'Quitá los platos marcados para poder enviar el pedido.',
+  'cart.locked': 'Tu pedido se está enviando y por ahora no se puede modificar.',
+  'cart.error.resolveFailed': 'Sin conexión. Probá de nuevo.',
+  'cart.line.unknownDish': 'Plato que ya no está en la carta',
+  'cart.line.reopen': 'Elegir de nuevo',
+  'cart.line.reopenLabel': 'Elegir de nuevo: {name}',
 
   // Mis pedidos
   'orders.title': 'Mis pedidos',
