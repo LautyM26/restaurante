@@ -1,26 +1,35 @@
-import { RESTAURANT } from '../config'
-import { LanguageToggle } from '../features/layout/LanguageToggle'
-import { I18nProvider, useI18n } from '../i18n/I18nContext'
+// Raíz de la aplicación (plan §3). Arma los providers en este orden:
+//   Servicios > Idioma > Movimiento > Región viva > Mesa > CustomerApp
+// ?mesa= se lee de la URL una sola vez: la mesa no cambia mientras la página está abierta (cada QR es una carga).
+// T7 suma CartProvider y T9 MyOrdersProvider debajo de la mesa.
+import { useState } from 'react'
+import { MotionConfig } from 'motion/react'
+import { parseTableParam } from '../domain/table'
+import { I18nProvider } from '../i18n/I18nContext'
+import type { Services } from '../services/contracts'
+import { createServices } from '../services'
+import { ServicesProvider } from '../services/ServicesContext'
+import { TableProvider } from '../state/TableContext'
+import { LiveRegionProvider } from '../ui/LiveRegion'
+import { CustomerApp } from './CustomerApp'
 
-// Contenido provisorio de T4: marca, selector de idioma y un texto traducido para ver el cambio.
-// T5 reemplaza esto por CustomerApp (TopBar con el selector, mesa y navegación) y suma el resto de providers.
-function ProvisionalScreen() {
-  const { t } = useI18n()
-  return (
-    <main className="px-4 pt-6">
-      <div className="flex items-center justify-between gap-3">
-        <h1 className="font-display text-5xl font-extrabold uppercase">{RESTAURANT.name}</h1>
-        <LanguageToggle />
-      </div>
-      <p className="mt-4 max-w-prose text-ash-300">{t('hero.subtitle')}</p>
-    </main>
-  )
-}
+/** `services` es opcional: en producción se usa la instancia única de `createServices()`; los tests inyectan la suya. */
+export function App({ services }: { services?: Services }) {
+  const [appServices] = useState(() => services ?? createServices())
+  const [parsedTable] = useState(() => parseTableParam(window.location.search))
 
-export function App() {
   return (
-    <I18nProvider>
-      <ProvisionalScreen />
-    </I18nProvider>
+    <ServicesProvider services={appServices}>
+      <I18nProvider>
+        {/* reducedMotion="user": con "reducir movimiento" en el sistema, Motion deja solo opacidad (plan §10.4) */}
+        <MotionConfig reducedMotion="user">
+          <LiveRegionProvider>
+            <TableProvider parsed={parsedTable}>
+              <CustomerApp />
+            </TableProvider>
+          </LiveRegionProvider>
+        </MotionConfig>
+      </I18nProvider>
+    </ServicesProvider>
   )
 }

@@ -16,6 +16,7 @@
   --color-ember-700: #8f3510; /* decorativo, no texto */
   --color-herb-400: #8fcf8a;
   --color-chili-400: #ff6b5e;
+  --color-hairline: rgb(255 240 225 / 0.1); /* bordes de 1 px (decorativo); sube con prefers-contrast */
 
   /* Tipografías autoalojadas con @fontsource */
   --font-display: "Barlow Condensed", ui-sans-serif, system-ui, sans-serif;
@@ -90,5 +91,41 @@
   :focus-visible {
     outline: 2px solid var(--color-ember-400);
     outline-offset: 2px;
+  }
+}
+
+/* Material de vidrio (plan §9.2, §9.5 y §10.4): TopBar, CategoryTabs, CartBar y SegmentedControl */
+@layer components {
+  .glass {
+    background-color: rgb(21 18 15 / 0.72);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    backdrop-filter: blur(16px) saturate(140%);
+    border: 1px solid var(--color-hairline);
+    box-shadow:
+      0 8px 24px rgb(0 0 0 / 0.35),
+      inset 0 1px 0 rgb(255 240 225 / 0.06);
+  }
+}
+
+/* Sin backdrop-filter el texto quedaría sobre la carta sin separación: casi opaco */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass {
+    background-color: rgb(21 18 15 / 0.96);
+  }
+}
+
+/* Transparencia reducida: vidrio sólido coal-900, sin desenfoque */
+@media (prefers-reduced-transparency: reduce) {
+  .glass {
+    background-color: var(--color-coal-900);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/* Contraste alto: los hairlines suben a 30 % de blanco (plan §10.4) */
+@media (prefers-contrast: more) {
+  :root {
+    --color-hairline: rgb(255 255 255 / 0.3);
   }
 }
