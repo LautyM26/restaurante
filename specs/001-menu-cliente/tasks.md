@@ -42,7 +42,7 @@
   - **Skills:** `ponytail` (funciones mínimas, sin abstracciones), `systematic-debugging` (casos que fallen).
   - **Hecho cuando:** todo es puro (sin React, DOM ni almacenamiento, salvo `lib/id.ts` que recibe `crypto` inyectable), cubre cada caso listado y `npm test` está en verde.
 
-- [ ] **T3. Servicios: contratos, almacenamiento seguro, mock con tiempo real y ayudas de demo**
+- [x] **T3. Servicios: contratos, almacenamiento seguro, mock con tiempo real y ayudas de demo**
   - **Requisitos:** RF9 (errores tipados), RF24, RF26, RF27, RF36-RF40, RF46 (lado servidor); RNF4, RNF8, RNF10 (plan §7.1-§7.2; el protocolo WebSocket §7.4 se documenta, NO se implementa).
   - **Tests primero (rojo):**
     - `tests/services/storage.test.ts`: get/set/remove; con storage que lanza error funciona en memoria.

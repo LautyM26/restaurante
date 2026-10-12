@@ -2,22 +2,27 @@ import type { ReactElement } from 'react'
 import axe from 'axe-core'
 import { render } from '@testing-library/react'
 import { MotionConfig } from 'motion/react'
+import type { Services } from '../src/services/contracts'
+import { ServicesProvider } from '../src/services/ServicesContext'
 
 interface RenderOptions {
   /** URL (ruta + query + hash) con la que arranca el test, por ejemplo '/?mesa=12#/orders'. */
   url?: string
+  /** Servicios que reciben las pantallas por useServices(); sin ellos no se monta el provider. */
+  services?: Services
 }
 
 /**
  * Renderiza dentro de MotionConfig sin duración y con movimiento reducido,
  * para que las animaciones no ralenticen ni vuelvan inestables los tests.
- * T3, T4 y T5 agregan aquí servicios, idioma y mesa a medida que existan.
+ * T3 agregó los servicios; T4 y T5 suman idioma y mesa a medida que existan.
  */
-export function renderWithProviders(ui: ReactElement, { url = '/' }: RenderOptions = {}) {
+export function renderWithProviders(ui: ReactElement, { url = '/', services }: RenderOptions = {}) {
   window.history.replaceState(null, '', url)
+  const content = services ? <ServicesProvider services={services}>{ui}</ServicesProvider> : ui
   return render(
     <MotionConfig transition={{ duration: 0 }} reducedMotion="always">
-      {ui}
+      {content}
     </MotionConfig>,
   )
 }
