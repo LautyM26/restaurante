@@ -129,3 +129,149 @@
     --color-hairline: rgb(255 255 255 / 0.3);
   }
 }
+
+/* Botón "brasa" (plan §9.5): cuerpo oscuro con un banco de luz al pie que recorta el propio radio.
+   Sin halo exterior mayor a 8 px. El texto queda por encima del banco (padding-bottom). */
+@layer components {
+  .btn-ember {
+    /* Banco de luz de ~18 px: del tono claro de 1 px al cuerpo #140f0c */
+    --ember-bank: linear-gradient(
+      to top,
+      #ffe2bf 1px,
+      #ffc88f 2px,
+      #ffae63 3px,
+      #ff9440 4px,
+      #f97a22 5px,
+      #e2620f 6px,
+      #c9520b 7px,
+      #ad450b 8px,
+      #8f3a0c 9px,
+      #6e2d0b 10px,
+      #55240c 12px,
+      #4a210d 13px,
+      #3d1c0d 14px,
+      #2e170d 16px,
+      #23130d 18px,
+      #1c110c 20px,
+      #17100c 24px,
+      #140f0c 30px,
+      #140f0c 100%
+    );
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 52px;
+    padding: 0 1.5rem 4px;
+    border-radius: 9999px;
+    background: var(--ember-bank);
+    color: var(--color-bone-50);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0.005em;
+    box-shadow:
+      0 0 0 1px rgb(143 53 16 / 0.55),
+      0 2px 6px rgb(0 0 0 / 0.5),
+      inset 0 1px 0 rgb(255 240 225 / 0.06);
+    transition:
+      transform 120ms var(--ease-out-strong),
+      filter 200ms ease;
+  }
+
+  /* Luz de borde lateral de 13 px, enmascarada para que solo se vea hacia el pie */
+  .btn-ember::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(
+      to right,
+      rgb(255 214 170 / 0.7),
+      transparent 13px,
+      transparent calc(100% - 13px),
+      rgb(255 214 170 / 0.7)
+    );
+    -webkit-mask-image: linear-gradient(to top, #000, transparent 60%);
+    mask-image: linear-gradient(to top, #000, transparent 60%);
+    opacity: 0.55;
+  }
+
+  .btn-ember:active:not(:disabled, [aria-busy="true"]) {
+    transform: scale(0.97);
+  }
+
+  .btn-ember:disabled {
+    background: var(--color-coal-700);
+    color: var(--color-ash-500);
+    box-shadow: inset 0 0 0 1px var(--color-hairline);
+    cursor: not-allowed;
+  }
+
+  .btn-ember:disabled::after {
+    display: none;
+  }
+
+  /* Cargando: el banco "respira" con un velo de luz que sube y baja de opacidad */
+  .btn-ember[aria-busy="true"] {
+    cursor: progress;
+  }
+
+  .btn-ember[aria-busy="true"]::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(to top, rgb(255 174 99 / 0.55), transparent 18px);
+    animation: ember-breathe 1.6s ease-in-out infinite;
+  }
+
+  /* Variante de la CartBar: raya de luz de 2 px arriba */
+  .btn-ember--streak {
+    background:
+      linear-gradient(to bottom, rgb(255 197 138 / 0.9) 2px, transparent 2px),
+      var(--ember-bank);
+  }
+
+  .btn-ember--lg {
+    min-height: 60px;
+  }
+}
+
+@keyframes ember-breathe {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Hover solo con puntero fino: en el celular no queda "pegado" tras tocar */
+@media (hover: hover) and (pointer: fine) {
+  .btn-ember:hover:not(:disabled, [aria-busy="true"]) {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+  }
+}
+
+/* Movimiento reducido: sin "respiración" ni desplazamientos al presionar */
+@media (prefers-reduced-motion: reduce) {
+  .btn-ember[aria-busy="true"]::before {
+    animation: none;
+    opacity: 0.7;
+  }
+
+  .btn-ember:active:not(:disabled, [aria-busy="true"]),
+  .btn-ember:hover:not(:disabled, [aria-busy="true"]) {
+    transform: none;
+  }
+}

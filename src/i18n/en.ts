@@ -71,4 +71,13 @@ export const en = {
   'menu.error': "We couldn't load the menu.",
   'menu.offline': "You're offline.",
   'menu.empty': "The menu isn't available right now. Please ask our staff.",
+  'menu.offlineHint': 'The menu will load by itself when the connection is back.',
+  'menu.loading': 'Loading the menu',
+  'menu.categories': 'Menu categories',
+
+  // Dietary tags on dishes
+  'tag.vegetarian': 'Vegetarian',
+  'tag.vegan': 'Vegan',
+  'tag.gluten_free': 'Gluten free',
+  'tag.spicy': 'Spicy',
 } satisfies Record<MessageKey, string>

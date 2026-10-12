@@ -4,14 +4,18 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { CustomerApp } from '../../src/app/CustomerApp'
 import { ServiceError } from '../../src/services/contracts'
 import { createTestServices } from '../fixtures/services'
+import { menu as fixtureMenu } from '../fixtures/menu'
 import { expectNoA11yViolations, renderWithProviders } from '../utils'
 
 type GetTable = Parameters<typeof createTestServices>[0]
+type GetMenu = Parameters<typeof createTestServices>[1]
 
 const NOTICE_ES = 'Para pedir, escaneá el código QR de tu mesa o pedile ayuda al personal.'
 
-const renderApp = (url: string, getTable?: GetTable) =>
-  renderWithProviders(<CustomerApp />, { url, services: createTestServices(getTable), i18n: true, table: true })
+const renderApp = (url: string, getTable?: GetTable, getMenu?: GetMenu) => {
+  const services = createTestServices(getTable, getMenu)
+  return { services, ...renderWithProviders(<CustomerApp />, { url, services, i18n: true, table: true }) }
+}
 
 const setScrollY = (y: number) => Object.defineProperty(window, 'scrollY', { value: y, configurable: true, writable: true })
 
@@ -203,6 +207,117 @@ describe('CustomerApp: esqueleto de la app (RF1, RF2, RF3, RF4, RF32, RF41, RF42
     it('toma el control de la restauración del navegador para que no compita con la propia', () => {
       renderApp('/')
       if ('scrollRestoration' in window.history) expect(window.history.scrollRestoration).toBe('manual')
+    })
+  })
+
+  describe('la carta (T6: RF7-RF13, RF45)', () => {
+    const withMenu = async () => fixtureMenu
+
+    it('con ?mesa=12 muestra la mesa, las pestañas y las categorías con sus platos', async () => {
+      renderApp('/?mesa=12', undefined, withMenu)
+
+      expect(await screen.findByText('Mesa 12')).toBeInTheDocument()
+      expect(await screen.findByRole('navigation', { name: 'Categorías de la carta' })).toBeInTheDocument()
+      expect(screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent)).toEqual(['Entradas', 'Principales'])
+      expect(screen.getByRole('button', { name: 'burger' })).toBeEnabled()
+    })
+
+    it('mientras carga la carta muestra los marcadores dentro de la sección #carta', () => {
+      const { container } = renderApp('/?mesa=12', undefined, () => new Promise(() => {}))
+      expect(container.querySelector('main section#carta [aria-busy="true"]')).toBeInTheDocument()
+    })
+
+    it('sin mesa la carta se ve completa (solo lectura) y el aviso explica por qué no se puede pedir', async () => {
+      renderApp('/', undefined, withMenu)
+
+      expect(screen.getByText(NOTICE_ES)).toBeInTheDocument()
+      expect(await screen.findByRole('navigation', { name: 'Categorías de la carta' })).toBeInTheDocument()
+      expect(screen.getByRole('heading', { level: 2, name: 'Principales' })).toBeInTheDocument()
+      // Los platos se pueden mirar; qué se puede hacer con ellos sin mesa lo decide la ficha (T7)
+      expect(screen.getByRole('button', { name: 'burger' })).toBeEnabled()
+      expect(screen.getByRole('button', { name: 'sold_out' })).toBeDisabled()
+    })
+
+    it('con una mesa inexistente también deja leer la carta', async () => {
+      renderApp('/?mesa=50', async () => null, withMenu)
+      expect(await screen.findByText(NOTICE_ES)).toBeInTheDocument()
+      expect(await screen.findByRole('heading', { level: 2, name: 'Entradas' })).toBeInTheDocument()
+    })
+
+    it('si la mesa no se puede verificar la carta se carga igual, cada una con su aviso', async () => {
+      renderApp(
+        '/?mesa=12',
+        async () => {
+          throw new ServiceError('NETWORK', 'sin red')
+        },
+        withMenu,
+      )
+      expect(await screen.findByText('No pudimos verificar tu mesa. Revisá tu conexión.')).toBeInTheDocument()
+      expect(await screen.findByRole('heading', { level: 2, name: 'Entradas' })).toBeInTheDocument()
+    })
+
+    it('si la carta falla muestra el error con Reintentar, y la mesa sigue visible', async () => {
+      let calls = 0
+      const { services } = renderApp('/?mesa=12', undefined, async () => {
+        if (++calls === 1) throw new ServiceError('SERVER', 'caído')
+        return fixtureMenu
+      })
+
+      const alert = await screen.findByRole('alert')
+      expect(alert).toHaveTextContent('No pudimos cargar la carta.')
+      expect(screen.getByText('Mesa 12')).toBeInTheDocument()
+
+      await userEvent.click(within(alert).getByRole('button', { name: 'Reintentar' }))
+      expect(await screen.findByRole('heading', { level: 2, name: 'Entradas' })).toBeInTheDocument()
+      expect(services.menuService.getMenu).toHaveBeenCalledTimes(2)
+    })
+
+    it('ir a "Mis pedidos" y volver conserva la carta cargada, sin volver a pedirla ni mostrar marcadores', async () => {
+      const { services, container } = renderApp('/?mesa=12', undefined, withMenu)
+      await screen.findByRole('heading', { level: 2, name: 'Entradas' })
+
+      await userEvent.click(screen.getByRole('button', { name: 'Mis pedidos' }))
+      expect(screen.queryByRole('heading', { level: 2, name: 'Entradas' })).not.toBeInTheDocument()
+
+      act(() => window.history.back())
+      expect(await screen.findByRole('heading', { level: 2, name: 'Entradas' })).toBeInTheDocument()
+      expect(container.querySelector('[aria-busy="true"]')).not.toBeInTheDocument()
+      expect(services.menuService.getMenu).toHaveBeenCalledTimes(1)
+    })
+
+    it('volver a primer plano refresca la carta aunque se esté en "Mis pedidos"', async () => {
+      const { services } = renderApp('/?mesa=12', undefined, withMenu)
+      await screen.findByRole('heading', { level: 2, name: 'Entradas' })
+      await userEvent.click(screen.getByRole('button', { name: 'Mis pedidos' }))
+
+      act(() => {
+        document.dispatchEvent(new Event('visibilitychange'))
+      })
+      await waitFor(() => expect(services.menuService.getMenu).toHaveBeenCalledTimes(2))
+    })
+
+    it('la restauración del scroll sigue funcionando con la carta real', async () => {
+      const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {})
+      renderApp('/?mesa=12', undefined, withMenu)
+      await screen.findByRole('heading', { level: 2, name: 'Entradas' })
+
+      setScrollY(900)
+      await userEvent.click(screen.getByRole('button', { name: 'Mis pedidos' }))
+      setScrollY(0)
+      act(() => window.history.back())
+      await screen.findByRole('heading', { level: 2, name: 'Entradas' })
+      expect(scrollTo).toHaveBeenLastCalledWith(0, 900)
+    })
+
+    it('sin violaciones de accesibilidad con la carta cargada, con y sin mesa', async () => {
+      const valid = renderApp('/?mesa=12', undefined, withMenu)
+      await screen.findByRole('heading', { level: 2, name: 'Entradas' })
+      await expectNoA11yViolations(valid.container)
+      valid.unmount()
+
+      const noTable = renderApp('/', undefined, withMenu)
+      await screen.findByRole('heading', { level: 2, name: 'Entradas' })
+      await expectNoA11yViolations(noTable.container)
     })
   })
 

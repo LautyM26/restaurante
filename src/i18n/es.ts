@@ -70,6 +70,15 @@ export const es = {
   'menu.error': 'No pudimos cargar la carta.',
   'menu.offline': 'Estás sin conexión.',
   'menu.empty': 'La carta no está disponible en este momento. Consultá al personal.',
+  'menu.offlineHint': 'Cuando vuelva la conexión, la carta se carga sola.',
+  'menu.loading': 'Cargando la carta',
+  'menu.categories': 'Categorías de la carta',
+
+  // Etiquetas dietarias de los platos
+  'tag.vegetarian': 'Vegetariano',
+  'tag.vegan': 'Vegano',
+  'tag.gluten_free': 'Sin TACC',
+  'tag.spicy': 'Picante',
 }
 
 /** Clave exacta del diccionario (incluidas las formas `_one` / `_other`). */

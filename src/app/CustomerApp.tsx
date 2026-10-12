@@ -1,11 +1,14 @@
 // Esqueleto de la vista del cliente (plan §3): barra superior fija y una de dos pantallas según el hash.
-// Las pantallas son PROVISORIAS: T6 reemplaza la carta por MenuScreen y T9 "Mis pedidos" por OrdersScreen.
-// Lo definitivo de este archivo es la navegación: el scroll de la carta se conserva al ir y volver (RF32)
-// y el foco acompaña cada cambio de pantalla.
+// La carta ya es la definitiva (MenuScreen, T6); "Mis pedidos" es PROVISORIA hasta que T9 la reemplace por OrdersScreen.
+// La carta se pide aquí, una sola vez, y sobrevive a ir y volver de "Mis pedidos" (y se refresca al volver a
+// primer plano). La navegación: el scroll de la carta se conserva al ir y volver (RF32) y el foco acompaña
+// cada cambio de pantalla.
 import { useEffect, useLayoutEffect, useRef } from 'react'
 import { TopBar } from '../features/layout/TopBar'
 import { TableNotice } from '../features/menu/TableNotice'
+import { MenuScreen } from '../features/menu/MenuScreen'
 import { useI18n } from '../i18n/I18nContext'
+import { useMenu } from '../state/useMenu'
 import { useTable } from '../state/TableContext'
 import { TableBadge } from '../ui/TableBadge'
 import { useHashScreen } from './useHashScreen'
@@ -17,6 +20,7 @@ const PAGE =
 export function CustomerApp() {
   const { t } = useI18n()
   const table = useTable()
+  const menu = useMenu()
   const menuScroll = useRef(0)
   const mainRef = useRef<HTMLElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
@@ -53,8 +57,7 @@ export function CustomerApp() {
             <div className="w-full">
               <TableNotice />
             </div>
-            {/* Ancla de la carta: T6 monta aquí las categorías y los platos */}
-            <section id="carta" className="w-full scroll-mt-24" />
+            <MenuScreen menu={menu} />
           </div>
         ) : (
           <section className="flex flex-col items-start gap-5">

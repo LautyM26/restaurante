@@ -21,3 +21,11 @@ export const SPRING = {
   /** Soltar una hoja tras un gesto con impulso. */
   sheetRelease: { type: 'spring', bounce: 0.15, duration: 0.4 },
 } as const
+
+/**
+ * ¿El sistema pide reducir el movimiento? Se lee en cada llamada porque el cliente puede cambiarlo con la
+ * app abierta. Sirve para lo que no pasa por Motion, como el `behavior` de `scrollIntoView` (plan §10.4).
+ */
+export function prefersReducedMotion(): boolean {
+  return typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+}
