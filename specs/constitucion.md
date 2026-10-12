@@ -1,6 +1,6 @@
 # Constitución del proyecto: restaurante
 
-**Estado:** APROBADO (2026-10-11) · **Versión:** 1
+**Estado:** APROBADO (2026-10-12) · **Versión:** 2 (v1 aprobada el 2026-10-11; la v2 aplica D-042 y D-043)
 
 > Documento de la Fase 0. Define las reglas del proyecto. Cada elección referencia la decisión del usuario que la originó.
 
@@ -13,13 +13,13 @@
 ## 2. Stack
 | Capa | Elección | Decisión |
 |---|---|---|
-| Framework (backend) | Node.js + Express (API REST) + Socket.IO (tiempo real) | D-005 |
+| Framework (backend) | Node.js + Express (API REST) + WebSocket nativo con `ws` (tiempo real, protocolo §7.4 del plan del front) | D-005, D-042 |
 | Framework (frontend) | Lo define el compañero | — |
 | Lenguaje (backend) | TypeScript | D-005 |
 | Estilos / UI | Lo define el compañero (frontend) | D-017 |
 | Base de datos | PostgreSQL en Supabase | D-006, D-009 |
 | ORM | Prisma | D-007 |
-| Autenticación | Supabase Auth, solo para el personal (cocineros/dueño); el backend verifica el token en REST y en Socket.IO | D-009 |
+| Autenticación | Supabase Auth, solo para el personal (cocineros/dueño); el backend verifica el token en REST y en el WebSocket | D-009, D-056 |
 | Testing | Vitest + Supertest | D-016 |
 | Gestor de paquetes | npm | D-016 |
 
@@ -28,12 +28,12 @@
 |---|---|---|---|
 | Desarrollo | Local (`C:\Proyectos\restaurante`) | localhost | D-001 |
 | Preview / staging | A decidir antes del primer deploy | | D-010 |
-| Producción | A decidir antes del primer deploy (debe soportar WebSockets/Socket.IO) | | D-010 |
+| Producción | A decidir antes del primer deploy (debe soportar WebSockets) | | D-010 |
 
 ## 4. Estándares adoptados
 | Estándar | Adoptado | Excepciones aprobadas |
 |---|---|---|
-| `docs/estandares/codigo.md` | Sí | Nombres del dominio en español, resto del código en inglés (D-012, D-013). La estructura Next.js no aplica: la define el diseño del backend |
+| `docs/estandares/codigo.md` | Sí | Ninguna sobre el idioma: todo en inglés (D-043, reemplaza D-012 y D-013). La estructura Next.js no aplica: la define el diseño del backend |
 | `docs/estandares/git.md` | Sí, tal cual (D-014) | — |
 | `docs/estandares/diseno.md` | Lo decide el compañero (es del frontend) (D-017) | — |
 | `docs/estandares/deploy.md` | Parcial (D-017) | Por ahora solo la sección Supabase: `DATABASE_URL` con pooling para la app y `DIRECT_URL` para las migraciones. El resto se adopta cuando se decida el hosting (D-010) |
@@ -47,7 +47,7 @@
 - Las decisiones de stack se consultan con el compañero antes de aprobarlas (D-002).
 - Estructura del repo: carpetas hermanas `backend/` y `frontend/`, cada una con su propio `package.json` (D-008). El front se subió en la raíz; el compañero lo mueve a `frontend/` (D-039).
 - Specs separadas por lado: `specs/backend/NNN-…` y `specs/frontend/NNN-…`, cada lado con su propia numeración. `specs/constitucion.md` es común (D-040).
-- Nombres de tablas, campos, estados y eventos en español (`Producto`, `Pedido`, `Pedido_Detalle`, `nuevo_pedido`…). Es una excepción aprobada por el usuario a la regla "código y nombres en inglés" de `CLAUDE.md` §6 y de `docs/estandares/codigo.md` (D-012). Funciones, variables y archivos siguen en inglés (D-013). Ej.: modelo `Pedido`, `createOrder()`, `order-controller.ts`.
+- Todo en inglés: tablas, campos, estados, eventos, rutas, parámetros y código (D-043, reemplaza D-012 y D-013). Los textos visibles para el cliente siguen en español, con inglés como segundo idioma de la carta (D-046).
 
 ## 6. Comandos
 - Desarrollo: · Build: · Tests: · Lint:
@@ -77,12 +77,15 @@
 | D-039 | El front quedó en la raíz, no en `frontend/` (opciones: el front se mueve a `frontend/` / front en la raíz y back en `backend/`) | El front se mueve a `frontend/` (lo hace el compañero) | 2026-10-11 |
 | D-040 | Dos specs numeradas 001 (opciones: la nuestra pasa a 003 / carpetas por lado / dejar las dos como 001) | Carpetas por lado: `specs/backend/` y `specs/frontend/` | 2026-10-11 |
 | D-041 | Alcance del commit de `specs/` (opciones: commit local sin push / commit + push + PR / push sin PR) | Commit local en `chore/backend-specs` (desde `develop`), sin push hasta alinear el contrato | 2026-10-11 |
+| D-042 | Protocolo de tiempo real tras alinear con el front (detalle en `specs/backend/001-pedidos-tiempo-real/decisiones.md`) | WebSocket nativo (`ws`) con el protocolo del front; Socket.IO sale (cambia D-005 en parte) | 2026-10-12 |
+| D-043 | Idioma del contrato tras alinear con el front | Todo en inglés, base de datos incluida (reemplaza D-012 y D-013) | 2026-10-12 |
 
 ## 8. Specs
 | Spec | Estado | Fase |
 |---|---|---|
-| `backend/001-pedidos-tiempo-real` | Requisitos APROBADOS (2026-10-11); se reabren para alinearlos con el front (D-038) | 1 — Alineación con el front |
+| `backend/001-pedidos-tiempo-real` | Requisitos v2 APROBADOS (2026-10-12) | 2 — Diseño (pendiente) |
 | `frontend/001-menu-cliente` (del compañero, en la rama `frontend`) | Aprobada por el compañero | — |
 
 ## Aprobación
-- [x] Aprobado por el usuario · Fecha: 2026-10-11 (el usuario confirmó que el stack se habló con el compañero, D-002)
+- [x] v1 aprobada por el usuario · Fecha: 2026-10-11 (el usuario confirmó que el stack se habló con el compañero, D-002)
+- [x] v2 aprobada por el usuario · Fecha: 2026-10-12
