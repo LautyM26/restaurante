@@ -9,8 +9,18 @@ opencode/
 skills/
 docs/constitution.md
 docs/referencias/
+graphify-out/
 
 # Sistema operativo y editor
 .DS_Store
 Thumbs.db
 .vscode/
+
+# Dependencias, compilación y entorno local
+node_modules/
+dist/
+coverage/
+.env
+.env.*
+!.env.example
+*.log
