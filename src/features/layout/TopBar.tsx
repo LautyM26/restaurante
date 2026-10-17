@@ -2,23 +2,32 @@
 // "Mis pedidos" y el selector de idioma. Contenido que se desplaza pasa por debajo (apple-design §12).
 // "Mis pedidos" lleva el contador de pedidos activos de TODAS las mesas del dispositivo y un punto de novedad
 // (RF42, RF47): aparece con mesa válida o, sin ella, mientras haya pedidos activos.
+// `intro`: la entrada animada de una sola vez (plan §10.3); sin ella la barra nace en su sitio.
 import { Fire, Receipt } from '@phosphor-icons/react'
+import { motion } from 'motion/react'
 import { RESTAURANT } from '../../config'
 import { useI18n } from '../../i18n/I18nContext'
 import { useMyOrders } from '../../state/MyOrdersContext'
 import { useTable } from '../../state/TableContext'
 import { GlassPill } from '../../ui/GlassPill'
 import { IconTile } from '../../ui/IconTile'
+import { introProps } from '../../ui/motion'
+import { useMediaQuery } from '../../ui/useMediaQuery'
 import { LanguageToggle } from './LanguageToggle'
 
 interface TopBarProps {
   onOpenOrders: () => void
   /** La pantalla "Mis pedidos" está abierta (se marca con aria-current). */
   ordersOpen?: boolean
+  /** Reproducir la entrada animada (una vez por sesión, ver useIntroOnce). */
+  intro?: boolean
 }
 
-export function TopBar({ onOpenOrders, ordersOpen = false }: TopBarProps) {
+const MotionPill = motion.create(GlassPill)
+
+export function TopBar({ onOpenOrders, ordersOpen = false, intro = false }: TopBarProps) {
   const { t } = useI18n()
+  const compact = !useMediaQuery('(min-width: 768px)')
   const table = useTable()
   const { activeOrders, hasNews } = useMyOrders()
   const active = activeOrders.length
@@ -31,19 +40,20 @@ export function TopBar({ onOpenOrders, ordersOpen = false }: TopBarProps) {
     // El contenedor ocupa todo el ancho pero no atrapa toques (pointer-events-none): solo la píldora los recibe.
     // Respeta el notch arriba y a los costados; 12 px de margen como mínimo (plan §9.5).
     <header className="pointer-events-none fixed inset-x-0 top-0 z-(--z-top-bar) pt-[calc(env(safe-area-inset-top)+8px)] pr-[max(0.75rem,env(safe-area-inset-right))] pl-[max(0.75rem,env(safe-area-inset-left))]">
-      <GlassPill className="pointer-events-auto mx-auto flex h-14 max-w-[680px] items-center gap-2 pr-2 pl-3">
-        <div className="flex min-w-0 items-center gap-2.5">
+      <MotionPill className="pointer-events-auto mx-auto flex h-14 max-w-[680px] items-center gap-2 pr-2 pl-3" {...introProps(intro, 'topBar', compact)}>
+        <motion.div className="flex min-w-0 items-center gap-2.5" {...introProps(intro, 'brand', compact)}>
           <IconTile icon={Fire} />
           <span className="truncate font-display text-xl font-extrabold tracking-wide text-bone-50 uppercase">
             {RESTAURANT.name}
           </span>
-        </div>
+        </motion.div>
 
         <div className="ml-auto flex items-center gap-1">
           {/* A la izquierda del selector: al aparecer tras verificar la mesa, el selector no se corre. */}
           {(table.status === 'valid' || active > 0) && (
-            <button
+            <motion.button
               type="button"
+              {...introProps(intro, 'orders', compact)}
               onClick={onOpenOrders}
               aria-current={ordersOpen ? 'page' : undefined}
               aria-label={label}
@@ -70,11 +80,13 @@ export function TopBar({ onOpenOrders, ordersOpen = false }: TopBarProps) {
                   {active}
                 </span>
               )}
-            </button>
+            </motion.button>
           )}
-          <LanguageToggle />
+          <motion.div {...introProps(intro, 'language', compact)}>
+            <LanguageToggle />
+          </motion.div>
         </div>
-      </GlassPill>
+      </MotionPill>
     </header>
   )
 }

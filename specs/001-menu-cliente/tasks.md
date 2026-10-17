@@ -102,7 +102,7 @@
   - **Skills:** `ui-ux-pro-max` (regiones vivas y avisos), `animate` + `motion` (timeline, Toast), `emil-design-eng` (tilde de enviado), `ponytail`, `systematic-debugging`.
   - **Hecho cuando:** con dos pestañas (o `VITE_MOCK_AUTO_ADVANCE=true`, o `window.__demo.advance`) el estado avanza en tiempo real, aparece el Toast en la carta y el punto de novedad; el flujo de integración pasa; `npm test` en verde.
 
-- [ ] **T10. Portada inmersiva, anillo 3D, entrada animada y verificación final**
+- [x] **T10. Portada inmersiva, anillo 3D, entrada animada y verificación final**
   - **Requisitos:** RF4, RF5, RF6; RNF1, RNF2, RNF3, RNF7, RNF8 (intro), RNF9 (preparación de la revisión); regresión de todos (plan §9.5 anillo/panel, §9.6, §10.3).
   - **Tests primero (rojo):** `tests/features/hero/ringMath.test.ts` (carta al frente visible sin sombra; recorte por encima de `cull`; simetría para ±a; sombra crece hacia los bordes; fase normalizada; con la configuración de celular hay 5 cartas visibles); `Hero.test.tsx` ("Mesa 12", titular, subtítulo, "Ver la carta" llama a `scrollIntoView` de `#carta` sin cambiar el hash; `expectNoA11yViolations`); `DishRing.test.tsx` (`aria-hidden`; solo destacados pedibles, recurre a los primeros pedibles, no se muestra sin platos; con movimiento reducido la fase no avanza); `useIntroOnce.test.tsx` (se reproduce la primera vez, no la segunda en la sesión, nunca con movimiento reducido, con storage bloqueado se reproduce y no rompe).
   - **Crea:** `src/features/hero/Hero.tsx`, `DishRing.tsx`, `ringMath.ts`, `EmberField.tsx`, `useIntroOnce.ts`. **Modifica:** `src/features/menu/MenuScreen.tsx` (portada + panel superpuesto al anillo), `src/features/layout/TopBar.tsx` (variantes de entrada), `src/styles/index.css`.

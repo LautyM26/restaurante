@@ -33,7 +33,11 @@ const sent = () => makeOrder({ id: 'order-9', code: 'K7F2', tableId: 12, totalCe
 function setup(getMenu: () => Promise<Menu> = async () => menu, prepare?: (orders: FakeOrderService) => void) {
   const onSent = vi.fn<(order: Order) => void>()
   function Harness() {
-    return <MenuScreen menu={useMenu()} onSent={onSent} />
+    return (
+      <main>
+        <MenuScreen menu={useMenu()} onSent={onSent} />
+      </main>
+    )
   }
   const services = createTestServices(undefined, getMenu)
   const orders = services.orderService as FakeOrderService

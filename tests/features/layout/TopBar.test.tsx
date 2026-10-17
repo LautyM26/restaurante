@@ -22,7 +22,7 @@ const next = (o: Order, status: Order['status']): Order => ({ ...o, status, upda
 
 const renderBar = (
   url: string,
-  { getTable, ordersOpen, orders = [] }: { getTable?: GetTable; ordersOpen?: boolean; orders?: Order[] } = {},
+  { getTable, ordersOpen, orders = [], intro }: { getTable?: GetTable; ordersOpen?: boolean; orders?: Order[]; intro?: boolean } = {},
 ) => {
   const onOpenOrders = vi.fn()
   const services = createTestServices(getTable)
@@ -31,7 +31,7 @@ const renderBar = (
   const backing = createMemoryStorage()
   const store = createMyOrdersStore({ storage: createSafeStorage(() => backing), target: new EventTarget(), now: () => NOW })
   orders.forEach((o) => store.add({ orderId: o.id, tableId: o.tableId, createdAt: o.createdAt }))
-  const view = renderWithProviders(<TopBar onOpenOrders={onOpenOrders} ordersOpen={ordersOpen} />, {
+  const view = renderWithProviders(<TopBar onOpenOrders={onOpenOrders} ordersOpen={ordersOpen} intro={intro} />, {
     url,
     services,
     i18n: true,
@@ -45,6 +45,15 @@ const renderBar = (
 
 describe('TopBar (RF4, RF42)', () => {
   beforeEach(() => window.localStorage.clear())
+
+  it('con la entrada animada en curso (intro) sigue siendo el banner con la marca y los controles', async () => {
+    const { container } = renderBar('/?mesa=12', { intro: true })
+    const bar = screen.getByRole('banner')
+    expect(within(bar).getByText(RESTAURANT.name)).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: 'Mis pedidos' })).toBeInTheDocument()
+    expect(within(bar).getByRole('radiogroup', { name: 'Idioma' })).toBeInTheDocument()
+    await expectNoA11yViolations(container)
+  })
 
   it('es el banner de la página y muestra la marca "Fogón"', () => {
     renderBar('/')

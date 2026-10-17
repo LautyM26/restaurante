@@ -8,7 +8,7 @@ import type { Icon } from '@phosphor-icons/react'
 import type { CategoryVisual } from '../domain/types'
 
 // Los degradados van completos para que Tailwind los detecte. Todos terminan en coal-800 (#1f1a16).
-const VISUALS: Record<CategoryVisual, { icon: Icon; surface: string; tint: string }> = {
+export const CATEGORY_VISUALS: Record<CategoryVisual, { icon: Icon; surface: string; tint: string }> = {
   starter: { icon: Cheese, surface: 'bg-[linear-gradient(145deg,#4a3d1a,#1f1a16)]', tint: 'text-[#f2d27a]' },
   grill: { icon: Cow, surface: 'bg-[linear-gradient(145deg,#5a2216,#1f1a16)]', tint: 'text-ember-300' },
   main: { icon: CookingPot, surface: 'bg-[linear-gradient(145deg,#4a2c17,#1f1a16)]', tint: 'text-ember-300' },
@@ -25,7 +25,7 @@ interface DishVisualProps {
 }
 
 export function DishVisual({ visual, imageUrl, unavailable = false }: DishVisualProps) {
-  const { icon: Glyph, surface, tint } = VISUALS[visual]
+  const { icon: Glyph, surface, tint } = CATEGORY_VISUALS[visual]
   // Se recuerda cuál URL falló (no un booleano): si cambia la imagen se vuelve a intentar.
   const [failedUrl, setFailedUrl] = useState<string | undefined>()
   const showImage = imageUrl !== undefined && imageUrl !== failedUrl

@@ -4,15 +4,13 @@
 // cada cambio de pantalla. Un cambio de estado de un pedido estando en la carta muestra el Toast (RF47).
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { TopBar } from '../features/layout/TopBar'
-import { TableNotice } from '../features/menu/TableNotice'
+import { useIntroOnce } from '../features/hero/useIntroOnce'
 import { MenuScreen } from '../features/menu/MenuScreen'
 import { OrdersScreen } from '../features/orders/OrdersScreen'
 import type { Order } from '../domain/types'
 import { useI18n } from '../i18n/I18nContext'
 import { useMyOrders } from '../state/MyOrdersContext'
 import { useMenu } from '../state/useMenu'
-import { useTable } from '../state/TableContext'
-import { TableBadge } from '../ui/TableBadge'
 import { STATUS_ICON } from '../ui/StatusPill'
 import { Toast } from '../ui/Toast'
 import { useHashScreen } from './useHashScreen'
@@ -23,8 +21,9 @@ const PAGE =
 
 export function CustomerApp() {
   const { t } = useI18n()
-  const table = useTable()
   const menu = useMenu()
+  // La entrada animada de la portada y de la barra: una vez por sesión (RF5), nunca con movimiento reducido (RF6).
+  const intro = useIntroOnce()
   const myOrders = useMyOrders()
   const { register, lastChange } = myOrders
   // El pedido recién enviado, para destacar su confirmación en "Mis pedidos" (RF25).
@@ -82,7 +81,7 @@ export function CustomerApp() {
 
   return (
     <>
-      <TopBar onOpenOrders={() => navigate('orders')} ordersOpen={screen === 'orders'} />
+      <TopBar onOpenOrders={() => navigate('orders')} ordersOpen={screen === 'orders'} intro={intro} />
       <Toast
         toast={
           toastChange && {
@@ -98,13 +97,7 @@ export function CustomerApp() {
       />
       <main ref={mainRef} tabIndex={-1} className={PAGE}>
         {screen === 'menu' ? (
-          <div className="flex flex-col items-start gap-4">
-            {table.status === 'valid' && <TableBadge tableId={table.tableId} />}
-            <div className="w-full">
-              <TableNotice />
-            </div>
-            <MenuScreen menu={menu} onSent={handleSent} />
-          </div>
+          <MenuScreen menu={menu} onSent={handleSent} intro={intro} />
         ) : (
           <OrdersScreen highlightId={justSentId} onBack={goBackToMenu} titleRef={titleRef} />
         )}

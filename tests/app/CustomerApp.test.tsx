@@ -2,6 +2,7 @@ import { act, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { CustomerApp } from '../../src/app/CustomerApp'
+import { INTRO_STORAGE_KEY } from '../../src/features/hero/useIntroOnce'
 import type { Order } from '../../src/domain/types'
 import { ServiceError } from '../../src/services/contracts'
 import type { FakeOrderService } from '../fixtures/fakeOrderService'
@@ -34,6 +35,14 @@ describe('CustomerApp: esqueleto de la app (RF1, RF2, RF3, RF4, RF32, RF41, RF42
   })
 
   describe('la carta y la mesa', () => {
+    it('arma la portada con la mesa una sola vez y deja anotada la entrada animada de la sesión (RF4, RF5)', async () => {
+      window.sessionStorage.clear()
+      renderApp('/?mesa=12')
+      expect(await screen.findAllByText('Mesa 12')).toHaveLength(1)
+      expect(screen.getByRole('heading', { level: 1, name: 'Pedí desde tu mesa' })).toBeInTheDocument()
+      expect(window.sessionStorage.getItem(INTRO_STORAGE_KEY)).not.toBeNull()
+    })
+
     it('con ?mesa=12 muestra "Mesa 12" tras verificarla, la barra y no muestra el aviso', async () => {
       renderApp('/?mesa=12')
       expect(await screen.findByText('Mesa 12')).toBeInTheDocument()

@@ -37,6 +37,7 @@ function deferred<T>() {
   return { promise, resolve, reject }
 }
 
+const onlyButtons = () => screen.queryAllByRole('button').map((b) => b.textContent)
 const headings = () => screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent)
 
 describe('MenuScreen: la carta (RF7-RF10, RF13, RF34, RF45)', () => {
@@ -62,7 +63,7 @@ describe('MenuScreen: la carta (RF7-RF10, RF13, RF34, RF45)', () => {
       expect(within(busy as HTMLElement).getByText('Cargando la carta')).toBeInTheDocument()
       expect(busy.querySelectorAll('[aria-hidden="true"]').length).toBeGreaterThan(6)
       expect(screen.queryByRole('navigation')).not.toBeInTheDocument()
-      expect(screen.queryByRole('button')).not.toBeInTheDocument()
+      expect(onlyButtons()).toEqual(['Ver la carta']) // la portada; ningún plato
     })
 
     it('al llegar la carta reemplaza los marcadores', async () => {
@@ -229,7 +230,7 @@ describe('MenuScreen: la carta (RF7-RF10, RF13, RF34, RF45)', () => {
       renderMenu(async () => ({ categories: [starters], dishes: [] }))
       expect(await screen.findByText('La carta no está disponible en este momento. Consultá al personal.')).toBeInTheDocument()
       expect(screen.queryByRole('navigation')).not.toBeInTheDocument()
-      expect(screen.queryByRole('button')).not.toBeInTheDocument()
+      expect(onlyButtons()).toEqual(['Ver la carta'])
     })
 
     it('una carta con solo platos huérfanos también se considera vacía', async () => {
@@ -286,6 +287,59 @@ describe('MenuScreen: la carta (RF7-RF10, RF13, RF34, RF45)', () => {
 
       expect(screen.queryByRole('alert')).not.toBeInTheDocument()
       expect(headings()).toEqual(['Entradas', 'Principales'])
+    })
+  })
+
+  describe('portada y panel (RF4, plan §9.5 y §9.6)', () => {
+    it('antepone la portada a la carta: titular, mesa y "Ver la carta" antes del panel #carta', async () => {
+      const { container } = renderMenu()
+      await screen.findByRole('navigation')
+      const title = screen.getByRole('heading', { level: 1, name: 'Pedí desde tu mesa' })
+      const panel = container.querySelector('section#carta')!
+      expect(title.compareDocumentPosition(panel) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+      expect(await screen.findByText('Mesa 12')).toBeInTheDocument()
+      expect(screen.getByTestId('dish-ring')).toBeInTheDocument()
+    })
+
+    it('"Ver la carta" lleva al panel #carta sin tocar el hash', async () => {
+      const spy = vi.spyOn(Element.prototype, 'scrollIntoView')
+      const { container } = renderMenu()
+      await screen.findByRole('navigation')
+      await userEvent.click(screen.getByRole('button', { name: 'Ver la carta' }))
+      expect(spy.mock.contexts.at(-1)).toBe(container.querySelector('section#carta'))
+      expect(window.location.hash).toBe('')
+    })
+
+    it('las pestañas de categorías y las secciones viven dentro del panel; la portada, fuera', async () => {
+      const { container } = renderMenu()
+      const tabs = await screen.findByRole('navigation')
+      const panel = container.querySelector('section#carta')!
+      expect(panel).toContainElement(tabs)
+      expect(panel).not.toContainElement(screen.getByRole('heading', { level: 1 }))
+      expect(panel).not.toContainElement(screen.getByRole('button', { name: 'Ver la carta' }))
+    })
+
+    it('mientras carga y si falla, la portada se ve igual y sin anillo', async () => {
+      const pending = deferred<Menu>()
+      const { unmount } = renderMenu(() => pending.promise)
+      expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
+      expect(screen.queryByTestId('dish-ring')).not.toBeInTheDocument()
+      unmount()
+
+      renderMenu(async () => {
+        throw new ServiceError('SERVER', 'caído')
+      })
+      await screen.findByRole('alert')
+      expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
+      expect(screen.queryByTestId('dish-ring')).not.toBeInTheDocument()
+    })
+
+    it('sin mesa, el aviso de la mesa va dentro del panel y la portada no muestra "Mesa"', async () => {
+      const services = createTestServices(undefined, async () => fixtureMenu)
+      const { container } = renderWithProviders(<Harness />, { url: '/', services, i18n: true, table: true, cart: true, liveRegion: true })
+      await screen.findByRole('navigation')
+      expect(container.querySelector('section#carta')).toContainElement(screen.getByRole('note'))
+      expect(screen.queryByText(/^Mesa \d+$/)).not.toBeInTheDocument()
     })
   })
 
