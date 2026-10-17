@@ -113,4 +113,31 @@ describe('myOrdersStore: registro local de pedidos enviados (RF28; plan §4)', (
     expect(() => store.add({ orderId: 'o1', tableId: 12, createdAt: hoursAgo(1) })).not.toThrow()
     expect(store.read().map((e) => e.orderId)).toEqual(['o1'])
   })
+
+  describe('remove: el restaurante ya no conoce el pedido (NOT_FOUND)', () => {
+    it('quita solo los ids pedidos, conserva el resto y avisa a los suscriptores', () => {
+      const { store } = makeStore()
+      store.add({ orderId: 'o1', tableId: 12, createdAt: hoursAgo(2) })
+      store.add({ orderId: 'o2', tableId: 5, createdAt: hoursAgo(1) })
+      const listener = vi.fn()
+      store.subscribe(listener)
+
+      store.remove(['o1'])
+
+      expect(store.read().map((e) => e.orderId)).toEqual(['o2'])
+      expect(listener).toHaveBeenCalledTimes(1)
+    })
+
+    it('un id que no está registrado no cambia nada ni avisa', () => {
+      const { store } = makeStore()
+      store.add({ orderId: 'o1', tableId: 12, createdAt: hoursAgo(1) })
+      const listener = vi.fn()
+      store.subscribe(listener)
+
+      store.remove(['nope'])
+
+      expect(store.read()).toHaveLength(1)
+      expect(listener).not.toHaveBeenCalled()
+    })
+  })
 })

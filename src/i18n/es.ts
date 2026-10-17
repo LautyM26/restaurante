@@ -83,6 +83,12 @@ export const es = {
   'orders.active_one': 'Mis pedidos, 1 activo',
   'orders.active_other': 'Mis pedidos, {count} activos',
   'orders.news': 'Hay novedades en tus pedidos',
+  'orders.timeline': 'Estado del pedido',
+  'orders.details': 'Ver detalle',
+  'orders.hasNews': 'hay novedades',
+  'orders.at': 'Enviado a las {time}',
+  'toast.view': 'Ver',
+  'toast.close': 'Cerrar aviso',
 
   // Estados del pedido
   'status.pending': 'Enviado',

@@ -2,6 +2,7 @@ import { act, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { CustomerApp } from '../../src/app/CustomerApp'
+import type { Order } from '../../src/domain/types'
 import { ServiceError } from '../../src/services/contracts'
 import type { FakeOrderService } from '../fixtures/fakeOrderService'
 import { makeOrder } from '../fixtures/orders'
@@ -19,7 +20,7 @@ const renderApp = (url: string, getTable?: GetTable, getMenu?: GetMenu, liveRegi
   const services = createTestServices(getTable, getMenu)
   return {
     services,
-    ...renderWithProviders(<CustomerApp />, { url, services, i18n: true, table: true, cart: true, liveRegion }),
+    ...renderWithProviders(<CustomerApp />, { url, services, i18n: true, table: true, cart: true, liveRegion, myOrders: true }),
   }
 }
 
@@ -32,7 +33,7 @@ describe('CustomerApp: esqueleto de la app (RF1, RF2, RF3, RF4, RF32, RF41, RF42
     setScrollY(0)
   })
 
-  describe('la carta provisoria y la mesa', () => {
+  describe('la carta y la mesa', () => {
     it('con ?mesa=12 muestra "Mesa 12" tras verificarla, la barra y no muestra el aviso', async () => {
       renderApp('/?mesa=12')
       expect(await screen.findByText('Mesa 12')).toBeInTheDocument()
@@ -104,7 +105,7 @@ describe('CustomerApp: esqueleto de la app (RF1, RF2, RF3, RF4, RF32, RF41, RF42
       expect(screen.queryByRole('heading', { name: 'Mis pedidos' })).not.toBeInTheDocument()
     })
 
-    it('con #/orders abre la sección provisoria "Mis pedidos" y no muestra la carta', async () => {
+    it('con #/orders abre "Mis pedidos" y no muestra la carta', async () => {
       const { container } = renderApp('/?mesa=12#/orders')
       expect(screen.getByRole('heading', { level: 1, name: 'Mis pedidos' })).toBeInTheDocument()
       expect(container.querySelector('#carta')).not.toBeInTheDocument()
@@ -139,22 +140,22 @@ describe('CustomerApp: esqueleto de la app (RF1, RF2, RF3, RF4, RF32, RF41, RF42
       expect(screen.getByRole('main')).toHaveFocus()
     })
 
-    it('"Pedir algo más" vuelve a la carta (hace history.back si se vino de ella)', async () => {
+    it('"Ver la carta" del estado vacío vuelve a la carta (hace history.back si se vino de ella)', async () => {
       renderApp('/?mesa=12')
       await userEvent.click(await screen.findByRole('button', { name: 'Mis pedidos' }))
       const back = vi.spyOn(window.history, 'back')
 
-      await userEvent.click(screen.getByRole('button', { name: 'Pedir algo más' }))
+      await userEvent.click(screen.getByRole('button', { name: 'Ver la carta' }))
 
       expect(back).toHaveBeenCalledTimes(1)
       expect(await screen.findByText('Mesa 12')).toBeInTheDocument()
     })
 
-    it('"Pedir algo más" tras entrar directo a #/orders reemplaza la entrada y muestra la carta', async () => {
+    it('"Ver la carta" tras entrar directo a #/orders reemplaza la entrada y muestra la carta', async () => {
       renderApp('/?mesa=12#/orders')
       const back = vi.spyOn(window.history, 'back')
 
-      await userEvent.click(screen.getByRole('button', { name: 'Pedir algo más' }))
+      await userEvent.click(screen.getByRole('button', { name: 'Ver la carta' }))
 
       expect(back).not.toHaveBeenCalled()
       expect(await screen.findByText('Mesa 12')).toBeInTheDocument()
@@ -357,7 +358,7 @@ describe('CustomerApp: esqueleto de la app (RF1, RF2, RF3, RF4, RF32, RF41, RF42
   describe('pedido en curso y envío (T8: RF21, RF23, RF25, RF26)', () => {
     const withSalad = async () => ({ categories: fixtureMenu.categories, dishes: [salad] })
     const barButton = () => screen.queryByRole('button', { name: /Ver pedido/ })
-    const sentOrder = () => makeOrder({ id: 'order-9', code: 'K7F2', tableId: 12, totalCents: 500000 })
+    const sentOrder = () => makeOrder({ id: 'order-9', code: 'K7F2', tableId: 12, totalCents: 500000, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() })
 
     async function addSalads(quantity: number) {
       await userEvent.click(await screen.findByRole('button', { name: 'salad' }))
@@ -425,12 +426,14 @@ describe('CustomerApp: esqueleto de la app (RF1, RF2, RF3, RF4, RF32, RF41, RF42
 
       expect(await screen.findByRole('heading', { name: 'Mis pedidos' })).toBeInTheDocument()
       expect(window.location.hash).toBe('#/orders')
-      expect(screen.getByText(/Pedido enviado.*K7F2/)).toBeInTheDocument()
+      const card = await screen.findByRole('article')
+      expect(within(card).getByText('Pedido enviado')).toBeInTheDocument()
+      expect(within(card).getByText('K7F2')).toBeInTheDocument()
       expect(barButton()).not.toBeInTheDocument()
       expect(window.sessionStorage.getItem('restaurante.cart.table-12')).toBeNull()
     })
 
-    it('el registro del dispositivo recuerda el pedido enviado (para el seguimiento de T9)', async () => {
+    it('el registro del dispositivo recuerda el pedido enviado (es lo que sigue "Mis pedidos")', async () => {
       window.localStorage.clear()
       const view = renderApp('/?mesa=12', undefined, withSalad, true)
       await sendOrder(view)
@@ -464,7 +467,7 @@ describe('CustomerApp: esqueleto de la app (RF1, RF2, RF3, RF4, RF32, RF41, RF42
       )
       const services = createTestServices(undefined, withSalad)
       ;(services.orderService as FakeOrderService).findByClientRequestId.mockResolvedValue(sentOrder())
-      renderWithProviders(<CustomerApp />, { url: '/?mesa=12', services, i18n: true, table: true, cart: true, liveRegion: true })
+      renderWithProviders(<CustomerApp />, { url: '/?mesa=12', services, i18n: true, table: true, cart: true, liveRegion: true, myOrders: true })
 
       expect(await screen.findByRole('heading', { name: 'Mis pedidos' })).toBeInTheDocument()
       expect(window.location.hash).toBe('#/orders')
@@ -489,6 +492,140 @@ describe('CustomerApp: esqueleto de la app (RF1, RF2, RF3, RF4, RF32, RF41, RF42
       const { container } = renderApp('/?mesa=12', undefined, withSalad, true)
       await addSalads(1)
       await screen.findByRole('button', { name: /Ver pedido/ })
+      await expectNoA11yViolations(container)
+    })
+  })
+
+  // T9: seguimiento en tiempo real, aviso en la carta y novedad en la barra.
+  describe('seguimiento de pedidos (T9: RF28, RF29, RF42, RF47)', () => {
+    const fresh = () => new Date().toISOString()
+    const tracked = () => makeOrder({ id: 'o-77', code: 'K7F2', tableId: 12, createdAt: fresh(), updatedAt: fresh() })
+    const changed = (order: Order, status: Order['status'], plusMs = 1000): Order => ({
+      ...order,
+      status,
+      updatedAt: new Date(Date.now() + plusMs).toISOString(),
+    })
+    const withSalad = async () => ({ categories: fixtureMenu.categories, dishes: [salad] })
+
+    /** Deja un pedido registrado en este dispositivo y en el restaurante, como si ya se hubiera enviado. */
+    function renderTracking(url: string) {
+      const order = tracked()
+      window.localStorage.setItem(
+        'restaurante.myOrders',
+        JSON.stringify([{ orderId: order.id, tableId: order.tableId, createdAt: order.createdAt }]),
+      )
+      const services = createTestServices(undefined, withSalad)
+      const orders = services.orderService as FakeOrderService
+      orders.orders = [order]
+      const view = renderWithProviders(<CustomerApp />, {
+        url,
+        services,
+        i18n: true,
+        table: true,
+        cart: true,
+        liveRegion: true,
+        myOrders: true,
+      })
+      return { order, orders, ...view }
+    }
+    const emitStatus = (orders: FakeOrderService, order: Order, status: Order['status'], plusMs = 1000) =>
+      act(() => orders.emit({ type: 'order.status_changed', order: changed(order, status, plusMs), previousStatus: order.status }))
+
+    beforeEach(() => {
+      window.sessionStorage.clear()
+      window.history.replaceState(null, '', '/')
+    })
+
+    it('un cambio de estado en la carta muestra el Toast con "Ver" y deja la novedad en la barra', async () => {
+      const { order, orders } = renderTracking('/?mesa=12')
+      await screen.findByRole('button', { name: 'Mis pedidos, 1 activo' })
+
+      emitStatus(orders, order, 'preparing')
+
+      expect(await screen.findByText('Pedido K7F2: En preparación')).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Ver' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Mis pedidos, 1 activo, hay novedades' })).toBeInTheDocument()
+    })
+
+    it('"Ver" lleva a "Mis pedidos", cierra el Toast y limpia la novedad', async () => {
+      const { order, orders } = renderTracking('/?mesa=12')
+      await screen.findByRole('button', { name: 'Mis pedidos, 1 activo' })
+      emitStatus(orders, order, 'accepted')
+      await userEvent.click(await screen.findByRole('button', { name: 'Ver' }))
+
+      expect(window.location.hash).toBe('#/orders')
+      expect(screen.getByRole('heading', { level: 1, name: 'Mis pedidos' })).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: 'Ver' })).not.toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Mis pedidos, 1 activo' })).toBeInTheDocument()
+    })
+
+    it('en "Mis pedidos" un cambio de estado no muestra Toast y actualiza la tarjeta', async () => {
+      const { order, orders } = renderTracking('/?mesa=12#/orders')
+      await screen.findByRole('article')
+
+      emitStatus(orders, order, 'preparing')
+
+      expect(screen.queryByRole('button', { name: 'Ver' })).not.toBeInTheDocument()
+      expect(within(screen.getByRole('article')).getAllByText('En preparación').length).toBeGreaterThan(0)
+      expect(screen.getByRole('button', { name: 'Mis pedidos, 1 activo' })).toBeInTheDocument()
+    })
+
+    it('un cambio ocurrido en "Mis pedidos" no reaparece como Toast al volver a la carta', async () => {
+      const { order, orders } = renderTracking('/?mesa=12')
+      await userEvent.click(await screen.findByRole('button', { name: 'Mis pedidos, 1 activo' }))
+      emitStatus(orders, order, 'preparing')
+
+      act(() => window.history.back())
+      await screen.findByText('Mesa 12')
+
+      expect(screen.queryByRole('button', { name: 'Ver' })).not.toBeInTheDocument()
+    })
+
+    it('un aviso nuevo reemplaza al anterior (uno a la vez)', async () => {
+      const { order, orders } = renderTracking('/?mesa=12')
+      await screen.findByRole('button', { name: 'Mis pedidos, 1 activo' })
+      emitStatus(orders, order, 'accepted')
+      await screen.findByText('Pedido K7F2: Confirmado')
+
+      emitStatus(orders, order, 'preparing', 2000)
+
+      expect(await screen.findByText('Pedido K7F2: En preparación')).toBeInTheDocument()
+      expect(screen.queryByText('Pedido K7F2: Confirmado')).not.toBeInTheDocument()
+      expect(screen.getAllByRole('button', { name: 'Ver' })).toHaveLength(1)
+    })
+
+    it('cerrar el Toast lo descarta pero deja la novedad en la barra (la cuenta de 4 s se prueba en Toast.test)', async () => {
+      const { order, orders } = renderTracking('/?mesa=12')
+      await screen.findByRole('button', { name: 'Mis pedidos, 1 activo' })
+      emitStatus(orders, order, 'accepted')
+
+      await userEvent.click(await screen.findByRole('button', { name: 'Cerrar aviso' }))
+
+      // (el anuncio de la región viva sigue teniendo el texto: se comprueba por los botones del aviso)
+      expect(screen.queryByRole('button', { name: 'Cerrar aviso' })).not.toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: 'Ver' })).not.toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Mis pedidos, 1 activo, hay novedades' })).toBeInTheDocument()
+    })
+
+    it('"Pedir algo más" vuelve a la carta conservando la mesa y el pedido en curso', async () => {
+      renderTracking('/?mesa=12')
+      await screen.findByText('Mesa 12') // agregar se habilita cuando la mesa está verificada (RF3)
+      await userEvent.click(await screen.findByRole('button', { name: 'salad' }))
+      const dialog = await screen.findByRole('dialog')
+      await userEvent.click(within(dialog).getByRole('button', { name: /^Agregar/ }))
+      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+      await userEvent.click(await screen.findByRole('button', { name: /Mis pedidos/ }))
+      await userEvent.click(await screen.findByRole('button', { name: 'Pedir algo más' }))
+
+      expect(await screen.findByText('Mesa 12')).toBeInTheDocument()
+      expect(await screen.findByRole('button', { name: /Ver pedido.*1 unidad/ })).toBeInTheDocument()
+    })
+
+    it('sin violaciones de accesibilidad con el Toast visible', async () => {
+      const { order, orders, container } = renderTracking('/?mesa=12')
+      await screen.findByRole('button', { name: 'Mis pedidos, 1 activo' })
+      emitStatus(orders, order, 'ready')
+      await screen.findByText('Pedido K7F2: Listo para servir')
       await expectNoA11yViolations(container)
     })
   })

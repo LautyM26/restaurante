@@ -7,6 +7,8 @@ import { I18nProvider } from '../src/i18n/I18nContext'
 import type { Services } from '../src/services/contracts'
 import { ServicesProvider } from '../src/services/ServicesContext'
 import { TableCartProvider } from '../src/state/CartContext'
+import { MyOrdersProvider } from '../src/state/MyOrdersContext'
+import type { MyOrdersStore } from '../src/state/myOrdersStore'
 import { TableProvider } from '../src/state/TableContext'
 import { LiveRegionProvider } from '../src/ui/LiveRegion'
 
@@ -23,17 +25,22 @@ interface RenderOptions {
   liveRegion?: boolean
   /** Monta el pedido en curso de la mesa (TableCartProvider); necesita `table`. */
   cart?: boolean
+  /** Monta el MyOrdersProvider (pedidos del dispositivo); necesita `services`, `table` y `liveRegion`. */
+  myOrders?: boolean
+  /** Registro de pedidos del dispositivo para el MyOrdersProvider; por defecto el de la aplicación (localStorage). */
+  myOrdersStore?: MyOrdersStore
 }
 
 /**
  * Renderiza dentro de MotionConfig sin duración y con movimiento reducido,
  * para que las animaciones no ralenticen ni vuelvan inestables los tests.
- * Los providers son opcionales y se anidan como en App: Services > I18n > Región viva > Table > Cart.
+ * Los providers son opcionales y se anidan como en App: Services > I18n > Región viva > Table > MyOrders > Cart.
  */
-export function renderWithProviders(ui: ReactElement, { url = '/', services, i18n = false, table = false, liveRegion = false, cart = false }: RenderOptions = {}) {
+export function renderWithProviders(ui: ReactElement, { url = '/', services, i18n = false, table = false, liveRegion = false, cart = false, myOrders = false, myOrdersStore }: RenderOptions = {}) {
   window.history.replaceState(null, '', url)
   let content = ui
   if (cart) content = <TableCartProvider>{content}</TableCartProvider>
+  if (myOrders) content = <MyOrdersProvider store={myOrdersStore}>{content}</MyOrdersProvider>
   if (table) content = <TableProvider parsed={parseTableParam(window.location.search)}>{content}</TableProvider>
   if (liveRegion) content = <LiveRegionProvider>{content}</LiveRegionProvider>
   if (i18n) content = <I18nProvider>{content}</I18nProvider>

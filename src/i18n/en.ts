@@ -84,6 +84,12 @@ export const en = {
   'orders.active_one': 'My orders, 1 active',
   'orders.active_other': 'My orders, {count} active',
   'orders.news': 'There are updates on your orders',
+  'orders.timeline': 'Order status',
+  'orders.details': 'View details',
+  'orders.hasNews': 'there are updates',
+  'orders.at': 'Sent at {time}',
+  'toast.view': 'View',
+  'toast.close': 'Dismiss notice',
 
   // Order status
   'status.pending': 'Sent',

@@ -4,21 +4,43 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { RESTAURANT } from '../../../src/config'
 import { TopBar } from '../../../src/features/layout/TopBar'
 import { ServiceError } from '../../../src/services/contracts'
+import type { Order } from '../../../src/domain/types'
+import { createSafeStorage } from '../../../src/services/storage'
+import { createMyOrdersStore } from '../../../src/state/myOrdersStore'
+import type { FakeOrderService } from '../../fixtures/fakeOrderService'
+import { makeOrder } from '../../fixtures/orders'
 import { createTestServices } from '../../fixtures/services'
+import { createMemoryStorage } from '../../fixtures/storage'
 import { expectNoA11yViolations, renderWithProviders } from '../../utils'
 
 type GetTable = Parameters<typeof createTestServices>[0]
 
-const renderBar = (url: string, { getTable, ordersOpen }: { getTable?: GetTable; ordersOpen?: boolean } = {}) => {
+const NOW = '2026-10-11T13:00:00.000Z'
+const o1 = makeOrder({ id: 'o1', code: 'K7F2', tableId: 12 })
+const o2 = makeOrder({ id: 'o2', code: 'P3Q9', tableId: 5 })
+const next = (o: Order, status: Order['status']): Order => ({ ...o, status, updatedAt: '2026-10-11T12:30:00.000Z' })
+
+const renderBar = (
+  url: string,
+  { getTable, ordersOpen, orders = [] }: { getTable?: GetTable; ordersOpen?: boolean; orders?: Order[] } = {},
+) => {
   const onOpenOrders = vi.fn()
   const services = createTestServices(getTable)
+  const orderService = services.orderService as FakeOrderService
+  orderService.orders = orders
+  const backing = createMemoryStorage()
+  const store = createMyOrdersStore({ storage: createSafeStorage(() => backing), target: new EventTarget(), now: () => NOW })
+  orders.forEach((o) => store.add({ orderId: o.id, tableId: o.tableId, createdAt: o.createdAt }))
   const view = renderWithProviders(<TopBar onOpenOrders={onOpenOrders} ordersOpen={ordersOpen} />, {
     url,
     services,
     i18n: true,
     table: true,
+    liveRegion: true,
+    myOrders: true,
+    myOrdersStore: store,
   })
-  return { onOpenOrders, services, ...view }
+  return { onOpenOrders, services, orderService, ...view }
 }
 
 describe('TopBar (RF4, RF42)', () => {
@@ -93,6 +115,69 @@ describe('TopBar (RF4, RF42)', () => {
 
       renderBar('/?mesa=12', { ordersOpen: false })
       expect(await screen.findByRole('button', { name: 'Mis pedidos' })).not.toHaveAttribute('aria-current')
+    })
+  })
+
+  describe('contador de activos y novedad (RF42, RF47)', () => {
+    it('con pedidos activos de varias mesas aparece aunque no haya mesa válida, con la cantidad en el nombre', async () => {
+      renderBar('/', { orders: [o1, o2] })
+      const button = await screen.findByRole('button', { name: 'Mis pedidos, 2 activos' })
+      expect(within(button).getByText('2')).toBeInTheDocument()
+    })
+
+    it('un solo activo usa el singular', async () => {
+      renderBar('/', { orders: [o1] })
+      expect(await screen.findByRole('button', { name: 'Mis pedidos, 1 activo' })).toBeInTheDocument()
+    })
+
+    it('los pedidos en estado final no cuentan', async () => {
+      renderBar('/?mesa=12', { orders: [next(o1, 'delivered'), o2] })
+      expect(await screen.findByRole('button', { name: 'Mis pedidos, 1 activo' })).toBeInTheDocument()
+    })
+
+    it('sin activos y con mesa válida, el nombre es solo "Mis pedidos" y no hay contador', async () => {
+      renderBar('/?mesa=12')
+      const button = await screen.findByRole('button', { name: 'Mis pedidos' })
+      expect(within(button).queryByText('0')).not.toBeInTheDocument()
+    })
+
+    it('un cambio de estado marca la novedad en el nombre accesible y con un punto', async () => {
+      const { orderService } = renderBar('/?mesa=12', { orders: [o1] })
+      await screen.findByRole('button', { name: 'Mis pedidos, 1 activo' })
+
+      act(() => orderService.emit({ type: 'order.status_changed', order: next(o1, 'accepted'), previousStatus: 'pending' }))
+
+      const button = await screen.findByRole('button', { name: 'Mis pedidos, 1 activo, hay novedades' })
+      expect(button.querySelector('[data-news]')).not.toBeNull()
+    })
+
+    it('sin novedad no hay punto', async () => {
+      renderBar('/?mesa=12', { orders: [o1] })
+      const button = await screen.findByRole('button', { name: 'Mis pedidos, 1 activo' })
+      expect(button.querySelector('[data-news]')).toBeNull()
+    })
+
+    it('la novedad de un pedido que ya terminó se nombra sin la cantidad', async () => {
+      const { orderService } = renderBar('/?mesa=12', { orders: [o1] })
+      await screen.findByRole('button', { name: 'Mis pedidos, 1 activo' })
+
+      act(() => orderService.emit({ type: 'order.status_changed', order: next(o1, 'delivered'), previousStatus: 'ready' }))
+
+      expect(await screen.findByRole('button', { name: 'Mis pedidos, hay novedades' })).toBeInTheDocument()
+    })
+
+    it('se traduce al inglés', async () => {
+      window.localStorage.setItem('restaurante.lang', 'en')
+      renderBar('/', { orders: [o1, o2] })
+      expect(await screen.findByRole('button', { name: 'My orders, 2 active' })).toBeInTheDocument()
+    })
+
+    it('no tiene violaciones de accesibilidad con contador y novedad', async () => {
+      const { container, orderService } = renderBar('/', { orders: [o1, o2] })
+      await screen.findByRole('button', { name: 'Mis pedidos, 2 activos' })
+      act(() => orderService.emit({ type: 'order.status_changed', order: next(o1, 'accepted'), previousStatus: 'pending' }))
+      await screen.findByRole('button', { name: 'Mis pedidos, 2 activos, hay novedades' })
+      await expectNoA11yViolations(container)
     })
   })
 

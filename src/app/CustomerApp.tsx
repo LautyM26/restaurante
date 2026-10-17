@@ -1,18 +1,20 @@
-// Esqueleto de la vista del cliente (plan §3): barra superior fija y una de dos pantallas según el hash.
-// La carta ya es la definitiva (MenuScreen, T6; con la CartBar y el resumen del pedido, T8); "Mis pedidos" es
-// PROVISORIA hasta que T9 la reemplace por OrdersScreen: por ahora muestra la confirmación del pedido recién enviado.
+// Vista del cliente (plan §3): barra superior fija, el Toast de novedades y una de dos pantallas según el hash.
 // La carta se pide aquí, una sola vez, y sobrevive a ir y volver de "Mis pedidos" (y se refresca al volver a
 // primer plano). La navegación: el scroll de la carta se conserva al ir y volver (RF32) y el foco acompaña
-// cada cambio de pantalla.
+// cada cambio de pantalla. Un cambio de estado de un pedido estando en la carta muestra el Toast (RF47).
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { TopBar } from '../features/layout/TopBar'
 import { TableNotice } from '../features/menu/TableNotice'
 import { MenuScreen } from '../features/menu/MenuScreen'
+import { OrdersScreen } from '../features/orders/OrdersScreen'
 import type { Order } from '../domain/types'
 import { useI18n } from '../i18n/I18nContext'
+import { useMyOrders } from '../state/MyOrdersContext'
 import { useMenu } from '../state/useMenu'
 import { useTable } from '../state/TableContext'
 import { TableBadge } from '../ui/TableBadge'
+import { STATUS_ICON } from '../ui/StatusPill'
+import { Toast } from '../ui/Toast'
 import { useHashScreen } from './useHashScreen'
 
 // Mismos límites que el plan §9.6: celular fluido, tablet centrada en 720 px y escritorio en 1120 px.
@@ -23,8 +25,12 @@ export function CustomerApp() {
   const { t } = useI18n()
   const table = useTable()
   const menu = useMenu()
-  // PROVISORIO hasta T9: el pedido recién enviado, para que "Mis pedidos" confirme algo (RF25).
-  const [justSent, setJustSent] = useState<Order | null>(null)
+  const myOrders = useMyOrders()
+  const { register, lastChange } = myOrders
+  // El pedido recién enviado, para destacar su confirmación en "Mis pedidos" (RF25).
+  const [justSentId, setJustSentId] = useState<string | null>(null)
+  // El último cambio de estado a avisar en la carta; el texto se arma al dibujar para seguir el idioma.
+  const [toastChange, setToastChange] = useState<{ id: number; order: Order } | null>(null)
   const menuScroll = useRef(0)
   const mainRef = useRef<HTMLElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
@@ -40,11 +46,24 @@ export function CustomerApp() {
   // reemplaza (no se apila otra encima): así "Pedir algo más" y "atrás" vuelven a la carta sin pasos de más.
   const handleSent = useCallback(
     (order: Order) => {
-      setJustSent(order)
+      register(order)
+      setJustSentId(order.id)
       navigate('orders', { replace: window.history.state?.sheet === true })
     },
-    [navigate],
+    [navigate, register],
   )
+
+  // Cada cambio de estado nuevo se avisa solo si se está en la carta; el que ocurre en "Mis pedidos" ya se ve ahí.
+  const seenChange = useRef(lastChange?.seq ?? 0)
+  useEffect(() => {
+    if (!lastChange || lastChange.seq === seenChange.current) return
+    seenChange.current = lastChange.seq
+    if (screen === 'menu') setToastChange({ id: lastChange.seq, order: lastChange.order })
+  }, [lastChange, screen])
+  useEffect(() => {
+    if (screen !== 'menu') setToastChange(null)
+  }, [screen])
+  const closeToast = useCallback(() => setToastChange(null), [])
 
   // La restauración automática del navegador compite con la propia: se desactiva y se hace a mano.
   useEffect(() => {
@@ -64,6 +83,19 @@ export function CustomerApp() {
   return (
     <>
       <TopBar onOpenOrders={() => navigate('orders')} ordersOpen={screen === 'orders'} />
+      <Toast
+        toast={
+          toastChange && {
+            id: toastChange.id,
+            icon: STATUS_ICON[toastChange.order.status],
+            message: t('orders.announce', { code: toastChange.order.code, status: t(`status.${toastChange.order.status}`) }),
+          }
+        }
+        actionLabel={t('toast.view')}
+        closeLabel={t('toast.close')}
+        onAction={() => navigate('orders')}
+        onClose={closeToast}
+      />
       <main ref={mainRef} tabIndex={-1} className={PAGE}>
         {screen === 'menu' ? (
           <div className="flex flex-col items-start gap-4">
@@ -74,27 +106,7 @@ export function CustomerApp() {
             <MenuScreen menu={menu} onSent={handleSent} />
           </div>
         ) : (
-          <section className="flex flex-col items-start gap-5">
-            <h1
-              ref={titleRef}
-              tabIndex={-1}
-              className="font-display text-[clamp(2rem,9vw,2.75rem)] leading-[0.9] font-extrabold tracking-[-0.005em] text-bone-50 uppercase outline-none"
-            >
-              {t('orders.title')}
-            </h1>
-            {justSent && (
-              <p className="w-full rounded-row border border-herb-400/40 px-3 py-2.5 text-[0.9375rem] font-semibold text-bone-50">
-                {t('orders.sent')}: {justSent.code}
-              </p>
-            )}
-            <button
-              type="button"
-              onClick={goBackToMenu}
-              className="inline-flex min-h-11 items-center rounded-full border border-ember-400/50 px-4 text-[0.9375rem] font-semibold text-ember-400 transition-[background-color,transform] duration-120 ease-out-strong hover:bg-ember-500/10 active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100"
-            >
-              {t('orders.more')}
-            </button>
-          </section>
+          <OrdersScreen highlightId={justSentId} onBack={goBackToMenu} titleRef={titleRef} />
         )}
       </main>
     </>

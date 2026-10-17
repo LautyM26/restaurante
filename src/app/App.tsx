@@ -1,7 +1,8 @@
 // Raíz de la aplicación (plan §3). Arma los providers en este orden:
-//   Servicios > Idioma > Movimiento > Región viva > Mesa > Pedido en curso > CustomerApp
+//   Servicios > Idioma > Movimiento > Región viva > Mesa > Pedidos del dispositivo > Pedido en curso > CustomerApp
 // ?mesa= se lee de la URL una sola vez: la mesa no cambia mientras la página está abierta (cada QR es una carga).
-// Debajo de la mesa va el pedido en curso (T7); T9 suma los pedidos enviados (MyOrdersProvider).
+// Debajo de la mesa van los pedidos enviados del dispositivo (MyOrdersProvider, siempre montado, T9) y el pedido
+// en curso (T7).
 import { useState } from 'react'
 import { MotionConfig } from 'motion/react'
 import { parseTableParam } from '../domain/table'
@@ -10,6 +11,7 @@ import type { Services } from '../services/contracts'
 import { createServices } from '../services'
 import { ServicesProvider } from '../services/ServicesContext'
 import { TableCartProvider } from '../state/CartContext'
+import { MyOrdersProvider } from '../state/MyOrdersContext'
 import { TableProvider } from '../state/TableContext'
 import { LiveRegionProvider } from '../ui/LiveRegion'
 import { CustomerApp } from './CustomerApp'
@@ -26,9 +28,11 @@ export function App({ services }: { services?: Services }) {
         <MotionConfig reducedMotion="user">
           <LiveRegionProvider>
             <TableProvider parsed={parsedTable}>
-              <TableCartProvider>
-                <CustomerApp />
-              </TableCartProvider>
+              <MyOrdersProvider>
+                <TableCartProvider>
+                  <CustomerApp />
+                </TableCartProvider>
+              </MyOrdersProvider>
             </TableProvider>
           </LiveRegionProvider>
         </MotionConfig>

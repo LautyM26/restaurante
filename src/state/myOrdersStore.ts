@@ -3,6 +3,7 @@
 // pedidos seguirles el rastro; los datos viven en el restaurante. T9 lo lee desde MyOrdersProvider.
 //   read()       → entradas de las últimas 12 horas, de todas las mesas (P3)
 //   add(entry)   → agrega (sin repetir) y avisa a esta pestaña; las otras reciben el evento `storage`
+//   remove(ids)  → olvida pedidos que el restaurante ya no conoce
 //   subscribe(f) → f() cuando el registro cambia en esta pestaña o en otra
 // El almacenamiento es seguro (RNF8): si el navegador lo bloquea, el registro vive en memoria.
 import { MY_ORDERS_WINDOW_H } from '../config'
@@ -16,6 +17,8 @@ export const MY_ORDERS_KEY = 'restaurante.myOrders'
 export interface MyOrdersStore {
   read(): MyOrderEntry[]
   add(entry: MyOrderEntry): void
+  /** Olvida pedidos que el restaurante ya no conoce (NOT_FOUND); avisa solo si algo se quitó. */
+  remove(orderIds: string[]): void
   subscribe(listener: () => void): () => void
 }
 
@@ -66,6 +69,13 @@ export function createMyOrdersStore({
       const kept = recent()
       if (kept.some((existing) => existing.orderId === entry.orderId)) return // ya registrado: nada cambia
       storage.set(MY_ORDERS_KEY, JSON.stringify([...kept, entry]))
+      notify()
+    },
+    remove(orderIds) {
+      const kept = recent()
+      const left = kept.filter((entry) => !orderIds.includes(entry.orderId))
+      if (left.length === kept.length) return
+      storage.set(MY_ORDERS_KEY, JSON.stringify(left))
       notify()
     },
     subscribe(listener) {
