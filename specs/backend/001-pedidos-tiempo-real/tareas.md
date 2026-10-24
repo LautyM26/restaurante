@@ -49,16 +49,16 @@ Rama: `feature/backend-001-base` (D-136)
   - Verificación: `npm run db:test:up` · `docker compose ps` (estado `healthy`) · `docker compose exec <servicio> psql -U postgres -c "select version();" -c "\l"` (mayor correcta, `restaurante_dev` y `restaurante_test` presentes)
   - Estado: aprobada (2026-10-24, D-163)
 
-- [ ] **T4 — Errores y dependencias inyectables**
-  - Qué: `shared/errors.ts` (`AppError(code, status, message, details?)`, códigos de §13.3, helpers), `shared/clock.ts`, `shared/random.ts`.
+- [x] **T4 — Errores y dependencias inyectables**
+  - Qué: `shared/errors.ts` (`AppError(code, status, message, details?)`, códigos de §13.3; sin helpers propios: el compilador exige que `status` corresponda al `code`, D-164), `shared/clock.ts`, `shared/random.ts`.
   - Archivos: `backend/src/shared/errors.ts`, `backend/src/shared/clock.ts`, `backend/src/shared/random.ts`, `backend/test/unit/errors.test.ts`
   - Requisitos: RNF6, RNF10
-  - Decisiones: D-077, D-099, D-100, D-101
+  - Decisiones: D-077, D-099, D-100, D-101, D-164..D-168
   - Agente: `dev-backend`
   - Depende de: T2
   - Criterios de aceptación: los 11 códigos de §13.3 con su HTTP; `message` en inglés; reloj y aleatorio reemplazables.
   - Verificación: `npx vitest run test/unit/errors.test.ts` · `npm run typecheck` · `npm run lint`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-24, D-168)
 
 - [ ] **T5 — Logger con redacción**
   - Qué: `shared/logger.ts`: `pino` con `LOG_LEVEL`, `redact` de `req.headers.authorization`, `req.headers.cookie`, `res.headers["set-cookie"]`, y serializador de URL que reemplaza `accessToken` por `[REDACTED]`.

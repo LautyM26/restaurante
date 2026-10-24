@@ -147,3 +147,8 @@
 | D-161 | 4 | T3 · Puerto de Postgres local | A) `0.0.0.0` · B) Solo `127.0.0.1:5433` (R) | B | 2026-10-24 |
 | D-162 | 4 | T3 · Volumen nombrado `restaurante_pgdata` y versión `postgres:17` | A) Mantener ambos; 17 provisoria hasta compararla en T42 (R) · B) Sacar el volumen | A | 2026-10-24 |
 | D-163 | 4 | Aprobación de T3 + commit local | A) Aprobar + commit y seguir con T4 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-24 |
+| D-164 | 4 | T4 · Coherencia `code`/`status` de `AppError` y "helpers" | A) Clase genérica `<C extends ErrorCode>` con `status: (typeof ERROR_STATUS)[C]`, sin helpers (R) · B) Fábrica `appError(code, message)` · C) Dejarlo | A ("helpers" de T4 se aclara: no hay helpers propios) | 2026-10-24 |
+| D-165 | 4 | T4 · Cambios en los tests | Selección múltiple | Sacar el test de reemplazo de reloj/aleatorio · agregar `instanceof AppError` y `name` | 2026-10-24 |
+| D-166 | 4 | T4 · Simplificaciones menores | Selección múltiple | `systemRandom = Math.random` · sacar `ValidationIssue` hasta T16 | 2026-10-24 |
+| D-167 | 4 | Errata en `diseno.md` §13: ejemplo `AppError('VALIDATION', 400, { issues })` sin `message` | A) Corregir como errata v1.2.1 (R) · B) Dejarlo | A | 2026-10-24 |
+| D-168 | 4 | Aprobación de T4 + commit local (incluye la errata de diseno.md) | A) Aprobar + commit y seguir con T5 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-24 |

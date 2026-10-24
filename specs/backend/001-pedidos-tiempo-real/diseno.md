@@ -1,7 +1,7 @@
 # Spec backend/001 — Pedidos en tiempo real · Diseño
 
-**Estado:** APROBADO (2026-10-24, v1.2 con §23 por D-145) · **Versión:** 1.2 · **Fecha:** 2026-10-24
-**Historial:** v1.2 (2026-10-24) agrega solo §23 Integración continua (D-137) y suma D-128..D-137 a §2; el resto es la v1.1 APROBADA sin cambios. §23 se aprueba por separado. v1.1 (APROBADO 2026-10-24, D-127) resuelve los pendientes P1–P11 (D-113..D-123) y pasa a requisitos v2.1 (D-124). v1 BORRADOR del 2026-10-23.
+**Estado:** APROBADO (2026-10-24, v1.2 con §23 por D-145) · **Versión:** 1.2.1 · **Fecha:** 2026-10-24
+**Historial:** v1.2.1 (2026-10-24): errata en §13.1, el ejemplo de `AppError` no tenía `message` (D-167); sin cambios de decisiones. v1.2 (2026-10-24) agrega solo §23 Integración continua (D-137) y suma D-128..D-137 a §2; el resto es la v1.1 APROBADA sin cambios. §23 se aprueba por separado. v1.1 (APROBADO 2026-10-24, D-127) resuelve los pendientes P1–P11 (D-113..D-123) y pasa a requisitos v2.1 (D-124). v1 BORRADOR del 2026-10-23.
 **Basado en:** requisitos v2.1 (APROBADO 2026-10-24, D-124, D-127) · constitución v2 · `plan.md` del front §6–§7.4 (rama `develop`) · decisiones D-042..D-127 (`decisiones.md`) · detalle de opciones en `opciones-diseno.md`.
 
 > Cada elección cita su decisión. Los huecos detectados en la v1 (P1–P11) ya están resueltos (§20). Lo que cambia o extiende el contrato del front está en §19.
@@ -541,7 +541,7 @@ Un pedido ya `cancelled` también responde 409 (R6.2: no está en `pending`).
 ## 13. Validación y errores (RNF6, RNF10, D-099..D-101)
 
 ### 13.1 Mecanismo
-- `validate({ body?, query?, params?, headers? })`: Zod; datos parseados en `res.locals.input` (Express 5: `req.query` es de solo lectura). Falla → `AppError('VALIDATION', 400, { issues })`.
+- `validate({ body?, query?, params?, headers? })`: Zod; datos parseados en `res.locals.input` (Express 5: `req.query` es de solo lectura). Falla → `AppError('VALIDATION', 400, message, { issues })`.
 - `POST /api/orders` usa un validador por etapas (§8.1) en el servicio, no el middleware genérico, para respetar el orden de R3.2.
 - `AppError(code, status, message, details?)`. Manejador central: `AppError` → su forma; `ZodError` → 400; JSON malformado (`entity.parse.failed`) o cuerpo demasiado grande (`entity.too.large`) → 400 `VALIDATION` (D-099); ruta inexistente → 404 `NOT_FOUND`; resto (incluidos errores de Prisma no previstos) → 500 `SERVER` con mensaje genérico y log del detalle.
 - Límite de tamaño del cuerpo JSON: `express.json({ limit: '100kb' })` (D-118); mayor → 400 `VALIDATION`.
