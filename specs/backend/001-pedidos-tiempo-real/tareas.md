@@ -38,16 +38,16 @@ Rama: `feature/backend-001-base` (D-136)
   - Verificación: `npx vitest run test/unit/env.test.ts` · `npm run typecheck` · `npm run lint` · `npx prettier --check .`
   - Estado: aprobada (2026-10-24, D-158)
 
-- [ ] **T3 — Postgres local en Docker (desarrollo y tests)** [APROBADO D-134: `docker compose up -d`]
+- [x] **T3 — Postgres local en Docker (desarrollo y tests)** [APROBADO D-134: `docker compose up -d`]
   - Qué: `docker-compose.yml` con `postgres:<mayor de Supabase>` (la mayor que usan los proyectos nuevos de Supabase, verificada en su documentación al ejecutar, porque el proyecto se crea en T41, D-133) publicado en el puerto **5433** del host, usuario/clave `postgres`/`postgres` solo locales (D-131), con health check y dos bases separadas: desarrollo (`restaurante_dev`, D-133) y tests (`restaurante_test`) — nombres propuestos. `.env.test.example` con `DATABASE_URL`/`DIRECT_URL` hacia la base de tests; `.env.example` suma un comentario con las URLs locales de desarrollo. Script `db:test:up`.
-  - Archivos: `backend/docker-compose.yml`, `backend/docker/init-databases.sql` (o equivalente para crear la segunda base; nombre propuesto), `backend/.env.test.example`, `backend/.env.example`, `backend/package.json` (script)
+  - Archivos: `backend/docker-compose.yml`, `backend/docker/init-databases.sql` (o equivalente para crear la segunda base; nombre propuesto), `backend/.env.test.example`, `backend/.env.example`, `backend/package.json` (script), `backend/.gitignore` (excepción `!.env.test.example`, D-159)
   - Requisitos: RNF9
-  - Decisiones: D-107, D-122, D-131, D-133, D-134
+  - Decisiones: D-107, D-122, D-131, D-133, D-134, D-144, D-159..D-163
   - Agente: `devops`
   - Depende de: T1
   - Criterios de aceptación: el contenedor queda sano; existen las dos bases; puerto 5433; el usuario crea `.env.test` desde el `.example` y un `.env` local apuntando a `restaurante_dev` [MANUAL].
   - Verificación: `npm run db:test:up` · `docker compose ps` (estado `healthy`) · `docker compose exec <servicio> psql -U postgres -c "select version();" -c "\l"` (mayor correcta, `restaurante_dev` y `restaurante_test` presentes)
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-24, D-163)
 
 - [ ] **T4 — Errores y dependencias inyectables**
   - Qué: `shared/errors.ts` (`AppError(code, status, message, details?)`, códigos de §13.3, helpers), `shared/clock.ts`, `shared/random.ts`.

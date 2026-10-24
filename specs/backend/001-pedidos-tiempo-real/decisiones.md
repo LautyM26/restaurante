@@ -142,3 +142,8 @@
 | D-156 | 4 | T2 · Variables opcionales vacías (`PORT=` etc.) | A) Vacía = ausente, se aplica el default (R) · B) Error | A | 2026-10-24 |
 | D-157 | 4 | T2 · Sugerencias menores del reviewer (S1, S2, S5, S7) | Selección múltiple | Solo S1: `defineConfig` + `globalIgnores` de `eslint/config`. S2, S5 y S7 quedan como están | 2026-10-24 |
 | D-158 | 4 | Aprobación de T2 + commit local | A) Aprobar + commit (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-24 |
+| D-159 | 4 | T3 · Excepción para commitear `.env.test.example` (el `.gitignore` raíz ignora `.env.*`) | A) `!.env.test.example` en `backend/.gitignore` (R) · B) En el `.gitignore` raíz | A | 2026-10-24 |
+| D-160 | 4 | T3 · `restart: unless-stopped` y `container_name` en docker-compose | A) Sacar los dos (R) · B) Mantenerlos · C) Solo sacar `restart` | A | 2026-10-24 |
+| D-161 | 4 | T3 · Puerto de Postgres local | A) `0.0.0.0` · B) Solo `127.0.0.1:5433` (R) | B | 2026-10-24 |
+| D-162 | 4 | T3 · Volumen nombrado `restaurante_pgdata` y versión `postgres:17` | A) Mantener ambos; 17 provisoria hasta compararla en T42 (R) · B) Sacar el volumen | A | 2026-10-24 |
+| D-163 | 4 | Aprobación de T3 + commit local | A) Aprobar + commit y seguir con T4 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-24 |
