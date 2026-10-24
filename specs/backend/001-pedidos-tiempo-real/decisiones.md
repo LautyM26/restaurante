@@ -137,3 +137,8 @@
 | D-151 | 4 | T1 · Opciones redundantes del tsconfig y `src/generated` en typecheck/lint | A) Dejarlas; ignorar `src/generated` en ESLint en T2 (R) · B) Simplificar ahora | A | 2026-10-24 |
 | D-152 | 4 | T1 · `target`/`lib` de TypeScript | A) ES2024, como Node 24 (R) · B) ES2023 | A | 2026-10-24 |
 | D-153 | 4 | Aprobación de T1 + commit local (sin push hasta cerrar el Bloque A) | A) Aprobar + commit (R) · B) Sin commit · C) Cambios | A | 2026-10-24 |
+| D-154 | 4 | T2 · B1 `.prettierignore` (no figura en T2; Prettier 3 ya lee `.gitignore`) | A) Borrarlo (R) · B) Mantenerlo | A | 2026-10-24 |
+| D-155 | 4 | T2 · Validación de `SUPABASE_URL` | A) URL solo `https` (R) · B) Texto no vacío · C) `z.url()` | A | 2026-10-24 |
+| D-156 | 4 | T2 · Variables opcionales vacías (`PORT=` etc.) | A) Vacía = ausente, se aplica el default (R) · B) Error | A | 2026-10-24 |
+| D-157 | 4 | T2 · Sugerencias menores del reviewer (S1, S2, S5, S7) | Selección múltiple | Solo S1: `defineConfig` + `globalIgnores` de `eslint/config`. S2, S5 y S7 quedan como están | 2026-10-24 |
+| D-158 | 4 | Aprobación de T2 + commit local | A) Aprobar + commit (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-24 |

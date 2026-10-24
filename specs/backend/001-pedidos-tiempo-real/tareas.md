@@ -27,16 +27,16 @@ Rama: `feature/backend-001-base` (D-136)
   - Verificación: `node -v` · `npm ls --depth=0` · `grep -E '"\^|"~' package.json` sin resultados · `npx tsc --version`
   - Estado: aprobada (2026-10-24, D-153)
 
-- [ ] **T2 — Configuración de herramientas y `src/env.ts`**
+- [x] **T2 — Configuración de herramientas y `src/env.ts`**
   - Qué: `eslint.config.js` (ignora `src/generated/`, D-151; `@eslint/js` recommended + `typescript-eslint` recommended + `eslint-config-prettier`, D-130), `.prettierrc` con la configuración por defecto de Prettier (D-130), `vitest.config.ts` (proyectos/carpetas `unit` e `integration`, alias `@/`), `tsdown.config.ts` con el bundle a `dist/server.js` (D-129; verificar la API en la documentación oficial de tsdown). `src/env.ts`: `parseEnv(process.env)` con Zod sobre las variables de §17.1 (obligatorias y defaults de D-123; `CORS_ORIGINS` separado por comas; `TRUST_PROXY` `false`/`true`/número). `.env.example` con el contenido de §17.1.
   - Archivos: `backend/eslint.config.js`, `backend/.prettierrc`, `backend/vitest.config.ts`, `backend/tsdown.config.ts`, `backend/src/env.ts`, `backend/.env.example`, `backend/test/unit/env.test.ts`
   - Requisitos: RNF3, RNF6
-  - Decisiones: D-016, D-017, D-066, D-103, D-105, D-123, D-129, D-130
+  - Decisiones: D-016, D-017, D-066, D-103, D-105, D-123, D-129, D-130, D-151, D-154..D-158
   - Agente: `dev-backend`
   - Depende de: T1
   - Criterios de aceptación: falta una obligatoria → error con el nombre de la variable y sin su valor; defaults `3000`/`info`/`false`/`10`; `TRUST_PROXY` acepta `false`, `true` y enteros; `.env.example` sin secretos.
   - Verificación: `npx vitest run test/unit/env.test.ts` · `npm run typecheck` · `npm run lint` · `npx prettier --check .`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-24, D-158)
 
 - [ ] **T3 — Postgres local en Docker (desarrollo y tests)** [APROBADO D-134: `docker compose up -d`]
   - Qué: `docker-compose.yml` con `postgres:<mayor de Supabase>` (la mayor que usan los proyectos nuevos de Supabase, verificada en su documentación al ejecutar, porque el proyecto se crea en T41, D-133) publicado en el puerto **5433** del host, usuario/clave `postgres`/`postgres` solo locales (D-131), con health check y dos bases separadas: desarrollo (`restaurante_dev`, D-133) y tests (`restaurante_test`) — nombres propuestos. `.env.test.example` con `DATABASE_URL`/`DIRECT_URL` hacia la base de tests; `.env.example` suma un comentario con las URLs locales de desarrollo. Script `db:test:up`.
