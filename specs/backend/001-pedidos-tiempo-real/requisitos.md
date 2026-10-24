@@ -1,7 +1,7 @@
 # Spec 001 — Pedidos en tiempo real · Requisitos
 
-**Estado:** APROBADO (2026-10-12) · **Versión:** 2
-**Historial:** v1 aprobada el 2026-10-11 (commit `f60b2d4`). La v2 alinea el contrato con la spec del front `001-menu-cliente` (D-038, D-042 a D-060; comparativa en `alineacion-front.md`).
+**Estado:** APROBADO (2026-10-24) · **Versión:** 2.1
+**Historial:** v2.1 ajusta R3.2, R3.4, R6 y RNF7 según el diseño (D-083, D-097, D-104, D-114, D-117, D-124); se aprueba junto con `diseno.md`. v2 aprobada el 2026-10-12 (commit `fd88198`). v1 aprobada el 2026-10-11 (commit `f60b2d4`). La v2 alinea el contrato con la spec del front `001-menu-cliente` (D-038, D-042 a D-060; comparativa en `alineacion-front.md`).
 
 ## Objetivo
 Backend del sistema de pedidos: el cliente, desde la mesa (QR), ve la carta, envía su pedido y sigue su estado en tiempo real; el personal del restaurante recibe los pedidos al instante y los hace avanzar. Esta spec define el comportamiento de la API REST y del canal WebSocket que consumen la vista del cliente (spec del front 001) y el panel de cocina y salón (spec del front 002). El contrato sigue `plan.md` §6–§7.4 del front (D-042 a D-055). El producto apunta a varios restaurantes (D-019, D-045).
@@ -65,9 +65,9 @@ Backend del sistema de pedidos: el cliente, desde la mesa (QR), ve la carta, env
 
 **Criterios de aceptación (EARS):**
 - R3.1 CUANDO se envía `POST /api/orders` con el header `Idempotency-Key` y un cuerpo `CreateOrderInput` válido (`restaurant`, `clientRequestId`, `tableId`, `items[{ lineId, dishId, quantity, selection, note? }]`, `note?`, `expectedTotalCents`), EL SISTEMA DEBERÁ registrar el pedido y responder 201 con el `Order` completo.
-- R3.2 EL SISTEMA DEBERÁ validar en este orden y detenerse en el primer rechazo: mesa (R3.3) → forma (R3.4) → líneas (R3.5) → precio (R3.7) (`plan.md` del front §7.3, regla 6).
+- R3.2 EL SISTEMA DEBERÁ validar primero `restaurant`, el header `Idempotency-Key` y `clientRequestId` (formato y coincidencia; si fallan, 400 `VALIDATION`). SI ese `clientRequestId` ya está registrado en el restaurante, ENTONCES EL SISTEMA DEBERÁ resolver según R3.10 y R3.11, sin aplicar las validaciones siguientes, aunque la carta o la mesa hayan cambiado. SI no está registrado, EL SISTEMA DEBERÁ validar en este orden y detenerse en el primer rechazo: mesa (R3.3) → forma (R3.4) → líneas (R3.5) → precio (R3.7) (`plan.md` del front §7.3, regla 6; D-083).
 - R3.3 SI la mesa no existe, está inactiva o es de otro restaurante, ENTONCES EL SISTEMA DEBERÁ responder 422 `INVALID_TABLE`.
-- R3.4 SI la forma es inválida (campos faltantes, ítems vacíos, más de 50 líneas, cantidad fuera de 1–20 en alguna línea, nota de línea de más de 140 caracteres visibles, nota general de más de 200, `Idempotency-Key` distinta del `clientRequestId`), ENTONCES EL SISTEMA DEBERÁ responder 400 `VALIDATION` indicando el campo, sin exponer detalles internos (D-054, D-051). Los caracteres visibles se cuentan como los cuenta el front: un emoji vale uno.
+- R3.4 SI la forma es inválida (campos faltantes, ítems vacíos, más de 50 líneas, cantidad fuera de 1–20 en alguna línea, nota de línea de más de 140 caracteres visibles, nota general de más de 200, `Idempotency-Key` distinta del `clientRequestId`, `lineId` repetido en el mismo pedido), ENTONCES EL SISTEMA DEBERÁ responder 400 `VALIDATION` indicando el campo, sin exponer detalles internos (D-054, D-051, D-114). Los caracteres visibles se cuentan como los cuenta el front: un emoji vale uno.
 - R3.5 SI alguna línea refiere a un plato inexistente o no disponible, a una opción inexistente o no disponible, o tiene una selección que no respeta el mínimo o el máximo de un grupo, ENTONCES EL SISTEMA DEBERÁ responder 422 `LINES_REJECTED` con `details.lines[]` (`lineId`, `dishId`, `reason` y, si aplica, `groupId`/`optionId`) y no registrar nada. Valores de `reason`: `dish_not_found`, `dish_unavailable`, `option_not_found`, `option_unavailable`, `selection_invalid`.
 - R3.6 EL SISTEMA DEBERÁ calcular el importe de cada línea como (precio base del plato + adicionales de las opciones elegidas) × cantidad, y el total como la suma de las líneas, usando solo precios guardados en el sistema, en centavos enteros (D-053).
 - R3.7 SI el total calculado difiere de `expectedTotalCents`, ENTONCES EL SISTEMA DEBERÁ responder 409 `PRICE_CHANGED` con `details.totalCents` y `details.priceLines[{ lineId, unitPriceCents }]`, y no registrar nada (D-049).
@@ -116,7 +116,7 @@ Backend del sistema de pedidos: el cliente, desde la mesa (QR), ve la carta, env
 - R6.2 SI el pedido no está en `pending`, ENTONCES EL SISTEMA DEBERÁ responder 409 `INVALID_TRANSITION` con el estado actual y no modificarlo.
 - R6.3 SI el pedido no existe o el `clientRequestId` no coincide con el del pedido, ENTONCES EL SISTEMA DEBERÁ responder 404 `NOT_FOUND` sin revelar su existencia.
 - R6.4 EL SISTEMA DEBERÁ permitir la cancelación por el cliente sin iniciar sesión.
-- (La ruta exacta se define en el diseño; no existe en el contrato actual del front y hay que acordarla con el compañero.)
+- La ruta es `POST /api/orders/{id}/cancel` con `{ clientRequestId }` (D-097); hay que acordarla con el compañero porque no existe en el contrato actual del front.
 
 ### R7 — Eventos de pedidos
 **Historia:** Como cocina, quiero ver los pedidos nuevos y cada cambio; como cliente, quiero ver el estado de mi pedido sin recargar.
@@ -182,7 +182,7 @@ Backend del sistema de pedidos: el cliente, desde la mesa (QR), ve la carta, env
 | RNF4 | Escala inicial | Un servidor, hasta 10 restaurantes y 50 pedidos activos por local al mismo tiempo, cumpliendo RNF1 y RNF2 (D-033) |
 | RNF5 | Integridad | Ningún pedido con líneas incompletas ni con un total distinto de la suma de sus líneas; ningún pedido duplicado por reintento (verificable con pruebas) |
 | RNF6 | Seguridad | Toda entrada externa (REST y mensajes WebSocket) se valida con Zod (D-016). Los errores no exponen detalles internos ni credenciales |
-| RNF7 | Seguridad | Límite por IP: 120 por minuto en `GET /api/menu` y 20 por minuto en `POST /api/orders` (D-032) |
+| RNF7 | Seguridad | Límite por IP: 120 por minuto en `GET /api/menu`, 20 por minuto en `POST /api/orders` y 20 por minuto en `POST /api/orders/{id}/cancel`, con contador propio (D-032, D-104, D-117) |
 | RNF8 | Privacidad | No se guardan datos personales del cliente. Los pedidos se conservan indefinidamente (D-034). Las notas son texto libre del cliente. Las credenciales nunca se registran en logs |
 | RNF9 | Calidad | Cada criterio R#.# tiene al menos una prueba automática (Vitest + Supertest; WebSocket con un cliente `ws` de prueba) (D-016) |
 | RNF10 | Contrato | Todo en inglés (D-043): JSON en camelCase, importes en centavos enteros, fechas ISO 8601 UTC. Errores con la forma `{ code, message, details? }` y los códigos de `ServiceErrorCode` del front. Los tipos coinciden con `plan.md` del front §6–§7.4 |
@@ -221,3 +221,4 @@ Backend del sistema de pedidos: el cliente, desde la mesa (QR), ve la carta, env
 ## Aprobación
 - [x] v1 aprobada por el usuario · Fecha: 2026-10-11
 - [x] v2 aprobada por el usuario · Fecha: 2026-10-12 (incluye S1–S11 e I1–I4)
+- [x] v2.1 aprobada por el usuario junto con `diseno.md` v1.1 · Fecha: 2026-10-24 (D-127)

@@ -96,3 +96,19 @@
 | D-110 | 2 | Tanda 14 (DS-52 y DS-53) · Personal en el seed y versiones | A) Aceptar ambas (R) · B) Una por una | A: DS-52 usuario creado a mano en Supabase Auth, vinculado con `SEED_STAFF_USER_ID` · DS-53 versiones exactas (`save-exact`) + `package-lock.json` commiteado | 2026-10-23 |
 | D-111 | 2 | Siguiente paso tras cerrar DS-1 a DS-53 | A) Redactar `diseno.md` (R) · B) Coordinar primero con el compañero · C) Ambas en paralelo | A | 2026-10-23 |
 | D-112 | 2 | Commit y push de las decisiones de diseño | A) Commit + push a `chore/backend-specs` (R) · B) Solo commit local · C) Todavía no | A | 2026-10-23 |
+| D-113 | 2 | P1 · Formato de `lineId` (el del front supera los 64 caracteres de D-078) | A) Front manda UUID · B) Texto no vacío ≤ 4096 (R) · C) Sin tope propio | B: texto no vacío de hasta 4096 caracteres (ajusta D-078 para `lineId`) | 2026-10-23 |
+| D-114 | 2 | P2 · `lineId` repetido en un pedido | A) 400 `VALIDATION` (R) · B) Aceptarlo | A (se suma a R3.4 en requisitos v2.1) | 2026-10-23 |
+| D-115 | 2 | P3 · `tableId` ausente o no entero en el POST | A) 422 `INVALID_TABLE` (R) · B) 400 `VALIDATION` | A | 2026-10-23 |
+| D-116 | 2 | P4 · Significado de `dish_unavailable` | A) Igual que el front: plato no pedible, solo ese motivo (R) · B) Solo `available=false` + problemas de opciones | A | 2026-10-23 |
+| D-117 | 2 | P5 · Contador del rate limit de la cancelación | A) Contador propio (R) · B) Compartido con `POST /api/orders` | A | 2026-10-23 |
+| D-118 | 2 | P6 · Límite de tamaño del cuerpo JSON | A) 100 KB (R) · B) 32 KB · C) 1 MB | A | 2026-10-23 |
+| D-119 | 2 | P7 · "Plato fantasma" (CL36) en el seed | A) Omitirlo (R) · B) Quitar la FK plato→categoría | A | 2026-10-23 |
+| D-120 | 2 | P8 · Restricciones `CHECK` en la base | A) SQL en las migraciones (R) · B) No agregarlas | A | 2026-10-23 |
+| D-121 | 2 | P9 · Pertenencia del plato al restaurante | A) Por su categoría, sin columna propia (R) · B) `restaurantId` en `Dish` + FK compuesta | A | 2026-10-23 |
+| D-122 | 2 | P10 · Archivo de entorno de los tests | A) `.env.test` fuera de git + `.env.test.example` (R) · B) Commitear `.env.test` | A | 2026-10-23 |
+| D-123 | 2 | P11 · Defaults de `PORT`, `LOG_LEVEL`, `TRUST_PROXY`, `DB_POOL_MAX` | A) 3000 / `info` / `false` / 10 (R) · B) Todas obligatorias | A | 2026-10-23 |
+| D-124 | 2 | Aplicar requisitos v2.1 (R3.2 por D-083, RNF7 por D-104/D-117, R6 por D-097, R3.4 por D-114) | A) Aplicarlos (R) · B) Ver el texto antes | A: requisitos v2.1 EN REVISIÓN; se aprueba junto con diseno.md | 2026-10-23 |
+| D-125 | 2 | P12 · ¿`Option.priceDeltaCents` puede ser negativo? (para el `CHECK` de D-120) | A) `CHECK (priceDeltaCents >= 0)` (R) · B) Sin restricción de signo | A | 2026-10-23 |
+| D-126 | 2 | ¿El compañero (front) confirma los puntos F1–F16 de `diseno.md` §19? | A) Sí, de acuerdo · B) Sí, con cambios · C) Todavía no | A: confirmados tal cual (informado por el usuario) | 2026-10-24 |
+| D-127 | 2 | Aprobación de requisitos v2.1 y diseño v1.1 | A) Aprobar ahora (R) · B) Esperar al compañero · C) Hay cambios | A: ambos APROBADOS | 2026-10-24 |
+| D-128 | 3 | Commit + push de los documentos aprobados y arranque de la Fase 3 | A) Commit + push y arrancar (R) · B) Solo commit · C) Más tarde | A | 2026-10-24 |
