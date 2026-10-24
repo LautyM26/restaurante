@@ -130,3 +130,10 @@
 | D-144 | 3 | Nombres propuestos de ramas por bloque y bases de Docker | A) Aceptar (R) · B) Cambiar | A: `feature/backend-001-{base,data,domain,http,public-reads,staff-auth,orders,realtime,closing}`; `restaurante_dev` / `restaurante_test` | 2026-10-24 |
 | D-145 | 3 | Aprobación de tareas.md v1.2 y diseño §23 (v1.2) | A) Aprobar ambos (R) · B) Cambios · C) Revisar primero | A: ambos APROBADOS | 2026-10-24 |
 | D-146 | 4 | Commit/push, cómo llevar las specs a develop y arranque de la Fase 4 | A) Commit + push; merge del PR en GitHub; arrancar T1 (R) · B) Merge local · C) Rama desde chore/backend-specs | A | 2026-10-24 |
+| D-147 | 4 | T1 · Versión de TypeScript (la 7.0.2 no es compatible con `typescript-eslint` 8.72, que pide < 6.1) | A) TypeScript 6.0.3 (R) · B) TS 7 + `--legacy-peer-deps` · C) TS 7 sin `typescript-eslint` | A | 2026-10-24 |
+| D-148 | 4 | T1 · Versión de `@types/node` | A) 24.19.2, igual que el runtime (R) · B) 26.6.5 | A | 2026-10-24 |
+| D-149 | 4 | T1 · Confirmación del `npm install` con versiones exactas (Prisma 7.10.1 estable, no la 8.0.0-rc de `latest`, por D-063) | A) Instalar · B) No todavía | A | 2026-10-24 |
+| D-150 | 4 | T1 · Scripts de instalación bloqueados por npm 11 (prisma, @prisma/engines, esbuild) | A) No aprobarlos; aprobar solo si algo falla (R) · B) Aprobar los tres | A (las 4 herramientas funcionan sin ellos) | 2026-10-24 |
+| D-151 | 4 | T1 · Opciones redundantes del tsconfig y `src/generated` en typecheck/lint | A) Dejarlas; ignorar `src/generated` en ESLint en T2 (R) · B) Simplificar ahora | A | 2026-10-24 |
+| D-152 | 4 | T1 · `target`/`lib` de TypeScript | A) ES2024, como Node 24 (R) · B) ES2023 | A | 2026-10-24 |
+| D-153 | 4 | Aprobación de T1 + commit local (sin push hasta cerrar el Bloque A) | A) Aprobar + commit (R) · B) Sin commit · C) Cambios | A | 2026-10-24 |

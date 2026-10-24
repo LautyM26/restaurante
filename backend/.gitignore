@@ -1,0 +1,5 @@
+.env
+.env.test
+dist/
+src/generated/
+node_modules/

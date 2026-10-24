@@ -16,19 +16,19 @@
 ## Bloque A — Base del proyecto
 Rama: `feature/backend-001-base` (D-136)
 
-- [ ] **T1 — Esqueleto de `backend/` e instalación de dependencias** [CONFIRMACIÓN: `npm install`]
+- [x] **T1 — Esqueleto de `backend/` e instalación de dependencias** [CONFIRMACIÓN: `npm install`]
   - Qué: `package.json` (`"type": "module"`, `engines.node` 24, scripts de §3 más `db:generate` = `prisma generate`, D-132), `.npmrc` con `save-exact=true`, `tsconfig.json` (`strict`, `moduleResolution: "bundler"`, alias `@/*` → `./src/*`), `.gitignore` (`.env`, `.env.test`, `dist/`, `src/generated/`, `node_modules/`). Instalar las dependencias de producción y desarrollo de §3 en su última versión estable (verificada en npm al ejecutar), exactas, con `package-lock.json`. Bundle: `tsdown` (D-129). Lint/formato: `eslint`, `@eslint/js`, `typescript-eslint`, `eslint-config-prettier`, `prettier` (D-130).
   - Archivos: `backend/package.json`, `backend/package-lock.json`, `backend/.npmrc`, `backend/tsconfig.json`, `backend/.gitignore`
   - Requisitos: RNF9, RNF10 (base técnica)
-  - Decisiones: D-008, D-016, D-063, D-064, D-065, D-066, D-103, D-110, D-122, D-129, D-130, D-132
+  - Decisiones: D-008, D-016, D-063, D-064, D-065, D-066, D-103, D-110, D-122, D-129, D-130, D-132, D-147..D-153
   - Agente: `dev-backend`
   - Depende de: —
   - Criterios de aceptación: todas las dependencias de §3 instaladas sin `^`/`~`, con `tsdown` como bundler y los paquetes de D-130; ninguna otra dependencia; `node -v` es 24.x (si no, el usuario lo instala [MANUAL]); `.gitignore` cubre lo indicado.
   - Verificación: `node -v` · `npm ls --depth=0` · `grep -E '"\^|"~' package.json` sin resultados · `npx tsc --version`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-24, D-153)
 
 - [ ] **T2 — Configuración de herramientas y `src/env.ts`**
-  - Qué: `eslint.config.js` (`@eslint/js` recommended + `typescript-eslint` recommended + `eslint-config-prettier`, D-130), `.prettierrc` con la configuración por defecto de Prettier (D-130), `vitest.config.ts` (proyectos/carpetas `unit` e `integration`, alias `@/`), `tsdown.config.ts` con el bundle a `dist/server.js` (D-129; verificar la API en la documentación oficial de tsdown). `src/env.ts`: `parseEnv(process.env)` con Zod sobre las variables de §17.1 (obligatorias y defaults de D-123; `CORS_ORIGINS` separado por comas; `TRUST_PROXY` `false`/`true`/número). `.env.example` con el contenido de §17.1.
+  - Qué: `eslint.config.js` (ignora `src/generated/`, D-151; `@eslint/js` recommended + `typescript-eslint` recommended + `eslint-config-prettier`, D-130), `.prettierrc` con la configuración por defecto de Prettier (D-130), `vitest.config.ts` (proyectos/carpetas `unit` e `integration`, alias `@/`), `tsdown.config.ts` con el bundle a `dist/server.js` (D-129; verificar la API en la documentación oficial de tsdown). `src/env.ts`: `parseEnv(process.env)` con Zod sobre las variables de §17.1 (obligatorias y defaults de D-123; `CORS_ORIGINS` separado por comas; `TRUST_PROXY` `false`/`true`/número). `.env.example` con el contenido de §17.1.
   - Archivos: `backend/eslint.config.js`, `backend/.prettierrc`, `backend/vitest.config.ts`, `backend/tsdown.config.ts`, `backend/src/env.ts`, `backend/.env.example`, `backend/test/unit/env.test.ts`
   - Requisitos: RNF3, RNF6
   - Decisiones: D-016, D-017, D-066, D-103, D-105, D-123, D-129, D-130
