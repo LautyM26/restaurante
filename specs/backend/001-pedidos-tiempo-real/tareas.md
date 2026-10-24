@@ -60,16 +60,16 @@ Rama: `feature/backend-001-base` (D-136)
   - Verificación: `npx vitest run test/unit/errors.test.ts` · `npm run typecheck` · `npm run lint`
   - Estado: aprobada (2026-10-24, D-168)
 
-- [ ] **T5 — Logger con redacción**
+- [x] **T5 — Logger con redacción**
   - Qué: `shared/logger.ts`: `pino` con `LOG_LEVEL`, `redact` de `req.headers.authorization`, `req.headers.cookie`, `res.headers["set-cookie"]`, y serializador de URL que reemplaza `accessToken` por `[REDACTED]`.
   - Archivos: `backend/src/shared/logger.ts`, `backend/test/unit/logger.test.ts`
   - Requisitos: RNF8
-  - Decisiones: D-091, D-103
+  - Decisiones: D-091, D-103, D-169..D-174
   - Agente: `dev-backend`
   - Depende de: T2
   - Criterios de aceptación: la salida capturada no contiene el valor de `authorization`, `cookie` ni `accessToken` (también con el parámetro en distintas posiciones de la query).
   - Verificación: `npx vitest run test/unit/logger.test.ts`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-24, D-174)
 
 ## Bloque B — Datos y CI
 Rama: `feature/backend-001-data` (D-136) · incluye T44 (CI, D-137)

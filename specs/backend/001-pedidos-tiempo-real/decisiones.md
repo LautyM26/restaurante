@@ -152,3 +152,9 @@
 | D-166 | 4 | T4 · Simplificaciones menores | Selección múltiple | `systemRandom = Math.random` · sacar `ValidationIssue` hasta T16 | 2026-10-24 |
 | D-167 | 4 | Errata en `diseno.md` §13: ejemplo `AppError('VALIDATION', 400, { issues })` sin `message` | A) Corregir como errata v1.2.1 (R) · B) Dejarlo | A | 2026-10-24 |
 | D-168 | 4 | Aprobación de T4 + commit local (incluye la errata de diseno.md) | A) Aprobar + commit y seguir con T5 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-24 |
+| D-169 | 4 | T5 · Fuga 1: `accessToken` con el nombre percent-encoded no se tapaba | A) Decodificar cada nombre como URLSearchParams y tapar el valor (R) · B) Reconstruir con URLSearchParams | A | 2026-10-24 |
+| D-170 | 4 | T5 · Fuga 2: pino-http pisa el serializador `req` y registra `query.accessToken` | A) Exportar serializador para el `req` de pino-http (tapa `url` y `query.accessToken`), probado con pino-http real (R) · B) Path en `redact` · C) Dejarlo para T17 | A | 2026-10-24 |
+| D-171 | 4 | T5 · `req` sin `url` rompe el log | A) Protegerlo (R) · B) Dejarlo | A | 2026-10-24 |
+| D-172 | 4 | T5 · Tipo de `level` y parámetro `destination` | A) `Env["LOG_LEVEL"]` + mantener `destination` opcional (R) · B) `string` · C) Sacar `destination` | A | 2026-10-24 |
+| D-173 | 4 | T5 · Mejoras al test de pino-http | Selección múltiple | Assert de `query.accessToken` sin condicional + `remotePort` definido; la espera fija de 20 ms queda como está | 2026-10-24 |
+| D-174 | 4 | Aprobación de T5 y cierre del Bloque A | A) Commit + push + PR a develop, sin mergear (R) · B) A + mergear · C) Solo commit | A | 2026-10-24 |
