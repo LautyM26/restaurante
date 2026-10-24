@@ -1,7 +1,7 @@
 # Spec backend/001 — Pedidos en tiempo real · Diseño
 
-**Estado:** APROBADO (2026-10-24) · **Versión:** 1.1 · **Fecha:** 2026-10-23
-**Historial:** v1.1 resuelve los pendientes P1–P11 (D-113..D-123) y pasa a requisitos v2.1 (D-124). v1 BORRADOR del 2026-10-23.
+**Estado:** APROBADO (2026-10-24, v1.2 con §23 por D-145) · **Versión:** 1.2 · **Fecha:** 2026-10-24
+**Historial:** v1.2 (2026-10-24) agrega solo §23 Integración continua (D-137) y suma D-128..D-137 a §2; el resto es la v1.1 APROBADA sin cambios. §23 se aprueba por separado. v1.1 (APROBADO 2026-10-24, D-127) resuelve los pendientes P1–P11 (D-113..D-123) y pasa a requisitos v2.1 (D-124). v1 BORRADOR del 2026-10-23.
 **Basado en:** requisitos v2.1 (APROBADO 2026-10-24, D-124, D-127) · constitución v2 · `plan.md` del front §6–§7.4 (rama `develop`) · decisiones D-042..D-127 (`decisiones.md`) · detalle de opciones en `opciones-diseno.md`.
 
 > Cada elección cita su decisión. Los huecos detectados en la v1 (P1–P11) ya están resueltos (§20). Lo que cambia o extiende el contrato del front está en §19.
@@ -79,6 +79,18 @@ Decisiones de requisitos que este diseño implementa sin reabrir: D-042..D-060 (
 | D-123 | Defaults de env (P11) | `PORT` 3000 · `LOG_LEVEL` info · `TRUST_PROXY` false · `DB_POOL_MAX` 10 | §17.1 |
 | D-124 | Requisitos v2.1 | Aplicados (R3.2, R3.4, R6, RNF7); se aprueban junto con este diseño | Todo el documento |
 | D-125 | Signo de `priceDeltaCents` | `CHECK ("priceDeltaCents" >= 0)`; sin adicionales con descuento | §5.4 |
+| D-126 | Confirmación del front (F1–F16) | Confirmados tal cual | §19 |
+| D-127 | Aprobación de requisitos v2.1 y diseño v1.1 | Ambos APROBADOS | Todo el documento |
+| D-128 | Commit + push de lo aprobado y arranque de la Fase 3 | Commit + push y arrancar | — |
+| D-129 | Herramienta de bundle (abierta en D-066) | tsdown | §3 |
+| D-130 | ESLint y Prettier | `@eslint/js` + `typescript-eslint` recommended + `eslint-config-prettier`; Prettier por defecto | §3 |
+| D-131 | Postgres de Docker | `postgres:<mayor de Supabase>` en el puerto 5433, `postgres`/`postgres` solo locales | §18.2, §23 |
+| D-132 | `prisma generate` | Script `db:generate` + README | §3, §23 |
+| D-133 | Base de desarrollo y momento de crear Supabase | Docker (base de desarrollo separada de la de tests); Supabase al final (T41–T42 de `tareas.md`) | §17, §18.2 |
+| D-134 | Confirmación de acciones locales | `docker compose up` y `npm test` sobre Docker local aprobados una vez; Supabase, `npm install`, commits y push siempre con confirmación | — (proceso) |
+| D-135 | Pruebas no funcionales | N=100 + carta de 200 platos + escenario de 10 restaurantes × 50 pedidos activos | §18.3 |
+| D-136 | Ramas, commits y PRs | Rama por bloque `feature/backend-001-<bloque>`, commit por tarea, PR a `develop` por bloque | — (git) |
+| D-137 | Integración continua | GitHub Actions: lint, typecheck y tests con Postgres como servicio | §23 |
 
 ---
 
@@ -729,6 +741,26 @@ Sin pendientes. Los huecos P1–P11 de la v1 quedaron resueltos por el usuario c
 | RNF10 | §5.2, §6, §13.3 | `domain/types.ts`, mappers |
 | RNF11 | §6.6 (`since` sobre `updatedAt`), §11 | `list-orders.service.ts` |
 
+## 23. Integración continua (D-137)
+Motivo: `docs/estandares/git.md` (adoptado tal cual, D-014) exige CI en verde para mergear; la v1.1 no tenía CI.
+
+### 23.1 Qué queda definido
+- **Plataforma:** GitHub Actions (D-137). Un workflow en `.github/workflows/` en la raíz del repo (GitHub solo los lee ahí), con los pasos ejecutándose en `backend/` (`defaults.run.working-directory: backend`).
+- **Runtime:** Node 24 (D-064) con `actions/setup-node`.
+- **Base de datos:** Postgres como servicio del job, con la misma imagen que la BD de tests local, `postgres:<mayor de Supabase>` (D-131), y un health check antes de los tests.
+- **Pasos:** checkout → setup de Node 24 → `npm ci` → `npm run db:generate` (D-132; Prisma 7 no genera el cliente solo) → `npm run lint` → `npm run typecheck` → `npm test` (el `global-setup` aplica `prisma migrate deploy` y limpia la base del servicio, §18.2).
+- **Entorno:** las variables de los tests (`DATABASE_URL` y `DIRECT_URL` hacia el servicio; el resto con valores de prueba) se definen en el workflow. El script `test` usa `--env-file-if-exists=.env.test`, así que en CI no hace falta `.env.test`. **Sin secretos**: el CI nunca se conecta a Supabase (los tests usan un verificador JWT con claves propias, §18.2).
+- Las versiones de las actions (`actions/checkout`, `actions/setup-node`) se toman de su documentación oficial al implementar.
+
+### 23.2 Detalles decididos (C1–C6)
+- **Archivo:** `.github/workflows/backend-ci.yml` (D-143).
+- **Disparadores:** `pull_request` a `develop` y `main`, y `push` a `develop`, filtrados con `paths` a `backend/**` y al propio workflow (D-138).
+- **Bloqueo del merge:** el check es informativo, sin protección de ramas; la regla "no mergear en rojo" la aplica la revisión del PR. Se revisa con el compañero más adelante (D-139).
+- **Cache:** `actions/setup-node` con `cache: npm` y `cache-dependency-path: backend/package-lock.json` (D-140).
+- **Matriz:** sin matriz; solo Node 24 y `postgres:<mayor de Supabase>` (D-141).
+- **Pasos extra:** `npx prettier --check .` y `npm run build`, además de lint, typecheck y test (D-142). El build se suma cuando existe `src/server.ts` (T36).
+
 ## Aprobación
 - [x] Aprobado por el usuario · Fecha: 2026-10-24 (D-127)
 - [x] Requisitos v2.1 (D-083, D-097, D-104, D-114, D-117, D-124) aprobados junto con este diseño · Fecha: 2026-10-24
+- [x] v1.2: §23 Integración continua (D-137, D-138..D-143) aprobada por el usuario · Fecha: 2026-10-24 (D-145)

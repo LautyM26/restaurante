@@ -112,3 +112,21 @@
 | D-126 | 2 | ¿El compañero (front) confirma los puntos F1–F16 de `diseno.md` §19? | A) Sí, de acuerdo · B) Sí, con cambios · C) Todavía no | A: confirmados tal cual (informado por el usuario) | 2026-10-24 |
 | D-127 | 2 | Aprobación de requisitos v2.1 y diseño v1.1 | A) Aprobar ahora (R) · B) Esperar al compañero · C) Hay cambios | A: ambos APROBADOS | 2026-10-24 |
 | D-128 | 3 | Commit + push de los documentos aprobados y arranque de la Fase 3 | A) Commit + push y arrancar (R) · B) Solo commit · C) Más tarde | A | 2026-10-24 |
+| D-129 | 3 | Q1 · Herramienta de bundle (abierta en D-066) | A) tsdown (R) · B) esbuild | A | 2026-10-24 |
+| D-130 | 3 | Q2 · ESLint y Prettier | A) `@eslint/js` + `typescript-eslint` recommended + `eslint-config-prettier`, Prettier por defecto (R) · B) A con `strictTypeChecked` | A | 2026-10-24 |
+| D-131 | 3 | Q4 · Postgres de Docker | A) `postgres:<mayor de Supabase>` en el puerto 5433, `postgres`/`postgres` solo locales (R) · B) Puerto 5432 | A | 2026-10-24 |
+| D-132 | 3 | Q5 · `prisma generate` (Prisma 7 no lo corre solo) | A) Script `db:generate` + README (R) · B) `postinstall` · C) A mano | A | 2026-10-24 |
+| D-133 | 3 | Q3 · Base de desarrollo y momento de crear Supabase | A) Docker (base `dev` separada de la de tests); Supabase en T41–T42 (R) · B) Supabase desde antes de T7 | A | 2026-10-24 |
+| D-134 | 3 | Q6 · Confirmación de `docker compose up` y `npm test` sobre la BD de Docker | A) Aprobados una vez al aprobar tareas.md, solo BD local de Docker (R) · B) Confirmar cada corrida | A: vale solo para Docker local; Supabase, `npm install`, commits y push se siguen confirmando siempre | 2026-10-24 |
+| D-135 | 3 | Q7 · Alcance de las pruebas no funcionales (T39) | A) N=100 + carta de 200 platos, RNF4 sin prueba · B) A + escenario 10 restaurantes × 50 pedidos activos (R) | B | 2026-10-24 |
+| D-136 | 3 | Q8 · Ramas, commits y PRs | A) Una rama + un PR · B) Rama por bloque `feature/backend-001-<bloque>`, commit por tarea, PR a develop por bloque (R) · C) Rama y PR por tarea | B | 2026-10-24 |
+| D-137 | 3 | Q9 · CI (git.md exige CI en verde; el diseño no lo tenía) | A) Sin CI en esta spec · B) GitHub Actions: lint, typecheck y tests con Postgres como servicio (R) | B: diseño pasa a v1.2 con sección de CI (se aprueba solo ese agregado) + tarea nueva | 2026-10-24 |
+| D-138 | 3 | C1 · Disparadores del CI | A) `pull_request` a develop/main + `push` a develop, filtrado a `backend/**` y el workflow (R) · B) Todo push y PR · C) Solo `pull_request` | A | 2026-10-24 |
+| D-139 | 3 | C2 · ¿El CI bloquea el merge? | A) Protección de ramas exigiendo el check · B) Informativo; la regla la aplica la revisión (R) | B (se revisa con el compañero más adelante) | 2026-10-24 |
+| D-140 | 3 | C3 · Cache de npm en el CI | A) `setup-node` con `cache: npm` sobre `backend/package-lock.json` (R) · B) Sin cache | A | 2026-10-24 |
+| D-141 | 3 | C4 · Matriz del CI | A) Solo Node 24 + Postgres de la mayor de Supabase (R) · B) Node 24 y 26 | A | 2026-10-24 |
+| D-142 | 3 | C5 · Pasos extra del CI | A) Ninguno · B) + `npm run build` · C) + build + `npx prettier --check .` (R) | C | 2026-10-24 |
+| D-143 | 3 | C6 · Nombre del workflow | A) `.github/workflows/backend-ci.yml` (R) · B) `ci.yml` | A | 2026-10-24 |
+| D-144 | 3 | Nombres propuestos de ramas por bloque y bases de Docker | A) Aceptar (R) · B) Cambiar | A: `feature/backend-001-{base,data,domain,http,public-reads,staff-auth,orders,realtime,closing}`; `restaurante_dev` / `restaurante_test` | 2026-10-24 |
+| D-145 | 3 | Aprobación de tareas.md v1.2 y diseño §23 (v1.2) | A) Aprobar ambos (R) · B) Cambios · C) Revisar primero | A: ambos APROBADOS | 2026-10-24 |
+| D-146 | 4 | Commit/push, cómo llevar las specs a develop y arranque de la Fase 4 | A) Commit + push; merge del PR en GitHub; arrancar T1 (R) · B) Merge local · C) Rama desde chore/backend-specs | A | 2026-10-24 |
