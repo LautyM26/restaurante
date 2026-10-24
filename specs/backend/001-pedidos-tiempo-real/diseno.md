@@ -1,7 +1,7 @@
 # Spec backend/001 — Pedidos en tiempo real · Diseño
 
-**Estado:** APROBADO (2026-10-24, v1.2 con §23 por D-145) · **Versión:** 1.2.1 · **Fecha:** 2026-10-24
-**Historial:** v1.2.1 (2026-10-24): errata en §13.1, el ejemplo de `AppError` no tenía `message` (D-167); sin cambios de decisiones. v1.2 (2026-10-24) agrega solo §23 Integración continua (D-137) y suma D-128..D-137 a §2; el resto es la v1.1 APROBADA sin cambios. §23 se aprueba por separado. v1.1 (APROBADO 2026-10-24, D-127) resuelve los pendientes P1–P11 (D-113..D-123) y pasa a requisitos v2.1 (D-124). v1 BORRADOR del 2026-10-23.
+**Estado:** APROBADO (2026-10-24, v1.2 con §23 por D-145) · **Versión:** 1.2.2 · **Fecha:** 2026-10-24
+**Historial:** v1.2.2 (2026-10-24): errata en §5.1, los enums pasan a un valor por línea porque Prisma 7 no acepta la forma en una línea (D-176); mismos valores. v1.2.1 (2026-10-24): errata en §13.1, el ejemplo de `AppError` no tenía `message` (D-167); sin cambios de decisiones. v1.2 (2026-10-24) agrega solo §23 Integración continua (D-137) y suma D-128..D-137 a §2; el resto es la v1.1 APROBADA sin cambios. §23 se aprueba por separado. v1.1 (APROBADO 2026-10-24, D-127) resuelve los pendientes P1–P11 (D-113..D-123) y pasa a requisitos v2.1 (D-124). v1 BORRADOR del 2026-10-23.
 **Basado en:** requisitos v2.1 (APROBADO 2026-10-24, D-124, D-127) · constitución v2 · `plan.md` del front §6–§7.4 (rama `develop`) · decisiones D-042..D-127 (`decisiones.md`) · detalle de opciones en `opciones-diseno.md`.
 
 > Cada elección cita su decisión. Los huecos detectados en la v1 (P1–P11) ya están resueltos (§20). Lo que cambia o extiende el contrato del front está en §19.
@@ -186,10 +186,32 @@ Mismos nombres y casos que el front (§6 del plan), implementados en el back:
 Convenciones: ids `String @id @default(uuid(4)) @db.Uuid` (D-071); fechas `DateTime @db.Timestamptz(3)` asignadas por la app con el reloj inyectado, sin `@default(now())` ni `@updatedAt` (D-077); textos ES/EN en dos columnas (D-072); `position Int` interno para ordenar (D-073; en categorías y platos se expone como `order`).
 
 ```prisma
-enum OrderStatus     { pending accepted preparing ready delivered cancelled }
-enum OptionGroupType { single multiple }
-enum CategoryVisual  { starter main grill pasta dessert drink }
-enum DietaryTag      { vegetarian vegan gluten_free spicy }
+enum OrderStatus {
+  pending
+  accepted
+  preparing
+  ready
+  delivered
+  cancelled
+}
+enum OptionGroupType {
+  single
+  multiple
+}
+enum CategoryVisual {
+  starter
+  main
+  grill
+  pasta
+  dessert
+  drink
+}
+enum DietaryTag {
+  vegetarian
+  vegan
+  gluten_free
+  spicy
+}
 
 model Restaurant {
   id         String        @id @default(uuid(4)) @db.Uuid

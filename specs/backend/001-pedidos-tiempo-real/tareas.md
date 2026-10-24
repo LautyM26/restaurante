@@ -74,16 +74,16 @@ Rama: `feature/backend-001-base` (D-136)
 ## Bloque B — Datos y CI
 Rama: `feature/backend-001-data` (D-136) · incluye T44 (CI, D-137)
 
-- [ ] **T6 — Esquema Prisma, `prisma.config.ts` y cliente**
+- [x] **T6 — Esquema Prisma, `prisma.config.ts` y cliente**
   - Qué: `schema.prisma` exactamente como §5.1 (enums, 11 modelos, índices, generador `prisma-client` con `output` en `src/generated/prisma`); `prisma.config.ts` (§3: `process.loadEnvFile()`, `schema`, `migrations.path`, `migrations.seed`, `datasource.url = env("DIRECT_URL")`); `shared/db.ts` con `createPrismaClient(DATABASE_URL, DB_POOL_MAX)` sobre `@prisma/adapter-pg`. Verificar las APIs en la documentación oficial de Prisma 7.
   - Archivos: `backend/prisma/schema.prisma`, `backend/prisma.config.ts`, `backend/src/shared/db.ts`
   - Requisitos: R3.8, R11.1, RNF3, RNF8
-  - Decisiones: D-063, D-071..D-081, D-087, D-105, D-113, D-121, D-132
+  - Decisiones: D-063, D-071..D-081, D-087, D-105, D-113, D-121, D-132, D-176..D-178
   - Agente: `dev-database`
   - Depende de: T2
   - Criterios de aceptación: el esquema coincide con §5.1 campo por campo; sin `@default(now())` ni `@updatedAt`; `Dish` sin `restaurantId`.
   - Verificación: `npx prisma validate` · `npm run db:generate` (D-132) · `npm run typecheck`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-24, D-178)
 
 - [ ] **T7 — Migración inicial con RLS y CHECK** [CONFIRMACIÓN: crear y aplicar la migración en `restaurante_dev`]
   - Qué: `prisma migrate dev --create-only` contra la base de desarrollo de Docker (`restaurante_dev`, D-133; la shadow database la crea Prisma en el mismo contenedor); agregar a mano al SQL `ENABLE ROW LEVEL SECURITY` en cada tabla nueva y en `"_prisma_migrations"` (§5.3) y las restricciones `CHECK` con nombre propio de §5.4; aplicar con `prisma migrate dev` y `npm run db:generate` (D-132).

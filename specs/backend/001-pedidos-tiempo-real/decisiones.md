@@ -158,3 +158,7 @@
 | D-172 | 4 | T5 · Tipo de `level` y parámetro `destination` | A) `Env["LOG_LEVEL"]` + mantener `destination` opcional (R) · B) `string` · C) Sacar `destination` | A | 2026-10-24 |
 | D-173 | 4 | T5 · Mejoras al test de pino-http | Selección múltiple | Assert de `query.accessToken` sin condicional + `remotePort` definido; la espera fija de 20 ms queda como está | 2026-10-24 |
 | D-174 | 4 | Aprobación de T5 y cierre del Bloque A | A) Commit + push + PR a develop, sin mergear (R) · B) A + mergear · C) Solo commit | A | 2026-10-24 |
+| D-175 | 4 | Base de la rama del Bloque B (el PR #2 del Bloque A sigue sin mergear) | A) `feature/backend-001-data` desde `feature/backend-001-base` (R) · B) Esperar el merge · C) Cortar | A | 2026-10-24 |
+| D-176 | 4 | T6 · Enums de §5.1 en una línea no compilan en Prisma 7 | A) Un valor por línea + actualizar §5.1 (errata v1.2.2) (R) · B) Corregir el schema + nota en §5.1 | A | 2026-10-24 |
+| D-177 | 4 | T6 · `process.loadEnvFile()` falla sin `.env` (CI) | A) `if (existsSync(".env")) process.loadEnvFile()` (R) · B) `.env` creado en el CI · C) Decidir en T44 | A | 2026-10-24 |
+| D-178 | 4 | Aprobación de T6 + commit local (incluye errata §5.1) | A) Aprobar + commit y seguir con T7 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-24 |
