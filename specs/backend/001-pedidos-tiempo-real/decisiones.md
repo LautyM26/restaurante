@@ -130,3 +130,31 @@
 | D-144 | 3 | Nombres propuestos de ramas por bloque y bases de Docker | A) Aceptar (R) · B) Cambiar | A: `feature/backend-001-{base,data,domain,http,public-reads,staff-auth,orders,realtime,closing}`; `restaurante_dev` / `restaurante_test` | 2026-10-24 |
 | D-145 | 3 | Aprobación de tareas.md v1.2 y diseño §23 (v1.2) | A) Aprobar ambos (R) · B) Cambios · C) Revisar primero | A: ambos APROBADOS | 2026-10-24 |
 | D-146 | 4 | Commit/push, cómo llevar las specs a develop y arranque de la Fase 4 | A) Commit + push; merge del PR en GitHub; arrancar T1 (R) · B) Merge local · C) Rama desde chore/backend-specs | A | 2026-10-24 |
+| D-147 | 4 | T1 · Versión de TypeScript (la 7.0.2 no es compatible con `typescript-eslint` 8.72, que pide < 6.1) | A) TypeScript 6.0.3 (R) · B) TS 7 + `--legacy-peer-deps` · C) TS 7 sin `typescript-eslint` | A | 2026-10-24 |
+| D-148 | 4 | T1 · Versión de `@types/node` | A) 24.19.2, igual que el runtime (R) · B) 26.6.5 | A | 2026-10-24 |
+| D-149 | 4 | T1 · Confirmación del `npm install` con versiones exactas (Prisma 7.10.1 estable, no la 8.0.0-rc de `latest`, por D-063) | A) Instalar · B) No todavía | A | 2026-10-24 |
+| D-150 | 4 | T1 · Scripts de instalación bloqueados por npm 11 (prisma, @prisma/engines, esbuild) | A) No aprobarlos; aprobar solo si algo falla (R) · B) Aprobar los tres | A (las 4 herramientas funcionan sin ellos) | 2026-10-24 |
+| D-151 | 4 | T1 · Opciones redundantes del tsconfig y `src/generated` en typecheck/lint | A) Dejarlas; ignorar `src/generated` en ESLint en T2 (R) · B) Simplificar ahora | A | 2026-10-24 |
+| D-152 | 4 | T1 · `target`/`lib` de TypeScript | A) ES2024, como Node 24 (R) · B) ES2023 | A | 2026-10-24 |
+| D-153 | 4 | Aprobación de T1 + commit local (sin push hasta cerrar el Bloque A) | A) Aprobar + commit (R) · B) Sin commit · C) Cambios | A | 2026-10-24 |
+| D-154 | 4 | T2 · B1 `.prettierignore` (no figura en T2; Prettier 3 ya lee `.gitignore`) | A) Borrarlo (R) · B) Mantenerlo | A | 2026-10-24 |
+| D-155 | 4 | T2 · Validación de `SUPABASE_URL` | A) URL solo `https` (R) · B) Texto no vacío · C) `z.url()` | A | 2026-10-24 |
+| D-156 | 4 | T2 · Variables opcionales vacías (`PORT=` etc.) | A) Vacía = ausente, se aplica el default (R) · B) Error | A | 2026-10-24 |
+| D-157 | 4 | T2 · Sugerencias menores del reviewer (S1, S2, S5, S7) | Selección múltiple | Solo S1: `defineConfig` + `globalIgnores` de `eslint/config`. S2, S5 y S7 quedan como están | 2026-10-24 |
+| D-158 | 4 | Aprobación de T2 + commit local | A) Aprobar + commit (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-24 |
+| D-159 | 4 | T3 · Excepción para commitear `.env.test.example` (el `.gitignore` raíz ignora `.env.*`) | A) `!.env.test.example` en `backend/.gitignore` (R) · B) En el `.gitignore` raíz | A | 2026-10-24 |
+| D-160 | 4 | T3 · `restart: unless-stopped` y `container_name` en docker-compose | A) Sacar los dos (R) · B) Mantenerlos · C) Solo sacar `restart` | A | 2026-10-24 |
+| D-161 | 4 | T3 · Puerto de Postgres local | A) `0.0.0.0` · B) Solo `127.0.0.1:5433` (R) | B | 2026-10-24 |
+| D-162 | 4 | T3 · Volumen nombrado `restaurante_pgdata` y versión `postgres:17` | A) Mantener ambos; 17 provisoria hasta compararla en T42 (R) · B) Sacar el volumen | A | 2026-10-24 |
+| D-163 | 4 | Aprobación de T3 + commit local | A) Aprobar + commit y seguir con T4 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-24 |
+| D-164 | 4 | T4 · Coherencia `code`/`status` de `AppError` y "helpers" | A) Clase genérica `<C extends ErrorCode>` con `status: (typeof ERROR_STATUS)[C]`, sin helpers (R) · B) Fábrica `appError(code, message)` · C) Dejarlo | A ("helpers" de T4 se aclara: no hay helpers propios) | 2026-10-24 |
+| D-165 | 4 | T4 · Cambios en los tests | Selección múltiple | Sacar el test de reemplazo de reloj/aleatorio · agregar `instanceof AppError` y `name` | 2026-10-24 |
+| D-166 | 4 | T4 · Simplificaciones menores | Selección múltiple | `systemRandom = Math.random` · sacar `ValidationIssue` hasta T16 | 2026-10-24 |
+| D-167 | 4 | Errata en `diseno.md` §13: ejemplo `AppError('VALIDATION', 400, { issues })` sin `message` | A) Corregir como errata v1.2.1 (R) · B) Dejarlo | A | 2026-10-24 |
+| D-168 | 4 | Aprobación de T4 + commit local (incluye la errata de diseno.md) | A) Aprobar + commit y seguir con T5 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-24 |
+| D-169 | 4 | T5 · Fuga 1: `accessToken` con el nombre percent-encoded no se tapaba | A) Decodificar cada nombre como URLSearchParams y tapar el valor (R) · B) Reconstruir con URLSearchParams | A | 2026-10-24 |
+| D-170 | 4 | T5 · Fuga 2: pino-http pisa el serializador `req` y registra `query.accessToken` | A) Exportar serializador para el `req` de pino-http (tapa `url` y `query.accessToken`), probado con pino-http real (R) · B) Path en `redact` · C) Dejarlo para T17 | A | 2026-10-24 |
+| D-171 | 4 | T5 · `req` sin `url` rompe el log | A) Protegerlo (R) · B) Dejarlo | A | 2026-10-24 |
+| D-172 | 4 | T5 · Tipo de `level` y parámetro `destination` | A) `Env["LOG_LEVEL"]` + mantener `destination` opcional (R) · B) `string` · C) Sacar `destination` | A | 2026-10-24 |
+| D-173 | 4 | T5 · Mejoras al test de pino-http | Selección múltiple | Assert de `query.accessToken` sin condicional + `remotePort` definido; la espera fija de 20 ms queda como está | 2026-10-24 |
+| D-174 | 4 | Aprobación de T5 y cierre del Bloque A | A) Commit + push + PR a develop, sin mergear (R) · B) A + mergear · C) Solo commit | A | 2026-10-24 |

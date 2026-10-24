@@ -16,60 +16,60 @@
 ## Bloque A — Base del proyecto
 Rama: `feature/backend-001-base` (D-136)
 
-- [ ] **T1 — Esqueleto de `backend/` e instalación de dependencias** [CONFIRMACIÓN: `npm install`]
+- [x] **T1 — Esqueleto de `backend/` e instalación de dependencias** [CONFIRMACIÓN: `npm install`]
   - Qué: `package.json` (`"type": "module"`, `engines.node` 24, scripts de §3 más `db:generate` = `prisma generate`, D-132), `.npmrc` con `save-exact=true`, `tsconfig.json` (`strict`, `moduleResolution: "bundler"`, alias `@/*` → `./src/*`), `.gitignore` (`.env`, `.env.test`, `dist/`, `src/generated/`, `node_modules/`). Instalar las dependencias de producción y desarrollo de §3 en su última versión estable (verificada en npm al ejecutar), exactas, con `package-lock.json`. Bundle: `tsdown` (D-129). Lint/formato: `eslint`, `@eslint/js`, `typescript-eslint`, `eslint-config-prettier`, `prettier` (D-130).
   - Archivos: `backend/package.json`, `backend/package-lock.json`, `backend/.npmrc`, `backend/tsconfig.json`, `backend/.gitignore`
   - Requisitos: RNF9, RNF10 (base técnica)
-  - Decisiones: D-008, D-016, D-063, D-064, D-065, D-066, D-103, D-110, D-122, D-129, D-130, D-132
+  - Decisiones: D-008, D-016, D-063, D-064, D-065, D-066, D-103, D-110, D-122, D-129, D-130, D-132, D-147..D-153
   - Agente: `dev-backend`
   - Depende de: —
   - Criterios de aceptación: todas las dependencias de §3 instaladas sin `^`/`~`, con `tsdown` como bundler y los paquetes de D-130; ninguna otra dependencia; `node -v` es 24.x (si no, el usuario lo instala [MANUAL]); `.gitignore` cubre lo indicado.
   - Verificación: `node -v` · `npm ls --depth=0` · `grep -E '"\^|"~' package.json` sin resultados · `npx tsc --version`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-24, D-153)
 
-- [ ] **T2 — Configuración de herramientas y `src/env.ts`**
-  - Qué: `eslint.config.js` (`@eslint/js` recommended + `typescript-eslint` recommended + `eslint-config-prettier`, D-130), `.prettierrc` con la configuración por defecto de Prettier (D-130), `vitest.config.ts` (proyectos/carpetas `unit` e `integration`, alias `@/`), `tsdown.config.ts` con el bundle a `dist/server.js` (D-129; verificar la API en la documentación oficial de tsdown). `src/env.ts`: `parseEnv(process.env)` con Zod sobre las variables de §17.1 (obligatorias y defaults de D-123; `CORS_ORIGINS` separado por comas; `TRUST_PROXY` `false`/`true`/número). `.env.example` con el contenido de §17.1.
+- [x] **T2 — Configuración de herramientas y `src/env.ts`**
+  - Qué: `eslint.config.js` (ignora `src/generated/`, D-151; `@eslint/js` recommended + `typescript-eslint` recommended + `eslint-config-prettier`, D-130), `.prettierrc` con la configuración por defecto de Prettier (D-130), `vitest.config.ts` (proyectos/carpetas `unit` e `integration`, alias `@/`), `tsdown.config.ts` con el bundle a `dist/server.js` (D-129; verificar la API en la documentación oficial de tsdown). `src/env.ts`: `parseEnv(process.env)` con Zod sobre las variables de §17.1 (obligatorias y defaults de D-123; `CORS_ORIGINS` separado por comas; `TRUST_PROXY` `false`/`true`/número). `.env.example` con el contenido de §17.1.
   - Archivos: `backend/eslint.config.js`, `backend/.prettierrc`, `backend/vitest.config.ts`, `backend/tsdown.config.ts`, `backend/src/env.ts`, `backend/.env.example`, `backend/test/unit/env.test.ts`
   - Requisitos: RNF3, RNF6
-  - Decisiones: D-016, D-017, D-066, D-103, D-105, D-123, D-129, D-130
+  - Decisiones: D-016, D-017, D-066, D-103, D-105, D-123, D-129, D-130, D-151, D-154..D-158
   - Agente: `dev-backend`
   - Depende de: T1
   - Criterios de aceptación: falta una obligatoria → error con el nombre de la variable y sin su valor; defaults `3000`/`info`/`false`/`10`; `TRUST_PROXY` acepta `false`, `true` y enteros; `.env.example` sin secretos.
   - Verificación: `npx vitest run test/unit/env.test.ts` · `npm run typecheck` · `npm run lint` · `npx prettier --check .`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-24, D-158)
 
-- [ ] **T3 — Postgres local en Docker (desarrollo y tests)** [APROBADO D-134: `docker compose up -d`]
+- [x] **T3 — Postgres local en Docker (desarrollo y tests)** [APROBADO D-134: `docker compose up -d`]
   - Qué: `docker-compose.yml` con `postgres:<mayor de Supabase>` (la mayor que usan los proyectos nuevos de Supabase, verificada en su documentación al ejecutar, porque el proyecto se crea en T41, D-133) publicado en el puerto **5433** del host, usuario/clave `postgres`/`postgres` solo locales (D-131), con health check y dos bases separadas: desarrollo (`restaurante_dev`, D-133) y tests (`restaurante_test`) — nombres propuestos. `.env.test.example` con `DATABASE_URL`/`DIRECT_URL` hacia la base de tests; `.env.example` suma un comentario con las URLs locales de desarrollo. Script `db:test:up`.
-  - Archivos: `backend/docker-compose.yml`, `backend/docker/init-databases.sql` (o equivalente para crear la segunda base; nombre propuesto), `backend/.env.test.example`, `backend/.env.example`, `backend/package.json` (script)
+  - Archivos: `backend/docker-compose.yml`, `backend/docker/init-databases.sql` (o equivalente para crear la segunda base; nombre propuesto), `backend/.env.test.example`, `backend/.env.example`, `backend/package.json` (script), `backend/.gitignore` (excepción `!.env.test.example`, D-159)
   - Requisitos: RNF9
-  - Decisiones: D-107, D-122, D-131, D-133, D-134
+  - Decisiones: D-107, D-122, D-131, D-133, D-134, D-144, D-159..D-163
   - Agente: `devops`
   - Depende de: T1
   - Criterios de aceptación: el contenedor queda sano; existen las dos bases; puerto 5433; el usuario crea `.env.test` desde el `.example` y un `.env` local apuntando a `restaurante_dev` [MANUAL].
   - Verificación: `npm run db:test:up` · `docker compose ps` (estado `healthy`) · `docker compose exec <servicio> psql -U postgres -c "select version();" -c "\l"` (mayor correcta, `restaurante_dev` y `restaurante_test` presentes)
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-24, D-163)
 
-- [ ] **T4 — Errores y dependencias inyectables**
-  - Qué: `shared/errors.ts` (`AppError(code, status, message, details?)`, códigos de §13.3, helpers), `shared/clock.ts`, `shared/random.ts`.
+- [x] **T4 — Errores y dependencias inyectables**
+  - Qué: `shared/errors.ts` (`AppError(code, status, message, details?)`, códigos de §13.3; sin helpers propios: el compilador exige que `status` corresponda al `code`, D-164), `shared/clock.ts`, `shared/random.ts`.
   - Archivos: `backend/src/shared/errors.ts`, `backend/src/shared/clock.ts`, `backend/src/shared/random.ts`, `backend/test/unit/errors.test.ts`
   - Requisitos: RNF6, RNF10
-  - Decisiones: D-077, D-099, D-100, D-101
+  - Decisiones: D-077, D-099, D-100, D-101, D-164..D-168
   - Agente: `dev-backend`
   - Depende de: T2
   - Criterios de aceptación: los 11 códigos de §13.3 con su HTTP; `message` en inglés; reloj y aleatorio reemplazables.
   - Verificación: `npx vitest run test/unit/errors.test.ts` · `npm run typecheck` · `npm run lint`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-24, D-168)
 
-- [ ] **T5 — Logger con redacción**
+- [x] **T5 — Logger con redacción**
   - Qué: `shared/logger.ts`: `pino` con `LOG_LEVEL`, `redact` de `req.headers.authorization`, `req.headers.cookie`, `res.headers["set-cookie"]`, y serializador de URL que reemplaza `accessToken` por `[REDACTED]`.
   - Archivos: `backend/src/shared/logger.ts`, `backend/test/unit/logger.test.ts`
   - Requisitos: RNF8
-  - Decisiones: D-091, D-103
+  - Decisiones: D-091, D-103, D-169..D-174
   - Agente: `dev-backend`
   - Depende de: T2
   - Criterios de aceptación: la salida capturada no contiene el valor de `authorization`, `cookie` ni `accessToken` (también con el parámetro en distintas posiciones de la query).
   - Verificación: `npx vitest run test/unit/logger.test.ts`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-24, D-174)
 
 ## Bloque B — Datos y CI
 Rama: `feature/backend-001-data` (D-136) · incluye T44 (CI, D-137)
