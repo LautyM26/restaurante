@@ -191,3 +191,5 @@
 | D-205 | 4 | T12 · 3 tests extra de D-202/D-203 + aprobación y commit | A) Agregar los tests + aprobar (R) · B) Aprobar sin tests · C) Cambios | A | 2026-10-25 |
 | D-206 | 4 | Aprobación de T13 + commit local (firma de `orderTotalCents(lines: PricedLine[])` elegida por el agente; §8.5 no la fija) | A) Aprobar + commit y seguir con T14 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-25 |
 | D-207 | 4 | Aprobación de T14 + commit local | A) Aprobar + commit y seguir con T15 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-25 |
+| D-208 | 4 | Aprobación de T15 y cierre del Bloque C | A) Commit + push + PR a develop, sin mergear (R) · B) Solo commit · C) Cambios | A | 2026-10-25 |
+| D-209 | 4 | Imports mezclados (relativos y alias `@/`; §3 prevé el alias) | A) Unificar a `@/` en un commit de estilo aparte al empezar el Bloque D (R) · B) Dentro de T15 · C) Dejarlo | A | 2026-10-25 |

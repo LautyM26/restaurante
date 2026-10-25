@@ -187,16 +187,16 @@ Rama: `feature/backend-001-domain` (D-136)
   - Verificación: `npx vitest run test/unit/short-code.test.ts`
   - Estado: aprobada (2026-10-25, D-207)
 
-- [ ] **T15 — Huella de idempotencia**
+- [x] **T15 — Huella de idempotencia**
   - Qué: `domain/fingerprint.ts`: contenido canónico de §8.7 + SHA-256 hex.
   - Archivos: `backend/src/domain/fingerprint.ts`, `backend/test/unit/fingerprint.test.ts`
   - Requisitos: R3.10, R3.11
-  - Decisiones: D-081, D-085
+  - Decisiones: D-081, D-085, D-208
   - Agente: `dev-backend`
   - Depende de: T11, T12
   - Criterios de aceptación: misma huella con líneas u opciones en otro orden y con notas que difieren solo en espacios; distinta si cambia mesa, cantidad, selección, nota o `expectedTotalCents`; `clientRequestId` no influye.
   - Verificación: `npx vitest run test/unit/fingerprint.test.ts`
-  - Estado: en curso
+  - Estado: aprobada (2026-10-25, D-208)
 
 ## Bloque D — Base HTTP
 Rama: `feature/backend-001-http` (D-136)
