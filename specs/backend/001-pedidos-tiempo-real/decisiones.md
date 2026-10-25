@@ -176,3 +176,7 @@
 | D-190 | 4 | T44 · `permissions: contents: read` agregado por devops (no estaba en §23) | A) Dejarlo (R) · B) Sacarlo | A | 2026-10-25 |
 | D-191 | 4 | T44 · Commit + push de `feature/backend-001-data` + PR del Bloque B a develop para correr el CI | A) Commit + push + PR, sin mergear (R) · B) Solo commit · C) No todavía | A | 2026-10-25 |
 | D-192 | 4 | Aprobación de T44 (CI verde en el run 40162158125) y cierre del Bloque B | A) Aprobar y cerrar el bloque; commit + push al PR #3, sin mergear (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-25 |
+| D-193 | 4 | Base de la rama del Bloque C y ritmo de aprobación | Rama: A) Desde `feature/backend-001-data` (R) · B) Esperar merges. Ritmo: A) Una por una · B) De a 2–3 | Rama A; una por una | 2026-10-25 |
+| D-194 | 4 | T9 · `ServiceErrorCode = ErrorCode \| "NETWORK"` en el back (NETWORK es solo del cliente) | A) Mantenerlo como espejo · B) Quitarlo; el back usa `ErrorCode` (R) | B | 2026-10-25 |
+| D-195 | 4 | T9 · `LINE_ID_MAX = 4096` (D-113) en `limits.ts`, no pedido por el "Qué" de T9 | A) Dejarlo y registrarlo en T9 (R) · B) Moverlo a T23 | A | 2026-10-25 |
+| D-196 | 4 | Aprobación de T9 + commit local | A) Aprobar + commit y seguir con T10 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-25 |

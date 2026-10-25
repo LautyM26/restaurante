@@ -121,16 +121,16 @@ Rama: `feature/backend-001-data` (D-136) · incluye T44 (CI, D-137)
 ## Bloque C — Dominio (funciones puras, tests unitarios)
 Rama: `feature/backend-001-domain` (D-136)
 
-- [ ] **T9 — Tipos del contrato y límites**
-  - Qué: `domain/types.ts` con los tipos de `plan.md` §6 del front (leído de `origin/develop`, solo lectura) más las extensiones de §19 (F9–F11); `domain/limits.ts` (`MAX_QTY` 20, `MAX_LINES` 50, `NOTE_MAX` 140, `ORDER_NOTE_MAX` 200, ventanas 12 h / 24 h, máximos de filtros de §6.6 y del WS).
+- [x] **T9 — Tipos del contrato y límites**
+  - Qué: `domain/types.ts` con los tipos de `plan.md` §6 del front (leído de `origin/develop`, solo lectura) más las extensiones de §19 (F9–F11); `domain/limits.ts` (`MAX_QTY` 20, `MAX_LINES` 50, `NOTE_MAX` 140, `ORDER_NOTE_MAX` 200, ventanas 12 h / 24 h, máximos de filtros de §6.6 y del WS, `LINE_ID_MAX` 4096 por D-113/D-195). Sin `ServiceErrorCode`: el back usa `ErrorCode` (D-194).
   - Archivos: `backend/src/domain/types.ts`, `backend/src/domain/limits.ts`
   - Requisitos: RNF10, R3.4, R10.2, R3.9
-  - Decisiones: D-043, D-054, D-094, D-098, D-099, D-100, D-126
+  - Decisiones: D-043, D-054, D-094, D-098, D-099, D-100, D-113, D-126, D-194..D-196
   - Agente: `dev-backend`
   - Depende de: T2
   - Criterios de aceptación: nombres y formas idénticos a `plan.md` §6 salvo lo acordado en §19.
   - Verificación: `npm run typecheck` · comparación con `git show origin/develop:specs/001-menu-cliente/plan.md`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-25, D-196)
 
 - [ ] **T10 — Estados y transiciones**
   - Qué: `domain/order-status.ts`: `ORDER_FLOW`, `FINAL_STATUSES`, `canTransition` (un paso adelante/atrás, cancelar desde no final), `applyTransition` (`noop | conflict | invalid | applied` en ese orden), `applyClientCancel`.
