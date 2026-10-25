@@ -262,7 +262,7 @@ Rama: `feature/backend-001-staff-auth` (D-136)
   - Verificación: `npx vitest run test/unit/token-verifier.test.ts`
   - Estado: aprobada (2026-10-25, D-236)
 
-- [ ] **T21 — Middleware `requireStaff`**
+- [x] **T21 — Middleware `requireStaff`**
   - Qué: `staff/staff-auth.ts`: `Authorization: Bearer` → verificador → `StaffMember` por `userId` → `res.locals.staff`; cualquier falla → 401 `UNAUTHORIZED`. Función de resolución reutilizable por el WS y por `GET /api/orders`.
   - Archivos: `backend/src/modules/staff/staff-auth.ts`, `backend/test/integration/auth.test.ts`
   - Requisitos: R8.1, R8.5, R11.1
@@ -271,7 +271,7 @@ Rama: `feature/backend-001-staff-auth` (D-136)
   - Depende de: T8, T20
   - Criterios de aceptación: sin header, esquema distinto de Bearer, token inválido, vencido o válido sin `StaffMember` → 401; válido con `StaffMember` → `{ userId, restaurantId }`.
   - Verificación: `npm test -- test/integration/auth.test.ts`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-25, D-242)
 
 ## Bloque G — Pedidos
 Rama: `feature/backend-001-orders` (D-136)

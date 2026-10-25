@@ -126,3 +126,11 @@ export function createOrder(
     },
   });
 }
+
+export function createStaffMember(
+  prisma: PrismaClient,
+  restaurantId: string,
+  userId = randomUUID(),
+) {
+  return prisma.staffMember.create({ data: { userId, restaurantId } });
+}

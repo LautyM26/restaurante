@@ -220,3 +220,9 @@
 | D-234 | 4 | T20 · Mejoras menores del reviewer | Selección múltiple | Solo: test con ES384 (asimétrico fuera de la lista) que prueba la lista de algoritmos | 2026-10-25 |
 | D-235 | 4 | T20 · `SUPABASE_URL` con barra final rompe el `iss` esperado | A) Comentario en `.env.example` (R) · B) Quitar la barra en `env.ts` · C) Dejarlo | A | 2026-10-25 |
 | D-236 | 4 | Aprobación de T20 + commit local | A) Aprobar + commit y seguir con T21 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-25 |
+| D-237 | 4 | T21 · Mensaje del 401 | A) Uno solo, "Authentication required" (R) · B) Uno por causa | A | 2026-10-25 |
+| D-238 | 4 | T21 · Lectura del header `Authorization` | A) Estricta: esquema sin distinguir mayúsculas, un espacio, token sin espacios; lo demás = sin credenciales (R) · B) Tolerar espacios extra | A | 2026-10-25 |
+| D-239 | 4 | T21 · Forma de `resolveStaff` (WS y `GET /api/orders`) | A) Resultado con motivo `invalid_token` / `not_staff` + `exp` (R) · B) `null` o lanzar | A | 2026-10-25 |
+| D-240 | 4 | T21 · `WWW-Authenticate` y chequeo de UUID del `sub` antes de consultar | A) Sin header + con chequeo UUID (R) · B) Con `WWW-Authenticate: Bearer` + chequeo · C) Sin header y sin chequeo | A | 2026-10-25 |
+| D-241 | 4 | T21 · Mejoras menores del reviewer | Selección múltiple | Solo: test directo de `resolveStaff` (motivo y `exp`) | 2026-10-25 |
+| D-242 | 4 | Aprobación de T21 + commit + push + PR del Bloque F | A) Aprobar + commit + push + PR (R) · B) Aprobar + commit sin push · C) Cambios | A | 2026-10-25 |
