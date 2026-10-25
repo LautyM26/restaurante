@@ -21,6 +21,9 @@ export default defineConfig({
         test: {
           name: "integration",
           include: ["test/integration/**/*.test.ts"],
+          globalSetup: ["test/global-setup.ts"],
+          // Files run in parallel; each one creates its own restaurant (slug).
+          fileParallelism: true,
         },
       },
     ],

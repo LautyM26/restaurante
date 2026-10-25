@@ -168,3 +168,8 @@
 | D-182 | 4 | T7 · Formato de nombres de los CHECK (§5.4 no lo fija) | A) Registrarlos en §5.4 · B) Dejarlo implícito (quitar "Naming:" del comentario) | B, pero el comentario del SQL queda como está porque la migración ya estaba aplicada (ver D-183) | 2026-10-24 |
 | D-183 | 4 | T7 · Editar el comentario de una migración aplicada (cambia el checksum) | A) Dejar el comentario como está (R) · B) Editarlo y recrear `restaurante_dev` | A | 2026-10-24 |
 | D-184 | 4 | Aprobación de T7 + commit local | A) Aprobar + commit y seguir con T8 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-24 |
+| D-185 | 4 | T8 · Criterio de la protección de tests y entorno del CI | A) Host local + nombre que termina en `_test`; en T44 el job corre en el runner con Postgres en `localhost` (R) · B) Solo `restaurante_test` · C) Host configurable | A | 2026-10-24 |
+| D-186 | 4 | T8 · Ajustes menores del reviewer | Selección múltiple | Solo: mostrar la salida de Prisma si `migrate deploy` falla. `test-db-guard.ts` queda como archivo propio (se suma a T8); `fileParallelism` y el `console.error` se mantienen | 2026-10-24 |
+| D-187 | 4 | T8 · Fábricas sin uso todavía y código fijo `AB12` | A) Mantenerlas + documentar `AB12` (R) · B) Recortarlas | A | 2026-10-24 |
+| D-188 | 4 | T8 · Script `test` con la ruta interna de vitest | A) Dejarlo (R) · B) Cargar `.env.test` en `vitest.config` | A (`test:watch` igual, por consistencia) | 2026-10-24 |
+| D-189 | 4 | Aprobación de T8 + commit local | A) Aprobar + commit y seguir con T44 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-25 |

@@ -96,19 +96,19 @@ Rama: `feature/backend-001-data` (D-136) · incluye T44 (CI, D-137)
   - Verificación: `npx prisma migrate status` · `select relname, relrowsecurity from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'public' and c.relkind = 'r';` (todas `true`) · `select conname from pg_constraint where contype = 'c';`
   - Estado: aprobada (2026-10-24, D-184)
 
-- [ ] **T8 — Infraestructura de tests de integración + tests de RLS y CHECK** [APROBADO D-134: `npm test` sobre `restaurante_test`]
+- [x] **T8 — Infraestructura de tests de integración + tests de RLS y CHECK** [APROBADO D-134: `npm test` sobre `restaurante_test`]
   - Qué: `test/global-setup.ts` (`prisma migrate deploy` contra la base de tests + `TRUNCATE … CASCADE` de las tablas de la app al inicio), fábricas en `test/helpers/` (restaurante con slug aleatorio, carta, mesas), script `test` que carga `.env.test` con `--env-file-if-exists`. Tests: toda tabla de `public` con `relrowsecurity = true`; cada `CHECK` rechaza un valor inválido.
-  - Archivos: `backend/test/global-setup.ts`, `backend/test/helpers/factories.ts`, `backend/test/integration/rls.test.ts`, `backend/test/integration/db-constraints.test.ts` (nombre propuesto), `backend/vitest.config.ts`, `backend/package.json`
+  - Archivos: `backend/test/global-setup.ts`, `backend/test/helpers/test-db-guard.ts` (D-186), `backend/test/helpers/factories.ts`, `backend/test/integration/rls.test.ts`, `backend/test/integration/db-constraints.test.ts` (nombre propuesto), `backend/vitest.config.ts`, `backend/package.json`
   - Requisitos: RNF5, RNF9, R11.1
-  - Decisiones: D-106, D-107, D-108, D-120, D-122, D-134
+  - Decisiones: D-106, D-107, D-108, D-120, D-122, D-134, D-185..D-189
   - Agente: `dev-database`
   - Depende de: T7
   - Criterios de aceptación: `npm test` corre sobre `restaurante_test` y nunca sobre `restaurante_dev` ni Supabase; sin `.env.test` toma las variables del entorno (como en CI, T44); dos archivos de test en paralelo no interfieren.
   - Verificación: `npm run db:test:up` · `npm test -- test/integration/rls.test.ts test/integration/db-constraints.test.ts`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-25, D-189)
 
 - [ ] **T44 — Workflow de CI en GitHub Actions**
-  - Qué: workflow según diseño §23: Node 24 (D-064), servicio `postgres:<mayor de Supabase>` (misma imagen que T3, D-131) con health check, `npm ci` → `npm run db:generate` (D-132) → `npx prettier --check .` (D-142) → `npm run lint` → `npm run typecheck` → `npm test`, con `working-directory: backend` y las variables de los tests definidas en el workflow, sin secretos. Disparadores: `pull_request` a `develop`/`main` y `push` a `develop`, con `paths` `backend/**` y el workflow (D-138). Cache `setup-node` `cache: npm` sobre `backend/package-lock.json` (D-140). Sin matriz (D-141). Check informativo, sin protección de ramas (D-139). `npm run build` (D-142) se agrega al workflow en T36, cuando existe `src/server.ts`. Versiones de las actions verificadas en su documentación oficial.
+  - Qué: workflow según diseño §23: Node 24 (D-064), servicio `postgres:<mayor de Supabase>` (misma imagen que T3, D-131) con health check, `npm ci` → `npm run db:generate` (D-132) → `npx prettier --check .` (D-142) → `npm run lint` → `npm run typecheck` → `npm test`, con `working-directory: backend` y las variables de los tests definidas en el workflow, sin secretos. Disparadores: `pull_request` a `develop`/`main` y `push` a `develop`, con `paths` `backend/**` y el workflow (D-138). Cache `setup-node` `cache: npm` sobre `backend/package-lock.json` (D-140). Sin matriz (D-141). Check informativo, sin protección de ramas (D-139). `npm run build` (D-142) se agrega al workflow en T36, cuando existe `src/server.ts`. Versiones de las actions verificadas en su documentación oficial. El job corre directo en el runner (no en `container:`), con Postgres en `localhost`, para cumplir la protección de los tests (D-185).
   - Archivos: `.github/workflows/<nombre>.yml` `.github/workflows/backend-ci.yml` (en la raíz del repo, D-143)
   - Requisitos: RNF9
   - Decisiones: D-014, D-064, D-131, D-132, D-137, D-138..D-143
@@ -116,7 +116,7 @@ Rama: `feature/backend-001-data` (D-136) · incluye T44 (CI, D-137)
   - Depende de: T8 · diseño §23 aprobado
   - Criterios de aceptación: el workflow corre en verde en el PR del Bloque B con los tests de T8; falla si se rompe lint, typecheck o un test; no usa secretos ni se conecta a Supabase.
   - Verificación: push de la rama del bloque [CONFIRMACIÓN] → `gh run list --branch feature/backend-001-data` y `gh run view <id>` en verde · prueba en una rama descartable con un error de lint forzado → el run falla (opcional, con confirmación)
-  - Estado: pendiente
+  - Estado: en curso
 
 ## Bloque C — Dominio (funciones puras, tests unitarios)
 Rama: `feature/backend-001-domain` (D-136)
