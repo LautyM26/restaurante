@@ -143,16 +143,16 @@ Rama: `feature/backend-001-domain` (D-136)
   - Verificación: `npx vitest run test/unit/order-status.test.ts`
   - Estado: aprobada (2026-10-25, D-199)
 
-- [ ] **T11 — Notas y caracteres visibles**
+- [x] **T11 — Notas y caracteres visibles**
   - Qué: `domain/text.ts`: `countVisibleChars` con `Intl.Segmenter` (grafemas) y `normalizeNote` (`trim`; vacía → `undefined`).
   - Archivos: `backend/src/domain/text.ts`, `backend/test/unit/text.test.ts`
   - Requisitos: R3.4
-  - Decisiones: D-085, D-086
+  - Decisiones: D-085, D-086, D-200
   - Agente: `dev-backend`
   - Depende de: T9
   - Criterios de aceptación: emojis compuestos (familia, banderas, tonos de piel) cuentan 1; 140/141 y 200/201 en el borde.
   - Verificación: `npx vitest run test/unit/text.test.ts`
-  - Estado: en curso
+  - Estado: aprobada (2026-10-25, D-200)
 
 - [ ] **T12 — Selección y validación de líneas**
   - Qué: `domain/selection.ts`: `canonicalSelection` (como el front), `isDishOrderable`, `validateLine(dish | null, line)` → `LineIssue[]` con las reglas de §8.4.
@@ -163,7 +163,7 @@ Rama: `feature/backend-001-domain` (D-136)
   - Depende de: T9
   - Criterios de aceptación: cada `reason` de R3.5 cubierto; `dish_unavailable` como único motivo; todos los problemas de una línea pedible; array vacío = sin elección; grupo ajeno y opciones repetidas → `selection_invalid` con `groupId`.
   - Verificación: `npx vitest run test/unit/selection.test.ts`
-  - Estado: pendiente
+  - Estado: en curso
 
 - [ ] **T13 — Precios**
   - Qué: `domain/pricing.ts`: `unitPriceCents`, `lineTotalCents`, `orderTotalCents` en enteros.

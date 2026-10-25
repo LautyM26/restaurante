@@ -183,3 +183,4 @@
 | D-197 | 4 | T10 · Forma del resultado de `applyTransition`/`applyClientCancel` (difiere del front; interno, no es contrato) | A) Mantener la del back: union por `kind`, `order` en noop/conflict/applied, `previousStatus` en applied (R) · B) Alinearla con el front | A (registrada solo aquí, no en §19) | 2026-10-25 |
 | D-198 | 4 | T10 · Test de no mutación en `applyClientCancel` | A) Agregarlo (R) · B) Dejarlo | A | 2026-10-25 |
 | D-199 | 4 | Aprobación de T10 + commit local | A) Aprobar + commit y seguir con T11 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-25 |
+| D-200 | 4 | Aprobación de T11 + commit local | A) Aprobar + commit y seguir con T12 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-25 |
