@@ -173,3 +173,5 @@
 | D-187 | 4 | T8 · Fábricas sin uso todavía y código fijo `AB12` | A) Mantenerlas + documentar `AB12` (R) · B) Recortarlas | A | 2026-10-24 |
 | D-188 | 4 | T8 · Script `test` con la ruta interna de vitest | A) Dejarlo (R) · B) Cargar `.env.test` en `vitest.config` | A (`test:watch` igual, por consistencia) | 2026-10-24 |
 | D-189 | 4 | Aprobación de T8 + commit local | A) Aprobar + commit y seguir con T44 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-25 |
+| D-190 | 4 | T44 · `permissions: contents: read` agregado por devops (no estaba en §23) | A) Dejarlo (R) · B) Sacarlo | A | 2026-10-25 |
+| D-191 | 4 | T44 · Commit + push de `feature/backend-001-data` + PR del Bloque B a develop para correr el CI | A) Commit + push + PR, sin mergear (R) · B) Solo commit · C) No todavía | A | 2026-10-25 |
