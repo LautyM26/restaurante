@@ -1,7 +1,7 @@
 # Spec backend/001 — Pedidos en tiempo real · Diseño
 
-**Estado:** APROBADO (2026-10-24, v1.2 con §23 por D-145) · **Versión:** 1.2.4 · **Fecha:** 2026-10-25
-**Historial:** v1.2.4 (2026-10-25): aclaración en §8.4 de casos de detalle de la validación de líneas (D-201..D-204). v1.2.3 (2026-10-24): errata en §5.3, RLS de `_prisma_migrations` con SQL condicional (D-180). v1.2.2 (2026-10-24): errata en §5.1, los enums pasan a un valor por línea porque Prisma 7 no acepta la forma en una línea (D-176); mismos valores. v1.2.1 (2026-10-24): errata en §13.1, el ejemplo de `AppError` no tenía `message` (D-167); sin cambios de decisiones. v1.2 (2026-10-24) agrega solo §23 Integración continua (D-137) y suma D-128..D-137 a §2; el resto es la v1.1 APROBADA sin cambios. §23 se aprueba por separado. v1.1 (APROBADO 2026-10-24, D-127) resuelve los pendientes P1–P11 (D-113..D-123) y pasa a requisitos v2.1 (D-124). v1 BORRADOR del 2026-10-23.
+**Estado:** APROBADO (2026-10-24, v1.2 con §23 por D-145) · **Versión:** 1.2.5 · **Fecha:** 2026-10-25
+**Historial:** v1.2.5 (2026-10-25): §13.1, charset/encoding no soportado → 400 `VALIDATION` (D-212). v1.2.4 (2026-10-25): aclaración en §8.4 de casos de detalle de la validación de líneas (D-201..D-204). v1.2.3 (2026-10-24): errata en §5.3, RLS de `_prisma_migrations` con SQL condicional (D-180). v1.2.2 (2026-10-24): errata en §5.1, los enums pasan a un valor por línea porque Prisma 7 no acepta la forma en una línea (D-176); mismos valores. v1.2.1 (2026-10-24): errata en §13.1, el ejemplo de `AppError` no tenía `message` (D-167); sin cambios de decisiones. v1.2 (2026-10-24) agrega solo §23 Integración continua (D-137) y suma D-128..D-137 a §2; el resto es la v1.1 APROBADA sin cambios. §23 se aprueba por separado. v1.1 (APROBADO 2026-10-24, D-127) resuelve los pendientes P1–P11 (D-113..D-123) y pasa a requisitos v2.1 (D-124). v1 BORRADOR del 2026-10-23.
 **Basado en:** requisitos v2.1 (APROBADO 2026-10-24, D-124, D-127) · constitución v2 · `plan.md` del front §6–§7.4 (rama `develop`) · decisiones D-042..D-127 (`decisiones.md`) · detalle de opciones en `opciones-diseno.md`.
 
 > Cada elección cita su decisión. Los huecos detectados en la v1 (P1–P11) ya están resueltos (§20). Lo que cambia o extiende el contrato del front está en §19.
@@ -566,7 +566,7 @@ Un pedido ya `cancelled` también responde 409 (R6.2: no está en `pending`).
 ### 13.1 Mecanismo
 - `validate({ body?, query?, params?, headers? })`: Zod; datos parseados en `res.locals.input` (Express 5: `req.query` es de solo lectura). Falla → `AppError('VALIDATION', 400, message, { issues })`.
 - `POST /api/orders` usa un validador por etapas (§8.1) en el servicio, no el middleware genérico, para respetar el orden de R3.2.
-- `AppError(code, status, message, details?)`. Manejador central: `AppError` → su forma; `ZodError` → 400; JSON malformado (`entity.parse.failed`) o cuerpo demasiado grande (`entity.too.large`) → 400 `VALIDATION` (D-099); ruta inexistente → 404 `NOT_FOUND`; resto (incluidos errores de Prisma no previstos) → 500 `SERVER` con mensaje genérico y log del detalle.
+- `AppError(code, status, message, details?)`. Manejador central: `AppError` → su forma; `ZodError` → 400; JSON malformado (`entity.parse.failed`), cuerpo demasiado grande (`entity.too.large`) o charset/encoding no soportado (`charset.unsupported`, `encoding.unsupported`) → 400 `VALIDATION` (D-099, D-212); ruta inexistente → 404 `NOT_FOUND`; resto (incluidos errores de Prisma no previstos) → 500 `SERVER` con mensaje genérico y log del detalle.
 - Límite de tamaño del cuerpo JSON: `express.json({ limit: '100kb' })` (D-118); mayor → 400 `VALIDATION`.
 
 ### 13.2 Formatos de entrada (D-078)

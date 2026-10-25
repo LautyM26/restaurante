@@ -194,3 +194,8 @@
 | D-208 | 4 | Aprobación de T15 y cierre del Bloque C | A) Commit + push + PR a develop, sin mergear (R) · B) Solo commit · C) Cambios | A | 2026-10-25 |
 | D-209 | 4 | Imports mezclados (relativos y alias `@/`; §3 prevé el alias) | A) Unificar a `@/` en un commit de estilo aparte al empezar el Bloque D (R) · B) Dentro de T15 · C) Dejarlo | A | 2026-10-25 |
 | D-210 | 4 | Seguir con el Bloque D (rama desde `feature/backend-001-domain`, primero el commit de imports de D-209) | A) Seguir (R) · B) Cortar | A | 2026-10-25 |
+| D-211 | 4 | T16 · Mensajes de error visibles en la API | A) "Invalid request" · "Malformed JSON body" · "Request body too large" · "Internal server error" (R) · B) Cambiar | A | 2026-10-25 |
+| D-212 | 4 | T16 · `charset.unsupported` / `encoding.unsupported` del parser JSON | A) Mantener 500 (§13.1) · B) 400 `VALIDATION` (R) | B; §13.1 se ajusta (v1.2.5) | 2026-10-25 |
+| D-213 | 4 | T16 · `path` de un issue en la raíz del cuerpo | A) Cadena vacía (R) · B) `"body"` | A | 2026-10-25 |
+| D-214 | 4 | T16 · Mejoras menores del reviewer | Selección múltiple | Solo: comentario + test de que los nombres de headers van en minúsculas | 2026-10-25 |
+| D-215 | 4 | Aprobación de T16 + commit local (incluye errata §13.1) | A) Aprobar + commit y seguir con T17 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-25 |

@@ -201,16 +201,16 @@ Rama: `feature/backend-001-domain` (D-136)
 ## Bloque D — Base HTTP
 Rama: `feature/backend-001-http` (D-136)
 
-- [ ] **T16 — Validación y manejador central de errores**
+- [x] **T16 — Validación y manejador central de errores**
   - Qué: `shared/validate.ts` (`validate({ body?, query?, params?, headers? })` → `res.locals.input`; falla → `VALIDATION` con `details.issues: [{ path, code }]`, `path` con puntos y prefijo `query.`/`params.`/`headers.` fuera del body, F11); `shared/error-handler.ts` (§13.1: `AppError`, `ZodError`, `entity.parse.failed`, `entity.too.large`, resto → 500 genérico con log).
   - Archivos: `backend/src/shared/validate.ts`, `backend/src/shared/error-handler.ts`, `backend/test/unit/validate.test.ts`, `backend/test/unit/error-handler.test.ts`
   - Requisitos: RNF6, RNF10, R4.2
-  - Decisiones: D-099, D-100, D-101, D-118
+  - Decisiones: D-099, D-100, D-101, D-118, D-211..D-215
   - Agente: `dev-backend`
   - Depende de: T4, T5
   - Criterios de aceptación: forma `{ code, message, details? }`; sin mensajes internos de Zod ni stack en la respuesta; el 500 deja el detalle en el log.
   - Verificación: `npx vitest run test/unit/validate.test.ts test/unit/error-handler.test.ts`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-25, D-215)
 
 - [ ] **T17 — `createApp` con CORS, JSON, logging y 404**
   - Qué: `app.ts` con `createApp(deps)` (§4.2): `x-powered-by` desactivado, `trust proxy`, `cors` de §16, `express.json({ limit: '100kb' })`, `pino-http` con el logger de T5, router `/api` vacío, 404 `NOT_FOUND` para rutas inexistentes y el manejador central.
@@ -221,7 +221,7 @@ Rama: `feature/backend-001-http` (D-136)
   - Depende de: T6, T16
   - Criterios de aceptación: origen permitido → headers CORS; no permitido → sin `Access-Control-Allow-Origin`; JSON malformado y cuerpo > 100 KB → 400 `VALIDATION`; ruta inexistente → 404; sin header `X-Powered-By`.
   - Verificación: `npm test -- test/integration/cors.test.ts test/integration/app.test.ts`
-  - Estado: pendiente
+  - Estado: en curso
 
 ## Bloque E — Lecturas públicas
 Rama: `feature/backend-001-public-reads` (D-136)
