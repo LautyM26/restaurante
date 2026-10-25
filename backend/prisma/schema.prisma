@@ -1,0 +1,176 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum OrderStatus {
+  pending
+  accepted
+  preparing
+  ready
+  delivered
+  cancelled
+}
+enum OptionGroupType {
+  single
+  multiple
+}
+enum CategoryVisual {
+  starter
+  main
+  grill
+  pasta
+  dessert
+  drink
+}
+enum DietaryTag {
+  vegetarian
+  vegan
+  gluten_free
+  spicy
+}
+
+model Restaurant {
+  id         String        @id @default(uuid(4)) @db.Uuid
+  slug       String        @unique @db.VarChar(50)
+  categories Category[]
+  tables     Table[]
+  orders     Order[]
+  staff      StaffMember[]
+}
+
+model Table {                                    // D-059, D-074
+  restaurantId String     @db.Uuid
+  number       Int
+  active       Boolean    @default(true)
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  orders       Order[]
+  @@id([restaurantId, number])
+}
+
+model Category {
+  id           String         @id @default(uuid(4)) @db.Uuid
+  restaurantId String         @db.Uuid
+  position     Int
+  nameEs       String
+  nameEn       String?
+  visual       CategoryVisual
+  restaurant   Restaurant     @relation(fields: [restaurantId], references: [id])
+  dishes       Dish[]
+  @@index([restaurantId, position])
+}
+
+model Dish {                                     // D-121: pertenece al restaurante por su categoría
+  id            String        @id @default(uuid(4)) @db.Uuid
+  categoryId    String        @db.Uuid
+  position      Int
+  nameEs        String
+  nameEn        String?
+  descriptionEs String
+  descriptionEn String?
+  priceCents    Int                              // D-076
+  imageUrl      String?
+  tags          DietaryTag[]  @default([])       // D-075
+  available     Boolean       @default(true)
+  featured      Boolean       @default(false)
+  category      Category      @relation(fields: [categoryId], references: [id])
+  optionGroups  OptionGroup[]
+  @@index([categoryId, position])
+}
+
+model OptionGroup {                              // D-073: grupo propio de cada plato
+  id       String          @id @default(uuid(4)) @db.Uuid
+  dishId   String          @db.Uuid
+  position Int
+  nameEs   String
+  nameEn   String?
+  type     OptionGroupType
+  min      Int
+  max      Int
+  dish     Dish            @relation(fields: [dishId], references: [id])
+  options  Option[]
+  @@index([dishId, position])
+}
+
+model Option {
+  id              String      @id @default(uuid(4)) @db.Uuid
+  groupId         String      @db.Uuid
+  position        Int
+  nameEs          String
+  nameEn          String?
+  priceDeltaCents Int
+  available       Boolean     @default(true)
+  group           OptionGroup @relation(fields: [groupId], references: [id])
+  @@index([groupId, position])
+}
+
+model StaffMember {                              // D-087: sin FK a auth.users
+  userId       String     @id @db.Uuid           // `sub` del JWT de Supabase
+  restaurantId String     @db.Uuid               // D-028: exactamente un restaurante
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  @@index([restaurantId])
+}
+
+model Order {
+  id                 String              @id @default(uuid(4)) @db.Uuid
+  restaurantId       String              @db.Uuid
+  tableNumber        Int                                  // se expone como `tableId`
+  code               String              @db.Char(4)
+  clientRequestId    String              @db.Uuid         // D-081
+  requestFingerprint String              @db.Char(64)     // SHA-256 hex (D-081)
+  note               String?
+  totalCents         BigInt                               // D-076
+  status             OrderStatus
+  createdAt          DateTime            @db.Timestamptz(3)
+  updatedAt          DateTime            @db.Timestamptz(3)
+  restaurant         Restaurant          @relation(fields: [restaurantId], references: [id])
+  table              Table               @relation(fields: [restaurantId, tableNumber], references: [restaurantId, number]) // D-074
+  items              OrderItem[]
+  statusChanges      OrderStatusChange[]
+  @@unique([restaurantId, clientRequestId])            // idempotencia por restaurante (D-081)
+  @@index([restaurantId, createdAt(sort: Desc)])       // códigos de 24 h, listados, ventana de 12 h
+  @@index([restaurantId, updatedAt])                   // `since`
+  @@index([restaurantId, tableNumber, createdAt])      // filtro por mesa
+}
+
+model OrderItem {                                // D-079: copia sin FK a la carta
+  id             String            @id @default(uuid(4)) @db.Uuid
+  orderId        String            @db.Uuid
+  position       Int                                  // orden del cuerpo del POST
+  lineId         String        @db.VarChar(4096)      // D-113
+  dishId         String            @db.Uuid           // sin FK
+  nameEs         String
+  nameEn         String?
+  quantity       Int
+  unitPriceCents Int                                  // base + adicionales (I4)
+  note           String?
+  order          Order             @relation(fields: [orderId], references: [id])
+  options        OrderItemOption[]
+  @@unique([orderId, position])
+}
+
+model OrderItemOption {
+  id              String    @id @default(uuid(4)) @db.Uuid
+  orderItemId     String    @db.Uuid
+  position        Int
+  groupId         String    @db.Uuid                  // sin FK
+  optionId        String    @db.Uuid                  // sin FK
+  nameEs          String
+  nameEn          String?
+  priceDeltaCents Int
+  orderItem       OrderItem @relation(fields: [orderItemId], references: [id])
+  @@unique([orderItemId, position])
+}
+
+model OrderStatusChange {                        // D-080
+  id      String      @id @default(uuid(4)) @db.Uuid
+  orderId String      @db.Uuid
+  status  OrderStatus
+  at      DateTime    @db.Timestamptz(3)
+  order   Order       @relation(fields: [orderId], references: [id])
+  @@index([orderId, at])
+}
