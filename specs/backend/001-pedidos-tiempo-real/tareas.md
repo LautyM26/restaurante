@@ -16,203 +16,203 @@
 ## Bloque A — Base del proyecto
 Rama: `feature/backend-001-base` (D-136)
 
-- [ ] **T1 — Esqueleto de `backend/` e instalación de dependencias** [CONFIRMACIÓN: `npm install`]
+- [x] **T1 — Esqueleto de `backend/` e instalación de dependencias** [CONFIRMACIÓN: `npm install`]
   - Qué: `package.json` (`"type": "module"`, `engines.node` 24, scripts de §3 más `db:generate` = `prisma generate`, D-132), `.npmrc` con `save-exact=true`, `tsconfig.json` (`strict`, `moduleResolution: "bundler"`, alias `@/*` → `./src/*`), `.gitignore` (`.env`, `.env.test`, `dist/`, `src/generated/`, `node_modules/`). Instalar las dependencias de producción y desarrollo de §3 en su última versión estable (verificada en npm al ejecutar), exactas, con `package-lock.json`. Bundle: `tsdown` (D-129). Lint/formato: `eslint`, `@eslint/js`, `typescript-eslint`, `eslint-config-prettier`, `prettier` (D-130).
   - Archivos: `backend/package.json`, `backend/package-lock.json`, `backend/.npmrc`, `backend/tsconfig.json`, `backend/.gitignore`
   - Requisitos: RNF9, RNF10 (base técnica)
-  - Decisiones: D-008, D-016, D-063, D-064, D-065, D-066, D-103, D-110, D-122, D-129, D-130, D-132
+  - Decisiones: D-008, D-016, D-063, D-064, D-065, D-066, D-103, D-110, D-122, D-129, D-130, D-132, D-147..D-153
   - Agente: `dev-backend`
   - Depende de: —
   - Criterios de aceptación: todas las dependencias de §3 instaladas sin `^`/`~`, con `tsdown` como bundler y los paquetes de D-130; ninguna otra dependencia; `node -v` es 24.x (si no, el usuario lo instala [MANUAL]); `.gitignore` cubre lo indicado.
   - Verificación: `node -v` · `npm ls --depth=0` · `grep -E '"\^|"~' package.json` sin resultados · `npx tsc --version`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-24, D-153)
 
-- [ ] **T2 — Configuración de herramientas y `src/env.ts`**
-  - Qué: `eslint.config.js` (`@eslint/js` recommended + `typescript-eslint` recommended + `eslint-config-prettier`, D-130), `.prettierrc` con la configuración por defecto de Prettier (D-130), `vitest.config.ts` (proyectos/carpetas `unit` e `integration`, alias `@/`), `tsdown.config.ts` con el bundle a `dist/server.js` (D-129; verificar la API en la documentación oficial de tsdown). `src/env.ts`: `parseEnv(process.env)` con Zod sobre las variables de §17.1 (obligatorias y defaults de D-123; `CORS_ORIGINS` separado por comas; `TRUST_PROXY` `false`/`true`/número). `.env.example` con el contenido de §17.1.
+- [x] **T2 — Configuración de herramientas y `src/env.ts`**
+  - Qué: `eslint.config.js` (ignora `src/generated/`, D-151; `@eslint/js` recommended + `typescript-eslint` recommended + `eslint-config-prettier`, D-130), `.prettierrc` con la configuración por defecto de Prettier (D-130), `vitest.config.ts` (proyectos/carpetas `unit` e `integration`, alias `@/`), `tsdown.config.ts` con el bundle a `dist/server.js` (D-129; verificar la API en la documentación oficial de tsdown). `src/env.ts`: `parseEnv(process.env)` con Zod sobre las variables de §17.1 (obligatorias y defaults de D-123; `CORS_ORIGINS` separado por comas; `TRUST_PROXY` `false`/`true`/número). `.env.example` con el contenido de §17.1.
   - Archivos: `backend/eslint.config.js`, `backend/.prettierrc`, `backend/vitest.config.ts`, `backend/tsdown.config.ts`, `backend/src/env.ts`, `backend/.env.example`, `backend/test/unit/env.test.ts`
   - Requisitos: RNF3, RNF6
-  - Decisiones: D-016, D-017, D-066, D-103, D-105, D-123, D-129, D-130
+  - Decisiones: D-016, D-017, D-066, D-103, D-105, D-123, D-129, D-130, D-151, D-154..D-158
   - Agente: `dev-backend`
   - Depende de: T1
   - Criterios de aceptación: falta una obligatoria → error con el nombre de la variable y sin su valor; defaults `3000`/`info`/`false`/`10`; `TRUST_PROXY` acepta `false`, `true` y enteros; `.env.example` sin secretos.
   - Verificación: `npx vitest run test/unit/env.test.ts` · `npm run typecheck` · `npm run lint` · `npx prettier --check .`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-24, D-158)
 
-- [ ] **T3 — Postgres local en Docker (desarrollo y tests)** [APROBADO D-134: `docker compose up -d`]
+- [x] **T3 — Postgres local en Docker (desarrollo y tests)** [APROBADO D-134: `docker compose up -d`]
   - Qué: `docker-compose.yml` con `postgres:<mayor de Supabase>` (la mayor que usan los proyectos nuevos de Supabase, verificada en su documentación al ejecutar, porque el proyecto se crea en T41, D-133) publicado en el puerto **5433** del host, usuario/clave `postgres`/`postgres` solo locales (D-131), con health check y dos bases separadas: desarrollo (`restaurante_dev`, D-133) y tests (`restaurante_test`) — nombres propuestos. `.env.test.example` con `DATABASE_URL`/`DIRECT_URL` hacia la base de tests; `.env.example` suma un comentario con las URLs locales de desarrollo. Script `db:test:up`.
-  - Archivos: `backend/docker-compose.yml`, `backend/docker/init-databases.sql` (o equivalente para crear la segunda base; nombre propuesto), `backend/.env.test.example`, `backend/.env.example`, `backend/package.json` (script)
+  - Archivos: `backend/docker-compose.yml`, `backend/docker/init-databases.sql` (o equivalente para crear la segunda base; nombre propuesto), `backend/.env.test.example`, `backend/.env.example`, `backend/package.json` (script), `backend/.gitignore` (excepción `!.env.test.example`, D-159)
   - Requisitos: RNF9
-  - Decisiones: D-107, D-122, D-131, D-133, D-134
+  - Decisiones: D-107, D-122, D-131, D-133, D-134, D-144, D-159..D-163
   - Agente: `devops`
   - Depende de: T1
   - Criterios de aceptación: el contenedor queda sano; existen las dos bases; puerto 5433; el usuario crea `.env.test` desde el `.example` y un `.env` local apuntando a `restaurante_dev` [MANUAL].
   - Verificación: `npm run db:test:up` · `docker compose ps` (estado `healthy`) · `docker compose exec <servicio> psql -U postgres -c "select version();" -c "\l"` (mayor correcta, `restaurante_dev` y `restaurante_test` presentes)
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-24, D-163)
 
-- [ ] **T4 — Errores y dependencias inyectables**
-  - Qué: `shared/errors.ts` (`AppError(code, status, message, details?)`, códigos de §13.3, helpers), `shared/clock.ts`, `shared/random.ts`.
+- [x] **T4 — Errores y dependencias inyectables**
+  - Qué: `shared/errors.ts` (`AppError(code, status, message, details?)`, códigos de §13.3; sin helpers propios: el compilador exige que `status` corresponda al `code`, D-164), `shared/clock.ts`, `shared/random.ts`.
   - Archivos: `backend/src/shared/errors.ts`, `backend/src/shared/clock.ts`, `backend/src/shared/random.ts`, `backend/test/unit/errors.test.ts`
   - Requisitos: RNF6, RNF10
-  - Decisiones: D-077, D-099, D-100, D-101
+  - Decisiones: D-077, D-099, D-100, D-101, D-164..D-168
   - Agente: `dev-backend`
   - Depende de: T2
   - Criterios de aceptación: los 11 códigos de §13.3 con su HTTP; `message` en inglés; reloj y aleatorio reemplazables.
   - Verificación: `npx vitest run test/unit/errors.test.ts` · `npm run typecheck` · `npm run lint`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-24, D-168)
 
-- [ ] **T5 — Logger con redacción**
+- [x] **T5 — Logger con redacción**
   - Qué: `shared/logger.ts`: `pino` con `LOG_LEVEL`, `redact` de `req.headers.authorization`, `req.headers.cookie`, `res.headers["set-cookie"]`, y serializador de URL que reemplaza `accessToken` por `[REDACTED]`.
   - Archivos: `backend/src/shared/logger.ts`, `backend/test/unit/logger.test.ts`
   - Requisitos: RNF8
-  - Decisiones: D-091, D-103
+  - Decisiones: D-091, D-103, D-169..D-174
   - Agente: `dev-backend`
   - Depende de: T2
   - Criterios de aceptación: la salida capturada no contiene el valor de `authorization`, `cookie` ni `accessToken` (también con el parámetro en distintas posiciones de la query).
   - Verificación: `npx vitest run test/unit/logger.test.ts`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-24, D-174)
 
 ## Bloque B — Datos y CI
 Rama: `feature/backend-001-data` (D-136) · incluye T44 (CI, D-137)
 
-- [ ] **T6 — Esquema Prisma, `prisma.config.ts` y cliente**
+- [x] **T6 — Esquema Prisma, `prisma.config.ts` y cliente**
   - Qué: `schema.prisma` exactamente como §5.1 (enums, 11 modelos, índices, generador `prisma-client` con `output` en `src/generated/prisma`); `prisma.config.ts` (§3: `process.loadEnvFile()`, `schema`, `migrations.path`, `migrations.seed`, `datasource.url = env("DIRECT_URL")`); `shared/db.ts` con `createPrismaClient(DATABASE_URL, DB_POOL_MAX)` sobre `@prisma/adapter-pg`. Verificar las APIs en la documentación oficial de Prisma 7.
   - Archivos: `backend/prisma/schema.prisma`, `backend/prisma.config.ts`, `backend/src/shared/db.ts`
   - Requisitos: R3.8, R11.1, RNF3, RNF8
-  - Decisiones: D-063, D-071..D-081, D-087, D-105, D-113, D-121, D-132
+  - Decisiones: D-063, D-071..D-081, D-087, D-105, D-113, D-121, D-132, D-176..D-178
   - Agente: `dev-database`
   - Depende de: T2
   - Criterios de aceptación: el esquema coincide con §5.1 campo por campo; sin `@default(now())` ni `@updatedAt`; `Dish` sin `restaurantId`.
   - Verificación: `npx prisma validate` · `npm run db:generate` (D-132) · `npm run typecheck`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-24, D-178)
 
-- [ ] **T7 — Migración inicial con RLS y CHECK** [CONFIRMACIÓN: crear y aplicar la migración en `restaurante_dev`]
+- [x] **T7 — Migración inicial con RLS y CHECK** [CONFIRMACIÓN: crear y aplicar la migración en `restaurante_dev`]
   - Qué: `prisma migrate dev --create-only` contra la base de desarrollo de Docker (`restaurante_dev`, D-133; la shadow database la crea Prisma en el mismo contenedor); agregar a mano al SQL `ENABLE ROW LEVEL SECURITY` en cada tabla nueva y en `"_prisma_migrations"` (§5.3) y las restricciones `CHECK` con nombre propio de §5.4; aplicar con `prisma migrate dev` y `npm run db:generate` (D-132).
   - Archivos: `backend/prisma/migrations/<timestamp>_init/migration.sql`, `backend/prisma/migrations/migration_lock.toml`
   - Requisitos: R11.1, RNF5
-  - Decisiones: D-015, D-106, D-120, D-125, D-132, D-133
+  - Decisiones: D-015, D-106, D-120, D-125, D-132, D-133, D-179..D-184
   - Agente: `dev-database`
   - Depende de: T3, T6
   - Criterios de aceptación: migración versionada; las 5 tablas de §5.4 con sus `CHECK`; todas las tablas de `public` con RLS y sin políticas.
   - Verificación: `npx prisma migrate status` · `select relname, relrowsecurity from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'public' and c.relkind = 'r';` (todas `true`) · `select conname from pg_constraint where contype = 'c';`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-24, D-184)
 
-- [ ] **T8 — Infraestructura de tests de integración + tests de RLS y CHECK** [APROBADO D-134: `npm test` sobre `restaurante_test`]
+- [x] **T8 — Infraestructura de tests de integración + tests de RLS y CHECK** [APROBADO D-134: `npm test` sobre `restaurante_test`]
   - Qué: `test/global-setup.ts` (`prisma migrate deploy` contra la base de tests + `TRUNCATE … CASCADE` de las tablas de la app al inicio), fábricas en `test/helpers/` (restaurante con slug aleatorio, carta, mesas), script `test` que carga `.env.test` con `--env-file-if-exists`. Tests: toda tabla de `public` con `relrowsecurity = true`; cada `CHECK` rechaza un valor inválido.
-  - Archivos: `backend/test/global-setup.ts`, `backend/test/helpers/factories.ts`, `backend/test/integration/rls.test.ts`, `backend/test/integration/db-constraints.test.ts` (nombre propuesto), `backend/vitest.config.ts`, `backend/package.json`
+  - Archivos: `backend/test/global-setup.ts`, `backend/test/helpers/test-db-guard.ts` (D-186), `backend/test/helpers/factories.ts`, `backend/test/integration/rls.test.ts`, `backend/test/integration/db-constraints.test.ts` (nombre propuesto), `backend/vitest.config.ts`, `backend/package.json`
   - Requisitos: RNF5, RNF9, R11.1
-  - Decisiones: D-106, D-107, D-108, D-120, D-122, D-134
+  - Decisiones: D-106, D-107, D-108, D-120, D-122, D-134, D-185..D-189
   - Agente: `dev-database`
   - Depende de: T7
   - Criterios de aceptación: `npm test` corre sobre `restaurante_test` y nunca sobre `restaurante_dev` ni Supabase; sin `.env.test` toma las variables del entorno (como en CI, T44); dos archivos de test en paralelo no interfieren.
   - Verificación: `npm run db:test:up` · `npm test -- test/integration/rls.test.ts test/integration/db-constraints.test.ts`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-25, D-189)
 
-- [ ] **T44 — Workflow de CI en GitHub Actions**
-  - Qué: workflow según diseño §23: Node 24 (D-064), servicio `postgres:<mayor de Supabase>` (misma imagen que T3, D-131) con health check, `npm ci` → `npm run db:generate` (D-132) → `npx prettier --check .` (D-142) → `npm run lint` → `npm run typecheck` → `npm test`, con `working-directory: backend` y las variables de los tests definidas en el workflow, sin secretos. Disparadores: `pull_request` a `develop`/`main` y `push` a `develop`, con `paths` `backend/**` y el workflow (D-138). Cache `setup-node` `cache: npm` sobre `backend/package-lock.json` (D-140). Sin matriz (D-141). Check informativo, sin protección de ramas (D-139). `npm run build` (D-142) se agrega al workflow en T36, cuando existe `src/server.ts`. Versiones de las actions verificadas en su documentación oficial.
-  - Archivos: `.github/workflows/<nombre>.yml` `.github/workflows/backend-ci.yml` (en la raíz del repo, D-143)
+- [x] **T44 — Workflow de CI en GitHub Actions**
+  - Qué: workflow según diseño §23: Node 24 (D-064), servicio `postgres:<mayor de Supabase>` (misma imagen que T3, D-131) con health check, `npm ci` → `npm run db:generate` (D-132) → `npx prettier --check .` (D-142) → `npm run lint` → `npm run typecheck` → `npm test`, con `working-directory: backend` y las variables de los tests definidas en el workflow, sin secretos. Disparadores: `pull_request` a `develop`/`main` y `push` a `develop`, con `paths` `backend/**` y el workflow (D-138). Cache `setup-node` `cache: npm` sobre `backend/package-lock.json` (D-140). Sin matriz (D-141). Check informativo, sin protección de ramas (D-139). `npm run build` (D-142) se agrega al workflow en T36, cuando existe `src/server.ts`. Versiones de las actions verificadas en su documentación oficial. El job corre directo en el runner (no en `container:`), con Postgres en `localhost`, para cumplir la protección de los tests (D-185).
+  - Archivos: `.github/workflows/backend-ci.yml` (en la raíz del repo, D-143)
   - Requisitos: RNF9
-  - Decisiones: D-014, D-064, D-131, D-132, D-137, D-138..D-143
+  - Decisiones: D-014, D-064, D-131, D-132, D-137, D-138..D-143, D-185, D-190..D-192
   - Agente: `devops`
   - Depende de: T8 · diseño §23 aprobado
   - Criterios de aceptación: el workflow corre en verde en el PR del Bloque B con los tests de T8; falla si se rompe lint, typecheck o un test; no usa secretos ni se conecta a Supabase.
   - Verificación: push de la rama del bloque [CONFIRMACIÓN] → `gh run list --branch feature/backend-001-data` y `gh run view <id>` en verde · prueba en una rama descartable con un error de lint forzado → el run falla (opcional, con confirmación)
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-25, D-192; CI verde en el run 40162158125)
 
 ## Bloque C — Dominio (funciones puras, tests unitarios)
 Rama: `feature/backend-001-domain` (D-136)
 
-- [ ] **T9 — Tipos del contrato y límites**
-  - Qué: `domain/types.ts` con los tipos de `plan.md` §6 del front (leído de `origin/develop`, solo lectura) más las extensiones de §19 (F9–F11); `domain/limits.ts` (`MAX_QTY` 20, `MAX_LINES` 50, `NOTE_MAX` 140, `ORDER_NOTE_MAX` 200, ventanas 12 h / 24 h, máximos de filtros de §6.6 y del WS).
+- [x] **T9 — Tipos del contrato y límites**
+  - Qué: `domain/types.ts` con los tipos de `plan.md` §6 del front (leído de `origin/develop`, solo lectura) más las extensiones de §19 (F9–F11); `domain/limits.ts` (`MAX_QTY` 20, `MAX_LINES` 50, `NOTE_MAX` 140, `ORDER_NOTE_MAX` 200, ventanas 12 h / 24 h, máximos de filtros de §6.6 y del WS, `LINE_ID_MAX` 4096 por D-113/D-195). Sin `ServiceErrorCode`: el back usa `ErrorCode` (D-194).
   - Archivos: `backend/src/domain/types.ts`, `backend/src/domain/limits.ts`
   - Requisitos: RNF10, R3.4, R10.2, R3.9
-  - Decisiones: D-043, D-054, D-094, D-098, D-099, D-100, D-126
+  - Decisiones: D-043, D-054, D-094, D-098, D-099, D-100, D-113, D-126, D-194..D-196
   - Agente: `dev-backend`
   - Depende de: T2
   - Criterios de aceptación: nombres y formas idénticos a `plan.md` §6 salvo lo acordado en §19.
   - Verificación: `npm run typecheck` · comparación con `git show origin/develop:specs/001-menu-cliente/plan.md`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-25, D-196)
 
-- [ ] **T10 — Estados y transiciones**
+- [x] **T10 — Estados y transiciones**
   - Qué: `domain/order-status.ts`: `ORDER_FLOW`, `FINAL_STATUSES`, `canTransition` (un paso adelante/atrás, cancelar desde no final), `applyTransition` (`noop | conflict | invalid | applied` en ese orden), `applyClientCancel`.
   - Archivos: `backend/src/domain/order-status.ts`, `backend/test/unit/order-status.test.ts`
   - Requisitos: R5.2, R5.3, R5.4, R5.5, R5.6, R5.7, R6.1, R6.2
-  - Decisiones: D-025, D-047, D-048, D-052, D-060, D-070
+  - Decisiones: D-025, D-047, D-048, D-052, D-060, D-070, D-197..D-199
   - Agente: `dev-backend`
   - Depende de: T9
   - Criterios de aceptación: tabla completa 6×6 de `canTransition`; orden de chequeo de `applyTransition`; `applyClientCancel` solo desde `pending`.
   - Verificación: `npx vitest run test/unit/order-status.test.ts`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-25, D-199)
 
-- [ ] **T11 — Notas y caracteres visibles**
+- [x] **T11 — Notas y caracteres visibles**
   - Qué: `domain/text.ts`: `countVisibleChars` con `Intl.Segmenter` (grafemas) y `normalizeNote` (`trim`; vacía → `undefined`).
   - Archivos: `backend/src/domain/text.ts`, `backend/test/unit/text.test.ts`
   - Requisitos: R3.4
-  - Decisiones: D-085, D-086
+  - Decisiones: D-085, D-086, D-200
   - Agente: `dev-backend`
   - Depende de: T9
   - Criterios de aceptación: emojis compuestos (familia, banderas, tonos de piel) cuentan 1; 140/141 y 200/201 en el borde.
   - Verificación: `npx vitest run test/unit/text.test.ts`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-25, D-200)
 
-- [ ] **T12 — Selección y validación de líneas**
+- [x] **T12 — Selección y validación de líneas**
   - Qué: `domain/selection.ts`: `canonicalSelection` (como el front), `isDishOrderable`, `validateLine(dish | null, line)` → `LineIssue[]` con las reglas de §8.4.
   - Archivos: `backend/src/domain/selection.ts`, `backend/test/unit/selection.test.ts`
   - Requisitos: R3.5, R3.13, R11.3
-  - Decisiones: D-070, D-073, D-084, D-116
+  - Decisiones: D-070, D-073, D-084, D-116, D-201..D-205
   - Agente: `dev-backend`
   - Depende de: T9
   - Criterios de aceptación: cada `reason` de R3.5 cubierto; `dish_unavailable` como único motivo; todos los problemas de una línea pedible; array vacío = sin elección; grupo ajeno y opciones repetidas → `selection_invalid` con `groupId`.
   - Verificación: `npx vitest run test/unit/selection.test.ts`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-25, D-205)
 
-- [ ] **T13 — Precios**
+- [x] **T13 — Precios**
   - Qué: `domain/pricing.ts`: `unitPriceCents`, `lineTotalCents`, `orderTotalCents` en enteros.
   - Archivos: `backend/src/domain/pricing.ts`, `backend/test/unit/pricing.test.ts`
   - Requisitos: R3.6, RNF5
-  - Decisiones: D-053, D-076
+  - Decisiones: D-053, D-076, D-206
   - Agente: `dev-backend`
   - Depende de: T9
   - Criterios de aceptación: base + adicionales × cantidad; total = Σ líneas; caso máximo (50 × 20 × 2^31) exacto.
   - Verificación: `npx vitest run test/unit/pricing.test.ts`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-25, D-206)
 
-- [ ] **T14 — Código corto**
+- [x] **T14 — Código corto**
   - Qué: `domain/short-code.ts`: `SHORT_CODE_ALPHABET`, `generateUniqueCode(existing, random)` con hasta 20 intentos y excepción al agotarse.
   - Archivos: `backend/src/domain/short-code.ts`, `backend/test/unit/short-code.test.ts`
   - Requisitos: R3.9
-  - Decisiones: D-051, D-082
+  - Decisiones: D-051, D-082, D-207
   - Agente: `dev-backend`
   - Depende de: T9
   - Criterios de aceptación: 4 caracteres del alfabeto; con aleatorio fijo y colisión forzada genera otro; 20 colisiones → lanza.
   - Verificación: `npx vitest run test/unit/short-code.test.ts`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-25, D-207)
 
-- [ ] **T15 — Huella de idempotencia**
+- [x] **T15 — Huella de idempotencia**
   - Qué: `domain/fingerprint.ts`: contenido canónico de §8.7 + SHA-256 hex.
   - Archivos: `backend/src/domain/fingerprint.ts`, `backend/test/unit/fingerprint.test.ts`
   - Requisitos: R3.10, R3.11
-  - Decisiones: D-081, D-085
+  - Decisiones: D-081, D-085, D-208
   - Agente: `dev-backend`
   - Depende de: T11, T12
   - Criterios de aceptación: misma huella con líneas u opciones en otro orden y con notas que difieren solo en espacios; distinta si cambia mesa, cantidad, selección, nota o `expectedTotalCents`; `clientRequestId` no influye.
   - Verificación: `npx vitest run test/unit/fingerprint.test.ts`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-25, D-208)
 
 ## Bloque D — Base HTTP
 Rama: `feature/backend-001-http` (D-136)
 
-- [ ] **T16 — Validación y manejador central de errores**
+- [x] **T16 — Validación y manejador central de errores**
   - Qué: `shared/validate.ts` (`validate({ body?, query?, params?, headers? })` → `res.locals.input`; falla → `VALIDATION` con `details.issues: [{ path, code }]`, `path` con puntos y prefijo `query.`/`params.`/`headers.` fuera del body, F11); `shared/error-handler.ts` (§13.1: `AppError`, `ZodError`, `entity.parse.failed`, `entity.too.large`, resto → 500 genérico con log).
   - Archivos: `backend/src/shared/validate.ts`, `backend/src/shared/error-handler.ts`, `backend/test/unit/validate.test.ts`, `backend/test/unit/error-handler.test.ts`
   - Requisitos: RNF6, RNF10, R4.2
-  - Decisiones: D-099, D-100, D-101, D-118
+  - Decisiones: D-099, D-100, D-101, D-118, D-211..D-215
   - Agente: `dev-backend`
   - Depende de: T4, T5
   - Criterios de aceptación: forma `{ code, message, details? }`; sin mensajes internos de Zod ni stack en la respuesta; el 500 deja el detalle en el log.
   - Verificación: `npx vitest run test/unit/validate.test.ts test/unit/error-handler.test.ts`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-25, D-215)
 
-- [ ] **T17 — `createApp` con CORS, JSON, logging y 404**
+- [x] **T17 — `createApp` con CORS, JSON, logging y 404**
   - Qué: `app.ts` con `createApp(deps)` (§4.2): `x-powered-by` desactivado, `trust proxy`, `cors` de §16, `express.json({ limit: '100kb' })`, `pino-http` con el logger de T5, router `/api` vacío, 404 `NOT_FOUND` para rutas inexistentes y el manejador central.
   - Archivos: `backend/src/app.ts`, `backend/test/helpers/app.ts` (deps de prueba), `backend/test/integration/cors.test.ts`, `backend/test/integration/app.test.ts` (nombre propuesto)
   - Requisitos: RNF6, RNF8, RNF10
@@ -221,12 +221,12 @@ Rama: `feature/backend-001-http` (D-136)
   - Depende de: T6, T16
   - Criterios de aceptación: origen permitido → headers CORS; no permitido → sin `Access-Control-Allow-Origin`; JSON malformado y cuerpo > 100 KB → 400 `VALIDATION`; ruta inexistente → 404; sin header `X-Powered-By`.
   - Verificación: `npm test -- test/integration/cors.test.ts test/integration/app.test.ts`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-25, D-220; CI verde en el run 40167697194)
 
 ## Bloque E — Lecturas públicas
 Rama: `feature/backend-001-public-reads` (D-136)
 
-- [ ] **T18 — `GET /api/menu`**
+- [x] **T18 — `GET /api/menu`**
   - Qué: `shared/restaurants.ts` (`findRestaurantBySlug`); módulo `menu` (router, service con una sola consulta anidada por `position`, schemas, mapper a `Menu` según §5.2).
   - Archivos: `backend/src/shared/restaurants.ts`, `backend/src/modules/menu/menu.router.ts`, `menu.service.ts`, `menu.schemas.ts`, `menu.mapper.ts`, `backend/src/app.ts`, `backend/test/integration/menu.test.ts`
   - Requisitos: R1.1–R1.7, R11.2, RNF1 (diseño de la consulta), RNF10
@@ -235,9 +235,9 @@ Rama: `feature/backend-001-public-reads` (D-136)
   - Depende de: T8, T17
   - Criterios de aceptación: 200 con forma `Menu`; no disponibles incluidos con `available: false`; `en` e `imageUrl` omitidos si son `null`; sin datos de otro restaurante (test con dos restaurantes); 400 / 404 según R1.4 / R1.5; sin auth.
   - Verificación: `npm test -- test/integration/menu.test.ts`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-25, D-224)
 
-- [ ] **T19 — `GET /api/tables/{tableId}`**
+- [x] **T19 — `GET /api/tables/{tableId}`**
   - Qué: módulo `tables` según §6.2.
   - Archivos: `backend/src/modules/tables/tables.router.ts`, `tables.service.ts`, `tables.schemas.ts`, `backend/src/app.ts`, `backend/test/integration/tables.test.ts`
   - Requisitos: R2.1–R2.4, R11.2
@@ -246,12 +246,12 @@ Rama: `feature/backend-001-public-reads` (D-136)
   - Depende de: T18
   - Criterios de aceptación: 200 `{ id }` activa; 404 inexistente, inactiva, de otro restaurante o restaurante inexistente; 400 con `tableId` no entero positivo, mayor a 2.147.483.647 o sin `restaurant`.
   - Verificación: `npm test -- test/integration/tables.test.ts`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-25, D-229)
 
 ## Bloque F — Autenticación del personal
 Rama: `feature/backend-001-staff-auth` (D-136)
 
-- [ ] **T20 — Verificador de JWT**
+- [x] **T20 — Verificador de JWT**
   - Qué: `staff/token-verifier.ts`: `TokenVerifier` con `jose` (`createRemoteJWKSet` sobre `${SUPABASE_URL}/auth/v1/.well-known/jwks.json`, `jwtVerify` con `issuer` y `audience: 'authenticated'`, solo algoritmos asimétricos) → `{ userId, exp }`; fábrica para tests con `createLocalJWKSet`. Helper `test/helpers/jwt.ts` que firma tokens con `iss`/`aud`/`exp` configurables. Verificar las APIs en la documentación oficial de `jose`.
   - Archivos: `backend/src/modules/staff/token-verifier.ts`, `backend/test/helpers/jwt.ts`, `backend/test/unit/token-verifier.test.ts`
   - Requisitos: R8.1, R8.2 (base)
@@ -260,9 +260,9 @@ Rama: `feature/backend-001-staff-auth` (D-136)
   - Depende de: T2
   - Criterios de aceptación: acepta un token válido; rechaza firma ajena, `iss` o `aud` distintos, vencido y HS256.
   - Verificación: `npx vitest run test/unit/token-verifier.test.ts`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-25, D-236)
 
-- [ ] **T21 — Middleware `requireStaff`**
+- [x] **T21 — Middleware `requireStaff`**
   - Qué: `staff/staff-auth.ts`: `Authorization: Bearer` → verificador → `StaffMember` por `userId` → `res.locals.staff`; cualquier falla → 401 `UNAUTHORIZED`. Función de resolución reutilizable por el WS y por `GET /api/orders`.
   - Archivos: `backend/src/modules/staff/staff-auth.ts`, `backend/test/integration/auth.test.ts`
   - Requisitos: R8.1, R8.5, R11.1
@@ -271,7 +271,7 @@ Rama: `feature/backend-001-staff-auth` (D-136)
   - Depende de: T8, T20
   - Criterios de aceptación: sin header, esquema distinto de Bearer, token inválido, vencido o válido sin `StaffMember` → 401; válido con `StaffMember` → `{ userId, restaurantId }`.
   - Verificación: `npm test -- test/integration/auth.test.ts`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-25, D-242)
 
 ## Bloque G — Pedidos
 Rama: `feature/backend-001-orders` (D-136)

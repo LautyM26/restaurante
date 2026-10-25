@@ -1,0 +1,55 @@
+name: Backend CI
+
+on:
+  pull_request:
+    branches: [develop, main]
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-ci.yml"
+  push:
+    branches: [develop]
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: restaurante_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d restaurante_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/restaurante_test
+      DIRECT_URL: postgresql://postgres:postgres@localhost:5432/restaurante_test
+      SUPABASE_URL: https://test.supabase.co
+      CORS_ORIGINS: http://localhost:5173
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - run: npm ci
+      - run: npm run db:generate
+      - run: npx prettier --check .
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
