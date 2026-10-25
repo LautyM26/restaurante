@@ -1,7 +1,7 @@
 # Spec backend/001 — Pedidos en tiempo real · Diseño
 
-**Estado:** APROBADO (2026-10-24, v1.2 con §23 por D-145) · **Versión:** 1.2.2 · **Fecha:** 2026-10-24
-**Historial:** v1.2.2 (2026-10-24): errata en §5.1, los enums pasan a un valor por línea porque Prisma 7 no acepta la forma en una línea (D-176); mismos valores. v1.2.1 (2026-10-24): errata en §13.1, el ejemplo de `AppError` no tenía `message` (D-167); sin cambios de decisiones. v1.2 (2026-10-24) agrega solo §23 Integración continua (D-137) y suma D-128..D-137 a §2; el resto es la v1.1 APROBADA sin cambios. §23 se aprueba por separado. v1.1 (APROBADO 2026-10-24, D-127) resuelve los pendientes P1–P11 (D-113..D-123) y pasa a requisitos v2.1 (D-124). v1 BORRADOR del 2026-10-23.
+**Estado:** APROBADO (2026-10-24, v1.2 con §23 por D-145) · **Versión:** 1.2.3 · **Fecha:** 2026-10-24
+**Historial:** v1.2.3 (2026-10-24): errata en §5.3, RLS de `_prisma_migrations` con SQL condicional (D-180). v1.2.2 (2026-10-24): errata en §5.1, los enums pasan a un valor por línea porque Prisma 7 no acepta la forma en una línea (D-176); mismos valores. v1.2.1 (2026-10-24): errata en §13.1, el ejemplo de `AppError` no tenía `message` (D-167); sin cambios de decisiones. v1.2 (2026-10-24) agrega solo §23 Integración continua (D-137) y suma D-128..D-137 a §2; el resto es la v1.1 APROBADA sin cambios. §23 se aprueba por separado. v1.1 (APROBADO 2026-10-24, D-127) resuelve los pendientes P1–P11 (D-113..D-123) y pasa a requisitos v2.1 (D-124). v1 BORRADOR del 2026-10-23.
 **Basado en:** requisitos v2.1 (APROBADO 2026-10-24, D-124, D-127) · constitución v2 · `plan.md` del front §6–§7.4 (rama `develop`) · decisiones D-042..D-127 (`decisiones.md`) · detalle de opciones en `opciones-diseno.md`.
 
 > Cada elección cita su decisión. Los huecos detectados en la v1 (P1–P11) ya están resueltos (§20). Lo que cambia o extiende el contrato del front está en §19.
@@ -363,7 +363,7 @@ model OrderStatusChange {                        // D-080
 - `Order`: `tableId` = `tableNumber`; `totalCents` = `Number(bigint)` en un único lugar (`order.mapper.ts`, D-076; seguro hasta 2^53); `note` y `items[].note` se omiten si son `null`; fechas con `toISOString()`; `statusHistory` = `OrderStatusChange` ordenado por `at` ascendente; `items` por `position`; `options` por `position`.
 
 ### 5.3 RLS (D-106)
-Cada migración que crea tablas se genera con `prisma migrate dev --create-only` y se le agrega `ALTER TABLE "<tabla>" ENABLE ROW LEVEL SECURITY;` por cada tabla nueva, sin políticas. La primera migración incluye también `"_prisma_migrations"` ("todas las tablas"). El rol `prisma` tiene `bypassrls` (D-105), así que la app no se ve afectada. Un test de integración verifica que toda tabla de `public` tenga `relrowsecurity = true`.
+Cada migración que crea tablas se genera con `prisma migrate dev --create-only` y se le agrega `ALTER TABLE "<tabla>" ENABLE ROW LEVEL SECURITY;` por cada tabla nueva, sin políticas. La primera migración incluye también `"_prisma_migrations"` ("todas las tablas"), con un bloque condicional (`DO $$ … IF to_regclass('public."_prisma_migrations"') IS NOT NULL THEN … END IF; $$`), porque esa tabla no existe en la shadow database donde `migrate dev` valida el SQL (D-180). El rol `prisma` tiene `bypassrls` (D-105), así que la app no se ve afectada. Un test de integración verifica que toda tabla de `public` tenga `relrowsecurity = true`.
 
 ---
 

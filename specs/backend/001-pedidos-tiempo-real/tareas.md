@@ -85,16 +85,16 @@ Rama: `feature/backend-001-data` (D-136) · incluye T44 (CI, D-137)
   - Verificación: `npx prisma validate` · `npm run db:generate` (D-132) · `npm run typecheck`
   - Estado: aprobada (2026-10-24, D-178)
 
-- [ ] **T7 — Migración inicial con RLS y CHECK** [CONFIRMACIÓN: crear y aplicar la migración en `restaurante_dev`]
+- [x] **T7 — Migración inicial con RLS y CHECK** [CONFIRMACIÓN: crear y aplicar la migración en `restaurante_dev`]
   - Qué: `prisma migrate dev --create-only` contra la base de desarrollo de Docker (`restaurante_dev`, D-133; la shadow database la crea Prisma en el mismo contenedor); agregar a mano al SQL `ENABLE ROW LEVEL SECURITY` en cada tabla nueva y en `"_prisma_migrations"` (§5.3) y las restricciones `CHECK` con nombre propio de §5.4; aplicar con `prisma migrate dev` y `npm run db:generate` (D-132).
   - Archivos: `backend/prisma/migrations/<timestamp>_init/migration.sql`, `backend/prisma/migrations/migration_lock.toml`
   - Requisitos: R11.1, RNF5
-  - Decisiones: D-015, D-106, D-120, D-125, D-132, D-133
+  - Decisiones: D-015, D-106, D-120, D-125, D-132, D-133, D-179..D-184
   - Agente: `dev-database`
   - Depende de: T3, T6
   - Criterios de aceptación: migración versionada; las 5 tablas de §5.4 con sus `CHECK`; todas las tablas de `public` con RLS y sin políticas.
   - Verificación: `npx prisma migrate status` · `select relname, relrowsecurity from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'public' and c.relkind = 'r';` (todas `true`) · `select conname from pg_constraint where contype = 'c';`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-24, D-184)
 
 - [ ] **T8 — Infraestructura de tests de integración + tests de RLS y CHECK** [APROBADO D-134: `npm test` sobre `restaurante_test`]
   - Qué: `test/global-setup.ts` (`prisma migrate deploy` contra la base de tests + `TRUNCATE … CASCADE` de las tablas de la app al inicio), fábricas en `test/helpers/` (restaurante con slug aleatorio, carta, mesas), script `test` que carga `.env.test` con `--env-file-if-exists`. Tests: toda tabla de `public` con `relrowsecurity = true`; cada `CHECK` rechaza un valor inválido.
