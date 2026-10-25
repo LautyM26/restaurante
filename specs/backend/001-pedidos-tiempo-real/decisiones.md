@@ -193,3 +193,4 @@
 | D-207 | 4 | Aprobación de T14 + commit local | A) Aprobar + commit y seguir con T15 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-25 |
 | D-208 | 4 | Aprobación de T15 y cierre del Bloque C | A) Commit + push + PR a develop, sin mergear (R) · B) Solo commit · C) Cambios | A | 2026-10-25 |
 | D-209 | 4 | Imports mezclados (relativos y alias `@/`; §3 prevé el alias) | A) Unificar a `@/` en un commit de estilo aparte al empezar el Bloque D (R) · B) Dentro de T15 · C) Dejarlo | A | 2026-10-25 |
+| D-210 | 4 | Seguir con el Bloque D (rama desde `feature/backend-001-domain`, primero el commit de imports de D-209) | A) Seguir (R) · B) Cortar | A | 2026-10-25 |

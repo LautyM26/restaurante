@@ -1,5 +1,5 @@
 import pino, { type DestinationStream, type Logger } from "pino";
-import type { Env } from "../env.js";
+import type { Env } from "@/env";
 
 export type { Logger };
 

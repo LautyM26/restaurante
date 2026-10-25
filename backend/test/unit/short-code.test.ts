@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  SHORT_CODE_ALPHABET,
-  generateUniqueCode,
-} from "../../src/domain/short-code.js";
+import { SHORT_CODE_ALPHABET, generateUniqueCode } from "@/domain/short-code";
 
 function sequence(values: number[]): () => number {
   let i = 0;

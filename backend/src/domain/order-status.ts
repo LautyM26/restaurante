@@ -1,4 +1,4 @@
-import type { Order, OrderStatus } from "./types";
+import type { Order, OrderStatus } from "@/domain/types";
 
 /** Flujo lineal del pedido; `cancelled` queda fuera (se alcanza desde cualquier no final). */
 export const ORDER_FLOW: readonly OrderStatus[] = [

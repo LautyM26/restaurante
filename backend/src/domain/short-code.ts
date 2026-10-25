@@ -1,4 +1,4 @@
-import type { Random } from "../shared/random.js";
+import type { Random } from "@/shared/random";
 
 /** Dígitos 2-9 y letras mayúsculas sin I ni O (R3.9). 32 símbolos. */
 export const SHORT_CODE_ALPHABET = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";

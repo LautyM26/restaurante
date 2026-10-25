@@ -3,11 +3,7 @@ import http from "node:http";
 import express from "express";
 import { pinoHttp } from "pino-http";
 import request from "supertest";
-import {
-  createLogger,
-  redactSerializedReq,
-  redactUrl,
-} from "../../src/shared/logger.js";
+import { createLogger, redactSerializedReq, redactUrl } from "@/shared/logger";
 
 function capture(): {
   lines: () => string;

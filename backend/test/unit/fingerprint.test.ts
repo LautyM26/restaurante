@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { computeFingerprint } from "../../src/domain/fingerprint.js";
-import type { CreateOrderInput } from "../../src/domain/types.js";
+import { computeFingerprint } from "@/domain/fingerprint";
+import type { CreateOrderInput } from "@/domain/types";
 
 type Content = Omit<CreateOrderInput, "clientRequestId">;
 
