@@ -154,16 +154,16 @@ Rama: `feature/backend-001-domain` (D-136)
   - Verificación: `npx vitest run test/unit/text.test.ts`
   - Estado: aprobada (2026-10-25, D-200)
 
-- [ ] **T12 — Selección y validación de líneas**
+- [x] **T12 — Selección y validación de líneas**
   - Qué: `domain/selection.ts`: `canonicalSelection` (como el front), `isDishOrderable`, `validateLine(dish | null, line)` → `LineIssue[]` con las reglas de §8.4.
   - Archivos: `backend/src/domain/selection.ts`, `backend/test/unit/selection.test.ts`
   - Requisitos: R3.5, R3.13, R11.3
-  - Decisiones: D-070, D-073, D-084, D-116
+  - Decisiones: D-070, D-073, D-084, D-116, D-201..D-205
   - Agente: `dev-backend`
   - Depende de: T9
   - Criterios de aceptación: cada `reason` de R3.5 cubierto; `dish_unavailable` como único motivo; todos los problemas de una línea pedible; array vacío = sin elección; grupo ajeno y opciones repetidas → `selection_invalid` con `groupId`.
   - Verificación: `npx vitest run test/unit/selection.test.ts`
-  - Estado: en curso
+  - Estado: aprobada (2026-10-25, D-205)
 
 - [ ] **T13 — Precios**
   - Qué: `domain/pricing.ts`: `unitPriceCents`, `lineTotalCents`, `orderTotalCents` en enteros.
@@ -174,7 +174,7 @@ Rama: `feature/backend-001-domain` (D-136)
   - Depende de: T9
   - Criterios de aceptación: base + adicionales × cantidad; total = Σ líneas; caso máximo (50 × 20 × 2^31) exacto.
   - Verificación: `npx vitest run test/unit/pricing.test.ts`
-  - Estado: pendiente
+  - Estado: en curso
 
 - [ ] **T14 — Código corto**
   - Qué: `domain/short-code.ts`: `SHORT_CODE_ALPHABET`, `generateUniqueCode(existing, random)` con hasta 20 intentos y excepción al agotarse.

@@ -184,3 +184,8 @@
 | D-198 | 4 | T10 · Test de no mutación en `applyClientCancel` | A) Agregarlo (R) · B) Dejarlo | A | 2026-10-25 |
 | D-199 | 4 | Aprobación de T10 + commit local | A) Aprobar + commit y seguir con T11 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-25 |
 | D-200 | 4 | Aprobación de T11 + commit local | A) Aprobar + commit y seguir con T12 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-25 |
+| D-201 | 4 | T12 · Orden de los issues dentro de una línea | A) Como el front: claves de la selección en su orden y luego min/max en el orden de los grupos del plato (R) · B) Por `groupId` | A | 2026-10-25 |
+| D-202 | 4 | T12 · Grupo ajeno con opciones | A) Un solo `selection_invalid` con `groupId` (R) · B) + un `option_not_found` por opción | A | 2026-10-25 |
+| D-203 | 4 | T12 · Repeticiones: repetidas, conteo min/max y opciones inválidas repetidas | A) Paridad con el front: un `selection_invalid` por grupo con repetidas, min/max sobre el array crudo, un issue por cada aparición inválida (R) · B) Sin duplicados | A | 2026-10-25 |
+| D-204 | 4 | T12 · Grupo del plato sin clave en la selección / grupo ajeno con array vacío | A) Sin clave = 0 elegidas (obligatorio → `selection_invalid`); grupo ajeno vacío se ignora (R) · B) Grupo ajeno vacío también es error | A | 2026-10-25 |
+| D-205 | 4 | T12 · 3 tests extra de D-202/D-203 + aprobación y commit | A) Agregar los tests + aprobar (R) · B) Aprobar sin tests · C) Cambios | A | 2026-10-25 |
