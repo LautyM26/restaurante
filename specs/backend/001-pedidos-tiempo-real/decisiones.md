@@ -130,3 +130,86 @@
 | D-144 | 3 | Nombres propuestos de ramas por bloque y bases de Docker | A) Aceptar (R) · B) Cambiar | A: `feature/backend-001-{base,data,domain,http,public-reads,staff-auth,orders,realtime,closing}`; `restaurante_dev` / `restaurante_test` | 2026-10-24 |
 | D-145 | 3 | Aprobación de tareas.md v1.2 y diseño §23 (v1.2) | A) Aprobar ambos (R) · B) Cambios · C) Revisar primero | A: ambos APROBADOS | 2026-10-24 |
 | D-146 | 4 | Commit/push, cómo llevar las specs a develop y arranque de la Fase 4 | A) Commit + push; merge del PR en GitHub; arrancar T1 (R) · B) Merge local · C) Rama desde chore/backend-specs | A | 2026-10-24 |
+| D-147 | 4 | T1 · Versión de TypeScript (la 7.0.2 no es compatible con `typescript-eslint` 8.72, que pide < 6.1) | A) TypeScript 6.0.3 (R) · B) TS 7 + `--legacy-peer-deps` · C) TS 7 sin `typescript-eslint` | A | 2026-10-24 |
+| D-148 | 4 | T1 · Versión de `@types/node` | A) 24.19.2, igual que el runtime (R) · B) 26.6.5 | A | 2026-10-24 |
+| D-149 | 4 | T1 · Confirmación del `npm install` con versiones exactas (Prisma 7.10.1 estable, no la 8.0.0-rc de `latest`, por D-063) | A) Instalar · B) No todavía | A | 2026-10-24 |
+| D-150 | 4 | T1 · Scripts de instalación bloqueados por npm 11 (prisma, @prisma/engines, esbuild) | A) No aprobarlos; aprobar solo si algo falla (R) · B) Aprobar los tres | A (las 4 herramientas funcionan sin ellos) | 2026-10-24 |
+| D-151 | 4 | T1 · Opciones redundantes del tsconfig y `src/generated` en typecheck/lint | A) Dejarlas; ignorar `src/generated` en ESLint en T2 (R) · B) Simplificar ahora | A | 2026-10-24 |
+| D-152 | 4 | T1 · `target`/`lib` de TypeScript | A) ES2024, como Node 24 (R) · B) ES2023 | A | 2026-10-24 |
+| D-153 | 4 | Aprobación de T1 + commit local (sin push hasta cerrar el Bloque A) | A) Aprobar + commit (R) · B) Sin commit · C) Cambios | A | 2026-10-24 |
+| D-154 | 4 | T2 · B1 `.prettierignore` (no figura en T2; Prettier 3 ya lee `.gitignore`) | A) Borrarlo (R) · B) Mantenerlo | A | 2026-10-24 |
+| D-155 | 4 | T2 · Validación de `SUPABASE_URL` | A) URL solo `https` (R) · B) Texto no vacío · C) `z.url()` | A | 2026-10-24 |
+| D-156 | 4 | T2 · Variables opcionales vacías (`PORT=` etc.) | A) Vacía = ausente, se aplica el default (R) · B) Error | A | 2026-10-24 |
+| D-157 | 4 | T2 · Sugerencias menores del reviewer (S1, S2, S5, S7) | Selección múltiple | Solo S1: `defineConfig` + `globalIgnores` de `eslint/config`. S2, S5 y S7 quedan como están | 2026-10-24 |
+| D-158 | 4 | Aprobación de T2 + commit local | A) Aprobar + commit (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-24 |
+| D-159 | 4 | T3 · Excepción para commitear `.env.test.example` (el `.gitignore` raíz ignora `.env.*`) | A) `!.env.test.example` en `backend/.gitignore` (R) · B) En el `.gitignore` raíz | A | 2026-10-24 |
+| D-160 | 4 | T3 · `restart: unless-stopped` y `container_name` en docker-compose | A) Sacar los dos (R) · B) Mantenerlos · C) Solo sacar `restart` | A | 2026-10-24 |
+| D-161 | 4 | T3 · Puerto de Postgres local | A) `0.0.0.0` · B) Solo `127.0.0.1:5433` (R) | B | 2026-10-24 |
+| D-162 | 4 | T3 · Volumen nombrado `restaurante_pgdata` y versión `postgres:17` | A) Mantener ambos; 17 provisoria hasta compararla en T42 (R) · B) Sacar el volumen | A | 2026-10-24 |
+| D-163 | 4 | Aprobación de T3 + commit local | A) Aprobar + commit y seguir con T4 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-24 |
+| D-164 | 4 | T4 · Coherencia `code`/`status` de `AppError` y "helpers" | A) Clase genérica `<C extends ErrorCode>` con `status: (typeof ERROR_STATUS)[C]`, sin helpers (R) · B) Fábrica `appError(code, message)` · C) Dejarlo | A ("helpers" de T4 se aclara: no hay helpers propios) | 2026-10-24 |
+| D-165 | 4 | T4 · Cambios en los tests | Selección múltiple | Sacar el test de reemplazo de reloj/aleatorio · agregar `instanceof AppError` y `name` | 2026-10-24 |
+| D-166 | 4 | T4 · Simplificaciones menores | Selección múltiple | `systemRandom = Math.random` · sacar `ValidationIssue` hasta T16 | 2026-10-24 |
+| D-167 | 4 | Errata en `diseno.md` §13: ejemplo `AppError('VALIDATION', 400, { issues })` sin `message` | A) Corregir como errata v1.2.1 (R) · B) Dejarlo | A | 2026-10-24 |
+| D-168 | 4 | Aprobación de T4 + commit local (incluye la errata de diseno.md) | A) Aprobar + commit y seguir con T5 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-24 |
+| D-169 | 4 | T5 · Fuga 1: `accessToken` con el nombre percent-encoded no se tapaba | A) Decodificar cada nombre como URLSearchParams y tapar el valor (R) · B) Reconstruir con URLSearchParams | A | 2026-10-24 |
+| D-170 | 4 | T5 · Fuga 2: pino-http pisa el serializador `req` y registra `query.accessToken` | A) Exportar serializador para el `req` de pino-http (tapa `url` y `query.accessToken`), probado con pino-http real (R) · B) Path en `redact` · C) Dejarlo para T17 | A | 2026-10-24 |
+| D-171 | 4 | T5 · `req` sin `url` rompe el log | A) Protegerlo (R) · B) Dejarlo | A | 2026-10-24 |
+| D-172 | 4 | T5 · Tipo de `level` y parámetro `destination` | A) `Env["LOG_LEVEL"]` + mantener `destination` opcional (R) · B) `string` · C) Sacar `destination` | A | 2026-10-24 |
+| D-173 | 4 | T5 · Mejoras al test de pino-http | Selección múltiple | Assert de `query.accessToken` sin condicional + `remotePort` definido; la espera fija de 20 ms queda como está | 2026-10-24 |
+| D-174 | 4 | Aprobación de T5 y cierre del Bloque A | A) Commit + push + PR a develop, sin mergear (R) · B) A + mergear · C) Solo commit | A | 2026-10-24 |
+| D-175 | 4 | Base de la rama del Bloque B (el PR #2 del Bloque A sigue sin mergear) | A) `feature/backend-001-data` desde `feature/backend-001-base` (R) · B) Esperar el merge · C) Cortar | A | 2026-10-24 |
+| D-176 | 4 | T6 · Enums de §5.1 en una línea no compilan en Prisma 7 | A) Un valor por línea + actualizar §5.1 (errata v1.2.2) (R) · B) Corregir el schema + nota en §5.1 | A | 2026-10-24 |
+| D-177 | 4 | T6 · `process.loadEnvFile()` falla sin `.env` (CI) | A) `if (existsSync(".env")) process.loadEnvFile()` (R) · B) `.env` creado en el CI · C) Decidir en T44 | A | 2026-10-24 |
+| D-178 | 4 | Aprobación de T6 + commit local (incluye errata §5.1) | A) Aprobar + commit y seguir con T7 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-24 |
+| D-179 | 4 | T7 · Confirmación de crear y aplicar la migración inicial en `restaurante_dev` (Docker local) | A) Sí, con `DIRECT_URL` local en la línea de comando (R) · B) Sí, tras crear `.env` · C) No | A | 2026-10-24 |
+| D-180 | 4 | T7 · RLS en `_prisma_migrations` (no existe en la shadow DB, la migración falla con P3018) | A) Paso aparte tras migrar · B) SQL condicional `DO $$ ... to_regclass(...) ... $$` en la migración (R) · C) Sin RLS en esa tabla | B; §5.3 se ajusta como errata v1.2.3; el test de T8 sigue exigiendo RLS en todas las tablas de `public` | 2026-10-24 |
+| D-181 | 4 | T7 · Corrección del RLS faltante en `_prisma_migrations` (el bloque de D-180 no se escribió antes de aplicar) | A) Recrear `restaurante_dev` vacía y reaplicar `init` con el bloque (R) · B) Segunda migración | A: autorizado el borrado de `restaurante_dev` (solo tablas recién creadas, sin datos) | 2026-10-24 |
+| D-182 | 4 | T7 · Formato de nombres de los CHECK (§5.4 no lo fija) | A) Registrarlos en §5.4 · B) Dejarlo implícito (quitar "Naming:" del comentario) | B, pero el comentario del SQL queda como está porque la migración ya estaba aplicada (ver D-183) | 2026-10-24 |
+| D-183 | 4 | T7 · Editar el comentario de una migración aplicada (cambia el checksum) | A) Dejar el comentario como está (R) · B) Editarlo y recrear `restaurante_dev` | A | 2026-10-24 |
+| D-184 | 4 | Aprobación de T7 + commit local | A) Aprobar + commit y seguir con T8 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-24 |
+| D-185 | 4 | T8 · Criterio de la protección de tests y entorno del CI | A) Host local + nombre que termina en `_test`; en T44 el job corre en el runner con Postgres en `localhost` (R) · B) Solo `restaurante_test` · C) Host configurable | A | 2026-10-24 |
+| D-186 | 4 | T8 · Ajustes menores del reviewer | Selección múltiple | Solo: mostrar la salida de Prisma si `migrate deploy` falla. `test-db-guard.ts` queda como archivo propio (se suma a T8); `fileParallelism` y el `console.error` se mantienen | 2026-10-24 |
+| D-187 | 4 | T8 · Fábricas sin uso todavía y código fijo `AB12` | A) Mantenerlas + documentar `AB12` (R) · B) Recortarlas | A | 2026-10-24 |
+| D-188 | 4 | T8 · Script `test` con la ruta interna de vitest | A) Dejarlo (R) · B) Cargar `.env.test` en `vitest.config` | A (`test:watch` igual, por consistencia) | 2026-10-24 |
+| D-189 | 4 | Aprobación de T8 + commit local | A) Aprobar + commit y seguir con T44 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-25 |
+| D-190 | 4 | T44 · `permissions: contents: read` agregado por devops (no estaba en §23) | A) Dejarlo (R) · B) Sacarlo | A | 2026-10-25 |
+| D-191 | 4 | T44 · Commit + push de `feature/backend-001-data` + PR del Bloque B a develop para correr el CI | A) Commit + push + PR, sin mergear (R) · B) Solo commit · C) No todavía | A | 2026-10-25 |
+| D-192 | 4 | Aprobación de T44 (CI verde en el run 40162158125) y cierre del Bloque B | A) Aprobar y cerrar el bloque; commit + push al PR #3, sin mergear (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-25 |
+| D-193 | 4 | Base de la rama del Bloque C y ritmo de aprobación | Rama: A) Desde `feature/backend-001-data` (R) · B) Esperar merges. Ritmo: A) Una por una · B) De a 2–3 | Rama A; una por una | 2026-10-25 |
+| D-194 | 4 | T9 · `ServiceErrorCode = ErrorCode \| "NETWORK"` en el back (NETWORK es solo del cliente) | A) Mantenerlo como espejo · B) Quitarlo; el back usa `ErrorCode` (R) | B | 2026-10-25 |
+| D-195 | 4 | T9 · `LINE_ID_MAX = 4096` (D-113) en `limits.ts`, no pedido por el "Qué" de T9 | A) Dejarlo y registrarlo en T9 (R) · B) Moverlo a T23 | A | 2026-10-25 |
+| D-196 | 4 | Aprobación de T9 + commit local | A) Aprobar + commit y seguir con T10 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-25 |
+| D-197 | 4 | T10 · Forma del resultado de `applyTransition`/`applyClientCancel` (difiere del front; interno, no es contrato) | A) Mantener la del back: union por `kind`, `order` en noop/conflict/applied, `previousStatus` en applied (R) · B) Alinearla con el front | A (registrada solo aquí, no en §19) | 2026-10-25 |
+| D-198 | 4 | T10 · Test de no mutación en `applyClientCancel` | A) Agregarlo (R) · B) Dejarlo | A | 2026-10-25 |
+| D-199 | 4 | Aprobación de T10 + commit local | A) Aprobar + commit y seguir con T11 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-25 |
+| D-200 | 4 | Aprobación de T11 + commit local | A) Aprobar + commit y seguir con T12 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-25 |
+| D-201 | 4 | T12 · Orden de los issues dentro de una línea | A) Como el front: claves de la selección en su orden y luego min/max en el orden de los grupos del plato (R) · B) Por `groupId` | A | 2026-10-25 |
+| D-202 | 4 | T12 · Grupo ajeno con opciones | A) Un solo `selection_invalid` con `groupId` (R) · B) + un `option_not_found` por opción | A | 2026-10-25 |
+| D-203 | 4 | T12 · Repeticiones: repetidas, conteo min/max y opciones inválidas repetidas | A) Paridad con el front: un `selection_invalid` por grupo con repetidas, min/max sobre el array crudo, un issue por cada aparición inválida (R) · B) Sin duplicados | A | 2026-10-25 |
+| D-204 | 4 | T12 · Grupo del plato sin clave en la selección / grupo ajeno con array vacío | A) Sin clave = 0 elegidas (obligatorio → `selection_invalid`); grupo ajeno vacío se ignora (R) · B) Grupo ajeno vacío también es error | A | 2026-10-25 |
+| D-205 | 4 | T12 · 3 tests extra de D-202/D-203 + aprobación y commit | A) Agregar los tests + aprobar (R) · B) Aprobar sin tests · C) Cambios | A | 2026-10-25 |
+| D-206 | 4 | Aprobación de T13 + commit local (firma de `orderTotalCents(lines: PricedLine[])` elegida por el agente; §8.5 no la fija) | A) Aprobar + commit y seguir con T14 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-25 |
+| D-207 | 4 | Aprobación de T14 + commit local | A) Aprobar + commit y seguir con T15 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-25 |
+| D-208 | 4 | Aprobación de T15 y cierre del Bloque C | A) Commit + push + PR a develop, sin mergear (R) · B) Solo commit · C) Cambios | A | 2026-10-25 |
+| D-209 | 4 | Imports mezclados (relativos y alias `@/`; §3 prevé el alias) | A) Unificar a `@/` en un commit de estilo aparte al empezar el Bloque D (R) · B) Dentro de T15 · C) Dejarlo | A | 2026-10-25 |
+| D-210 | 4 | Seguir con el Bloque D (rama desde `feature/backend-001-domain`, primero el commit de imports de D-209) | A) Seguir (R) · B) Cortar | A | 2026-10-25 |
+| D-211 | 4 | T16 · Mensajes de error visibles en la API | A) "Invalid request" · "Malformed JSON body" · "Request body too large" · "Internal server error" (R) · B) Cambiar | A | 2026-10-25 |
+| D-212 | 4 | T16 · `charset.unsupported` / `encoding.unsupported` del parser JSON | A) Mantener 500 (§13.1) · B) 400 `VALIDATION` (R) | B; §13.1 se ajusta (v1.2.5) | 2026-10-25 |
+| D-213 | 4 | T16 · `path` de un issue en la raíz del cuerpo | A) Cadena vacía (R) · B) `"body"` | A | 2026-10-25 |
+| D-214 | 4 | T16 · Mejoras menores del reviewer | Selección múltiple | Solo: comentario + test de que los nombres de headers van en minúsculas | 2026-10-25 |
+| D-215 | 4 | Aprobación de T16 + commit local (incluye errata §13.1) | A) Aprobar + commit y seguir con T17 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-25 |
+| D-216 | 4 | T17 · `AppDeps` cuando `tokenVerifier` (T20) y `bus` (T22) todavía no existen | A) Solo lo que existe (prisma, clock, random, logger, config); T20 y T22 lo completan (R) · B) Interfaces provisorias | A | 2026-10-25 |
+| D-217 | 4 | T17 · Mensaje del 404 para rutas inexistentes | A) "Route not found" (R) · B) "Not found" | A | 2026-10-25 |
+| D-218 | 4 | T17 · Deps de prueba crean un cliente Prisma aunque llegue un override | A) Corregir con `overrides.prisma ?? …` + comentario de merge superficial (R) · B) Dejar | A | 2026-10-25 |
+| D-219 | 4 | T17 · Test de integración del log armado en `createApp` | A) Dejar como está; cumple la spec (R) · B) Agregar test | A | 2026-10-25 |
+| D-220 | 4 | Aprobación de T17 + commit + push + PR del Bloque D | A) Aprobar + commit + push + PR (R) · B) Aprobar + commit sin push · C) Cambios | A | 2026-10-25 |
+| D-221 | 4 | T18 · Mensaje del 404 de restaurante inexistente | A) "Restaurant not found" (R) · B) "Not found" | A | 2026-10-25 |
+| D-222 | 4 | T18 · Ubicación de `restaurantSlugSchema` (lo usan menu, tables y orders) | A) `shared/restaurants.ts` (R) · B) `menu.schemas.ts` · C) Nuevo `shared/schemas.ts` | A | 2026-10-25 |
+| D-223 | 4 | T18 · Mejoras menores del reviewer | Selección múltiple | Handler `async` (patrón para los routers siguientes) + quitar `export` de los tipos internos del mapper | 2026-10-25 |
+| D-224 | 4 | Aprobación de T18 + commit local | A) Aprobar + commit y seguir con T19 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-25 |
+| D-225 | 4 | T19 · Mensaje del 404 de `GET /api/tables` (4 casos de R2.2) | A) Uno solo, "Table not found" (R) · B) "Restaurant not found" aparte | A | 2026-10-25 |
+| D-226 | 4 | T19 · Formato aceptado para `tableId` en la ruta | A) Solo dígitos canónicos; "07", "+7", "7.0" → 400 (R) · B) Aceptar y normalizar "07" y "+7" | A | 2026-10-25 |
+| D-227 | 4 | T19 · Consultas para resolver la mesa | A) Una sola consulta `table.findFirst` filtrando por slug y `active` (R) · B) Mantener 2 consultas con `findRestaurantBySlug` | A | 2026-10-25 |
+| D-228 | 4 | T19 · Ubicación de `tableIdSchema` y su límite (lo usarán orders y ws) | A) Dejar en `tables.schemas.ts` y mover a `shared/` cuando orders lo necesite (R) · B) Moverlo ya + límite a `limits.ts` · C) Quitar el export | A | 2026-10-25 |
+| D-229 | 4 | Aprobación de T19 + commit + push + PR del Bloque E | A) Aprobar + commit + push + PR (R) · B) Aprobar + commit sin push · C) Cambios | A | 2026-10-25 |

@@ -1,0 +1,6 @@
+.env
+.env.test
+!.env.test.example
+dist/
+src/generated/
+node_modules/
