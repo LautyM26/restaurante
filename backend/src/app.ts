@@ -1,6 +1,7 @@
 import cors from "cors";
 import express, { type Express } from "express";
 import { pinoHttp } from "pino-http";
+import { createMenuRouter } from "@/modules/menu/menu.router";
 import type { PrismaClient } from "@/generated/prisma/client";
 import type { Clock } from "@/shared/clock";
 import { createErrorHandler } from "@/shared/error-handler";
@@ -43,7 +44,9 @@ export function createApp(deps: AppDeps): Express {
   );
   app.use(express.json({ limit: config.jsonLimit }));
 
-  app.use("/api", express.Router());
+  const api = express.Router();
+  api.use(createMenuRouter(deps.prisma));
+  app.use("/api", api);
 
   app.use((_req, _res, next) => {
     next(new AppError("NOT_FOUND", 404, ROUTE_NOT_FOUND_MESSAGE));

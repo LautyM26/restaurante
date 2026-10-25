@@ -204,3 +204,7 @@
 | D-218 | 4 | T17 · Deps de prueba crean un cliente Prisma aunque llegue un override | A) Corregir con `overrides.prisma ?? …` + comentario de merge superficial (R) · B) Dejar | A | 2026-10-25 |
 | D-219 | 4 | T17 · Test de integración del log armado en `createApp` | A) Dejar como está; cumple la spec (R) · B) Agregar test | A | 2026-10-25 |
 | D-220 | 4 | Aprobación de T17 + commit + push + PR del Bloque D | A) Aprobar + commit + push + PR (R) · B) Aprobar + commit sin push · C) Cambios | A | 2026-10-25 |
+| D-221 | 4 | T18 · Mensaje del 404 de restaurante inexistente | A) "Restaurant not found" (R) · B) "Not found" | A | 2026-10-25 |
+| D-222 | 4 | T18 · Ubicación de `restaurantSlugSchema` (lo usan menu, tables y orders) | A) `shared/restaurants.ts` (R) · B) `menu.schemas.ts` · C) Nuevo `shared/schemas.ts` | A | 2026-10-25 |
+| D-223 | 4 | T18 · Mejoras menores del reviewer | Selección múltiple | Handler `async` (patrón para los routers siguientes) + quitar `export` de los tipos internos del mapper | 2026-10-25 |
+| D-224 | 4 | Aprobación de T18 + commit local | A) Aprobar + commit y seguir con T19 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-25 |

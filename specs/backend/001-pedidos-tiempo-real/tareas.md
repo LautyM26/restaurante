@@ -221,12 +221,12 @@ Rama: `feature/backend-001-http` (D-136)
   - Depende de: T6, T16
   - Criterios de aceptación: origen permitido → headers CORS; no permitido → sin `Access-Control-Allow-Origin`; JSON malformado y cuerpo > 100 KB → 400 `VALIDATION`; ruta inexistente → 404; sin header `X-Powered-By`.
   - Verificación: `npm test -- test/integration/cors.test.ts test/integration/app.test.ts`
-  - Estado: aprobada
+  - Estado: aprobada (2026-10-25, D-220; CI verde en el run 40167697194)
 
 ## Bloque E — Lecturas públicas
 Rama: `feature/backend-001-public-reads` (D-136)
 
-- [ ] **T18 — `GET /api/menu`**
+- [x] **T18 — `GET /api/menu`**
   - Qué: `shared/restaurants.ts` (`findRestaurantBySlug`); módulo `menu` (router, service con una sola consulta anidada por `position`, schemas, mapper a `Menu` según §5.2).
   - Archivos: `backend/src/shared/restaurants.ts`, `backend/src/modules/menu/menu.router.ts`, `menu.service.ts`, `menu.schemas.ts`, `menu.mapper.ts`, `backend/src/app.ts`, `backend/test/integration/menu.test.ts`
   - Requisitos: R1.1–R1.7, R11.2, RNF1 (diseño de la consulta), RNF10
@@ -235,7 +235,7 @@ Rama: `feature/backend-001-public-reads` (D-136)
   - Depende de: T8, T17
   - Criterios de aceptación: 200 con forma `Menu`; no disponibles incluidos con `available: false`; `en` e `imageUrl` omitidos si son `null`; sin datos de otro restaurante (test con dos restaurantes); 400 / 404 según R1.4 / R1.5; sin auth.
   - Verificación: `npm test -- test/integration/menu.test.ts`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-25, D-224)
 
 - [ ] **T19 — `GET /api/tables/{tableId}`**
   - Qué: módulo `tables` según §6.2.
