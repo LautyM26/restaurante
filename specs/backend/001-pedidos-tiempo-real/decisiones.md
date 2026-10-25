@@ -175,3 +175,4 @@
 | D-189 | 4 | Aprobación de T8 + commit local | A) Aprobar + commit y seguir con T44 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-25 |
 | D-190 | 4 | T44 · `permissions: contents: read` agregado por devops (no estaba en §23) | A) Dejarlo (R) · B) Sacarlo | A | 2026-10-25 |
 | D-191 | 4 | T44 · Commit + push de `feature/backend-001-data` + PR del Bloque B a develop para correr el CI | A) Commit + push + PR, sin mergear (R) · B) Solo commit · C) No todavía | A | 2026-10-25 |
+| D-192 | 4 | Aprobación de T44 (CI verde en el run 40162158125) y cierre del Bloque B | A) Aprobar y cerrar el bloque; commit + push al PR #3, sin mergear (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-25 |

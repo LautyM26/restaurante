@@ -107,16 +107,16 @@ Rama: `feature/backend-001-data` (D-136) · incluye T44 (CI, D-137)
   - Verificación: `npm run db:test:up` · `npm test -- test/integration/rls.test.ts test/integration/db-constraints.test.ts`
   - Estado: aprobada (2026-10-25, D-189)
 
-- [ ] **T44 — Workflow de CI en GitHub Actions**
+- [x] **T44 — Workflow de CI en GitHub Actions**
   - Qué: workflow según diseño §23: Node 24 (D-064), servicio `postgres:<mayor de Supabase>` (misma imagen que T3, D-131) con health check, `npm ci` → `npm run db:generate` (D-132) → `npx prettier --check .` (D-142) → `npm run lint` → `npm run typecheck` → `npm test`, con `working-directory: backend` y las variables de los tests definidas en el workflow, sin secretos. Disparadores: `pull_request` a `develop`/`main` y `push` a `develop`, con `paths` `backend/**` y el workflow (D-138). Cache `setup-node` `cache: npm` sobre `backend/package-lock.json` (D-140). Sin matriz (D-141). Check informativo, sin protección de ramas (D-139). `npm run build` (D-142) se agrega al workflow en T36, cuando existe `src/server.ts`. Versiones de las actions verificadas en su documentación oficial. El job corre directo en el runner (no en `container:`), con Postgres en `localhost`, para cumplir la protección de los tests (D-185).
   - Archivos: `.github/workflows/backend-ci.yml` (en la raíz del repo, D-143)
   - Requisitos: RNF9
-  - Decisiones: D-014, D-064, D-131, D-132, D-137, D-138..D-143
+  - Decisiones: D-014, D-064, D-131, D-132, D-137, D-138..D-143, D-185, D-190..D-192
   - Agente: `devops`
   - Depende de: T8 · diseño §23 aprobado
   - Criterios de aceptación: el workflow corre en verde en el PR del Bloque B con los tests de T8; falla si se rompe lint, typecheck o un test; no usa secretos ni se conecta a Supabase.
   - Verificación: push de la rama del bloque [CONFIRMACIÓN] → `gh run list --branch feature/backend-001-data` y `gh run view <id>` en verde · prueba en una rama descartable con un error de lint forzado → el run falla (opcional, con confirmación)
-  - Estado: en curso
+  - Estado: aprobada (2026-10-25, D-192; CI verde en el run 40162158125)
 
 ## Bloque C — Dominio (funciones puras, tests unitarios)
 Rama: `feature/backend-001-domain` (D-136)
