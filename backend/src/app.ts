@@ -2,6 +2,7 @@ import cors from "cors";
 import express, { type Express } from "express";
 import { pinoHttp } from "pino-http";
 import { createMenuRouter } from "@/modules/menu/menu.router";
+import { createTablesRouter } from "@/modules/tables/tables.router";
 import type { PrismaClient } from "@/generated/prisma/client";
 import type { Clock } from "@/shared/clock";
 import { createErrorHandler } from "@/shared/error-handler";
@@ -46,6 +47,7 @@ export function createApp(deps: AppDeps): Express {
 
   const api = express.Router();
   api.use(createMenuRouter(deps.prisma));
+  api.use(createTablesRouter(deps.prisma));
   app.use("/api", api);
 
   app.use((_req, _res, next) => {

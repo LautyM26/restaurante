@@ -208,3 +208,8 @@
 | D-222 | 4 | T18 · Ubicación de `restaurantSlugSchema` (lo usan menu, tables y orders) | A) `shared/restaurants.ts` (R) · B) `menu.schemas.ts` · C) Nuevo `shared/schemas.ts` | A | 2026-10-25 |
 | D-223 | 4 | T18 · Mejoras menores del reviewer | Selección múltiple | Handler `async` (patrón para los routers siguientes) + quitar `export` de los tipos internos del mapper | 2026-10-25 |
 | D-224 | 4 | Aprobación de T18 + commit local | A) Aprobar + commit y seguir con T19 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-25 |
+| D-225 | 4 | T19 · Mensaje del 404 de `GET /api/tables` (4 casos de R2.2) | A) Uno solo, "Table not found" (R) · B) "Restaurant not found" aparte | A | 2026-10-25 |
+| D-226 | 4 | T19 · Formato aceptado para `tableId` en la ruta | A) Solo dígitos canónicos; "07", "+7", "7.0" → 400 (R) · B) Aceptar y normalizar "07" y "+7" | A | 2026-10-25 |
+| D-227 | 4 | T19 · Consultas para resolver la mesa | A) Una sola consulta `table.findFirst` filtrando por slug y `active` (R) · B) Mantener 2 consultas con `findRestaurantBySlug` | A | 2026-10-25 |
+| D-228 | 4 | T19 · Ubicación de `tableIdSchema` y su límite (lo usarán orders y ws) | A) Dejar en `tables.schemas.ts` y mover a `shared/` cuando orders lo necesite (R) · B) Moverlo ya + límite a `limits.ts` · C) Quitar el export | A | 2026-10-25 |
+| D-229 | 4 | Aprobación de T19 + commit + push + PR del Bloque E | A) Aprobar + commit + push + PR (R) · B) Aprobar + commit sin push · C) Cambios | A | 2026-10-25 |

@@ -237,7 +237,7 @@ Rama: `feature/backend-001-public-reads` (D-136)
   - Verificación: `npm test -- test/integration/menu.test.ts`
   - Estado: aprobada (2026-10-25, D-224)
 
-- [ ] **T19 — `GET /api/tables/{tableId}`**
+- [x] **T19 — `GET /api/tables/{tableId}`**
   - Qué: módulo `tables` según §6.2.
   - Archivos: `backend/src/modules/tables/tables.router.ts`, `tables.service.ts`, `tables.schemas.ts`, `backend/src/app.ts`, `backend/test/integration/tables.test.ts`
   - Requisitos: R2.1–R2.4, R11.2
@@ -246,7 +246,7 @@ Rama: `feature/backend-001-public-reads` (D-136)
   - Depende de: T18
   - Criterios de aceptación: 200 `{ id }` activa; 404 inexistente, inactiva, de otro restaurante o restaurante inexistente; 400 con `tableId` no entero positivo, mayor a 2.147.483.647 o sin `restaurant`.
   - Verificación: `npm test -- test/integration/tables.test.ts`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-25, D-229)
 
 ## Bloque F — Autenticación del personal
 Rama: `feature/backend-001-staff-auth` (D-136)
