@@ -180,3 +180,6 @@
 | D-194 | 4 | T9 · `ServiceErrorCode = ErrorCode \| "NETWORK"` en el back (NETWORK es solo del cliente) | A) Mantenerlo como espejo · B) Quitarlo; el back usa `ErrorCode` (R) | B | 2026-10-25 |
 | D-195 | 4 | T9 · `LINE_ID_MAX = 4096` (D-113) en `limits.ts`, no pedido por el "Qué" de T9 | A) Dejarlo y registrarlo en T9 (R) · B) Moverlo a T23 | A | 2026-10-25 |
 | D-196 | 4 | Aprobación de T9 + commit local | A) Aprobar + commit y seguir con T10 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-25 |
+| D-197 | 4 | T10 · Forma del resultado de `applyTransition`/`applyClientCancel` (difiere del front; interno, no es contrato) | A) Mantener la del back: union por `kind`, `order` en noop/conflict/applied, `previousStatus` en applied (R) · B) Alinearla con el front | A (registrada solo aquí, no en §19) | 2026-10-25 |
+| D-198 | 4 | T10 · Test de no mutación en `applyClientCancel` | A) Agregarlo (R) · B) Dejarlo | A | 2026-10-25 |
+| D-199 | 4 | Aprobación de T10 + commit local | A) Aprobar + commit y seguir con T11 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-25 |

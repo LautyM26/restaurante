@@ -132,16 +132,16 @@ Rama: `feature/backend-001-domain` (D-136)
   - Verificación: `npm run typecheck` · comparación con `git show origin/develop:specs/001-menu-cliente/plan.md`
   - Estado: aprobada (2026-10-25, D-196)
 
-- [ ] **T10 — Estados y transiciones**
+- [x] **T10 — Estados y transiciones**
   - Qué: `domain/order-status.ts`: `ORDER_FLOW`, `FINAL_STATUSES`, `canTransition` (un paso adelante/atrás, cancelar desde no final), `applyTransition` (`noop | conflict | invalid | applied` en ese orden), `applyClientCancel`.
   - Archivos: `backend/src/domain/order-status.ts`, `backend/test/unit/order-status.test.ts`
   - Requisitos: R5.2, R5.3, R5.4, R5.5, R5.6, R5.7, R6.1, R6.2
-  - Decisiones: D-025, D-047, D-048, D-052, D-060, D-070
+  - Decisiones: D-025, D-047, D-048, D-052, D-060, D-070, D-197..D-199
   - Agente: `dev-backend`
   - Depende de: T9
   - Criterios de aceptación: tabla completa 6×6 de `canTransition`; orden de chequeo de `applyTransition`; `applyClientCancel` solo desde `pending`.
   - Verificación: `npx vitest run test/unit/order-status.test.ts`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-25, D-199)
 
 - [ ] **T11 — Notas y caracteres visibles**
   - Qué: `domain/text.ts`: `countVisibleChars` con `Intl.Segmenter` (grafemas) y `normalizeNote` (`trim`; vacía → `undefined`).
@@ -152,7 +152,7 @@ Rama: `feature/backend-001-domain` (D-136)
   - Depende de: T9
   - Criterios de aceptación: emojis compuestos (familia, banderas, tonos de piel) cuentan 1; 140/141 y 200/201 en el borde.
   - Verificación: `npx vitest run test/unit/text.test.ts`
-  - Estado: pendiente
+  - Estado: en curso
 
 - [ ] **T12 — Selección y validación de líneas**
   - Qué: `domain/selection.ts`: `canonicalSelection` (como el front), `isDishOrderable`, `validateLine(dish | null, line)` → `LineIssue[]` con las reglas de §8.4.
