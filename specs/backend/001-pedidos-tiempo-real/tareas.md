@@ -212,7 +212,7 @@ Rama: `feature/backend-001-http` (D-136)
   - Verificación: `npx vitest run test/unit/validate.test.ts test/unit/error-handler.test.ts`
   - Estado: aprobada (2026-10-25, D-215)
 
-- [ ] **T17 — `createApp` con CORS, JSON, logging y 404**
+- [x] **T17 — `createApp` con CORS, JSON, logging y 404**
   - Qué: `app.ts` con `createApp(deps)` (§4.2): `x-powered-by` desactivado, `trust proxy`, `cors` de §16, `express.json({ limit: '100kb' })`, `pino-http` con el logger de T5, router `/api` vacío, 404 `NOT_FOUND` para rutas inexistentes y el manejador central.
   - Archivos: `backend/src/app.ts`, `backend/test/helpers/app.ts` (deps de prueba), `backend/test/integration/cors.test.ts`, `backend/test/integration/app.test.ts` (nombre propuesto)
   - Requisitos: RNF6, RNF8, RNF10
@@ -221,7 +221,7 @@ Rama: `feature/backend-001-http` (D-136)
   - Depende de: T6, T16
   - Criterios de aceptación: origen permitido → headers CORS; no permitido → sin `Access-Control-Allow-Origin`; JSON malformado y cuerpo > 100 KB → 400 `VALIDATION`; ruta inexistente → 404; sin header `X-Powered-By`.
   - Verificación: `npm test -- test/integration/cors.test.ts test/integration/app.test.ts`
-  - Estado: en curso
+  - Estado: aprobada
 
 ## Bloque E — Lecturas públicas
 Rama: `feature/backend-001-public-reads` (D-136)

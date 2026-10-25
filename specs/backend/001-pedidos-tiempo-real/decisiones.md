@@ -199,3 +199,8 @@
 | D-213 | 4 | T16 · `path` de un issue en la raíz del cuerpo | A) Cadena vacía (R) · B) `"body"` | A | 2026-10-25 |
 | D-214 | 4 | T16 · Mejoras menores del reviewer | Selección múltiple | Solo: comentario + test de que los nombres de headers van en minúsculas | 2026-10-25 |
 | D-215 | 4 | Aprobación de T16 + commit local (incluye errata §13.1) | A) Aprobar + commit y seguir con T17 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-25 |
+| D-216 | 4 | T17 · `AppDeps` cuando `tokenVerifier` (T20) y `bus` (T22) todavía no existen | A) Solo lo que existe (prisma, clock, random, logger, config); T20 y T22 lo completan (R) · B) Interfaces provisorias | A | 2026-10-25 |
+| D-217 | 4 | T17 · Mensaje del 404 para rutas inexistentes | A) "Route not found" (R) · B) "Not found" | A | 2026-10-25 |
+| D-218 | 4 | T17 · Deps de prueba crean un cliente Prisma aunque llegue un override | A) Corregir con `overrides.prisma ?? …` + comentario de merge superficial (R) · B) Dejar | A | 2026-10-25 |
+| D-219 | 4 | T17 · Test de integración del log armado en `createApp` | A) Dejar como está; cumple la spec (R) · B) Agregar test | A | 2026-10-25 |
+| D-220 | 4 | Aprobación de T17 + commit + push + PR del Bloque D | A) Aprobar + commit + push + PR (R) · B) Aprobar + commit sin push · C) Cambios | A | 2026-10-25 |
