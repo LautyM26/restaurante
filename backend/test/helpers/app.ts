@@ -1,6 +1,9 @@
 import { createApp, type AppDeps } from "@/app";
 import { createPrismaClient } from "@/shared/db";
+import { createLocalTokenVerifier } from "@/modules/staff/token-verifier";
 import { createLogger } from "@/shared/logger";
+
+import { TEST_SUPABASE_URL } from "./jwt";
 
 export const TEST_ORIGIN = "http://localhost:5173";
 export const FIXED_NOW = new Date("2026-01-01T12:00:00.000Z");
@@ -18,6 +21,9 @@ export function createTestDeps(overrides: Partial<AppDeps> = {}): AppDeps {
     clock: { now: () => FIXED_NOW },
     random: () => 0.5,
     logger: createLogger("silent"),
+    tokenVerifier: createLocalTokenVerifier(TEST_SUPABASE_URL, {
+      keys: [],
+    }),
     config: {
       corsOrigins: [TEST_ORIGIN],
       trustProxy: false,

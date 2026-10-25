@@ -251,7 +251,7 @@ Rama: `feature/backend-001-public-reads` (D-136)
 ## Bloque F — Autenticación del personal
 Rama: `feature/backend-001-staff-auth` (D-136)
 
-- [ ] **T20 — Verificador de JWT**
+- [x] **T20 — Verificador de JWT**
   - Qué: `staff/token-verifier.ts`: `TokenVerifier` con `jose` (`createRemoteJWKSet` sobre `${SUPABASE_URL}/auth/v1/.well-known/jwks.json`, `jwtVerify` con `issuer` y `audience: 'authenticated'`, solo algoritmos asimétricos) → `{ userId, exp }`; fábrica para tests con `createLocalJWKSet`. Helper `test/helpers/jwt.ts` que firma tokens con `iss`/`aud`/`exp` configurables. Verificar las APIs en la documentación oficial de `jose`.
   - Archivos: `backend/src/modules/staff/token-verifier.ts`, `backend/test/helpers/jwt.ts`, `backend/test/unit/token-verifier.test.ts`
   - Requisitos: R8.1, R8.2 (base)
@@ -260,7 +260,7 @@ Rama: `feature/backend-001-staff-auth` (D-136)
   - Depende de: T2
   - Criterios de aceptación: acepta un token válido; rechaza firma ajena, `iss` o `aud` distintos, vencido y HS256.
   - Verificación: `npx vitest run test/unit/token-verifier.test.ts`
-  - Estado: pendiente
+  - Estado: aprobada (2026-10-25, D-236)
 
 - [ ] **T21 — Middleware `requireStaff`**
   - Qué: `staff/staff-auth.ts`: `Authorization: Bearer` → verificador → `StaffMember` por `userId` → `res.locals.staff`; cualquier falla → 401 `UNAUTHORIZED`. Función de resolución reutilizable por el WS y por `GET /api/orders`.

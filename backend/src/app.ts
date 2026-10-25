@@ -3,6 +3,7 @@ import express, { type Express } from "express";
 import { pinoHttp } from "pino-http";
 import { createMenuRouter } from "@/modules/menu/menu.router";
 import { createTablesRouter } from "@/modules/tables/tables.router";
+import type { TokenVerifier } from "@/modules/staff/token-verifier";
 import type { PrismaClient } from "@/generated/prisma/client";
 import type { Clock } from "@/shared/clock";
 import { createErrorHandler } from "@/shared/error-handler";
@@ -17,6 +18,7 @@ export interface AppDeps {
   clock: Clock;
   random: Random;
   logger: Logger;
+  tokenVerifier: TokenVerifier;
   config: {
     corsOrigins: string[];
     trustProxy: boolean | number;

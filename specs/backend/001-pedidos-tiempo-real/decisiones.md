@@ -213,3 +213,10 @@
 | D-227 | 4 | T19 · Consultas para resolver la mesa | A) Una sola consulta `table.findFirst` filtrando por slug y `active` (R) · B) Mantener 2 consultas con `findRestaurantBySlug` | A | 2026-10-25 |
 | D-228 | 4 | T19 · Ubicación de `tableIdSchema` y su límite (lo usarán orders y ws) | A) Dejar en `tables.schemas.ts` y mover a `shared/` cuando orders lo necesite (R) · B) Moverlo ya + límite a `limits.ts` · C) Quitar el export | A | 2026-10-25 |
 | D-229 | 4 | Aprobación de T19 + commit + push + PR del Bloque E | A) Aprobar + commit + push + PR (R) · B) Aprobar + commit sin push · C) Cambios | A | 2026-10-25 |
+| D-230 | 4 | T20 · Algoritmos de firma aceptados | A) ES256 + RS256 (R) · B) Solo ES256 · C) ES256 + RS256 + EdDSA | A | 2026-10-25 |
+| D-231 | 4 | T20 · Resultado ante token inválido y ante fallas de Supabase | A) `null` ante cualquier `JOSEError` (incluida respuesta inválida del JWKS, falla cerrado como 401); solo timeout y error de red se relanzan; corregir el comentario (R) · B) Además relanzar los errores del JWKS que no son del token · C) Lanzar `AppError` UNAUTHORIZED | A | 2026-10-25 |
+| D-232 | 4 | T20 · Tolerancia de reloj en `exp` | A) Sin tolerancia; `clock` inyectado opcional como `currentDate` (R) · B) 30 s | A | 2026-10-25 |
+| D-233 | 4 | T20 · Validación de `sub` | A) Texto no vacío (R) · B) Exigir UUID | A | 2026-10-25 |
+| D-234 | 4 | T20 · Mejoras menores del reviewer | Selección múltiple | Solo: test con ES384 (asimétrico fuera de la lista) que prueba la lista de algoritmos | 2026-10-25 |
+| D-235 | 4 | T20 · `SUPABASE_URL` con barra final rompe el `iss` esperado | A) Comentario en `.env.example` (R) · B) Quitar la barra en `env.ts` · C) Dejarlo | A | 2026-10-25 |
+| D-236 | 4 | Aprobación de T20 + commit local | A) Aprobar + commit y seguir con T21 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-25 |
