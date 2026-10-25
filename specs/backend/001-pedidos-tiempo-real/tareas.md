@@ -165,16 +165,16 @@ Rama: `feature/backend-001-domain` (D-136)
   - Verificación: `npx vitest run test/unit/selection.test.ts`
   - Estado: aprobada (2026-10-25, D-205)
 
-- [ ] **T13 — Precios**
+- [x] **T13 — Precios**
   - Qué: `domain/pricing.ts`: `unitPriceCents`, `lineTotalCents`, `orderTotalCents` en enteros.
   - Archivos: `backend/src/domain/pricing.ts`, `backend/test/unit/pricing.test.ts`
   - Requisitos: R3.6, RNF5
-  - Decisiones: D-053, D-076
+  - Decisiones: D-053, D-076, D-206
   - Agente: `dev-backend`
   - Depende de: T9
   - Criterios de aceptación: base + adicionales × cantidad; total = Σ líneas; caso máximo (50 × 20 × 2^31) exacto.
   - Verificación: `npx vitest run test/unit/pricing.test.ts`
-  - Estado: en curso
+  - Estado: aprobada (2026-10-25, D-206)
 
 - [ ] **T14 — Código corto**
   - Qué: `domain/short-code.ts`: `SHORT_CODE_ALPHABET`, `generateUniqueCode(existing, random)` con hasta 20 intentos y excepción al agotarse.
@@ -185,7 +185,7 @@ Rama: `feature/backend-001-domain` (D-136)
   - Depende de: T9
   - Criterios de aceptación: 4 caracteres del alfabeto; con aleatorio fijo y colisión forzada genera otro; 20 colisiones → lanza.
   - Verificación: `npx vitest run test/unit/short-code.test.ts`
-  - Estado: pendiente
+  - Estado: en curso
 
 - [ ] **T15 — Huella de idempotencia**
   - Qué: `domain/fingerprint.ts`: contenido canónico de §8.7 + SHA-256 hex.

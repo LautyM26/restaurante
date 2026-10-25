@@ -189,3 +189,4 @@
 | D-203 | 4 | T12 · Repeticiones: repetidas, conteo min/max y opciones inválidas repetidas | A) Paridad con el front: un `selection_invalid` por grupo con repetidas, min/max sobre el array crudo, un issue por cada aparición inválida (R) · B) Sin duplicados | A | 2026-10-25 |
 | D-204 | 4 | T12 · Grupo del plato sin clave en la selección / grupo ajeno con array vacío | A) Sin clave = 0 elegidas (obligatorio → `selection_invalid`); grupo ajeno vacío se ignora (R) · B) Grupo ajeno vacío también es error | A | 2026-10-25 |
 | D-205 | 4 | T12 · 3 tests extra de D-202/D-203 + aprobación y commit | A) Agregar los tests + aprobar (R) · B) Aprobar sin tests · C) Cambios | A | 2026-10-25 |
+| D-206 | 4 | Aprobación de T13 + commit local (firma de `orderTotalCents(lines: PricedLine[])` elegida por el agente; §8.5 no la fija) | A) Aprobar + commit y seguir con T14 (R) · B) Aprobar y cortar · C) Cambios | A | 2026-10-25 |
